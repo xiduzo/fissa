@@ -1,0 +1,51 @@
+import React, {FC} from 'react';
+import {StyleSheet, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import AddIcon from '../components/atoms/icons/AddIcon';
+import Typography from '../components/atoms/Typography';
+import {Color} from '../types/Color';
+
+const OnboardingSlideTwo: FC = () => (
+  <View style={styles.view}>
+    <Typography style={styles.icon}>💃🏾</Typography>
+    <LinearGradient style={styles.button} {...Color.gradient}>
+      <AddIcon style={styles.buttonIcon} />
+    </LinearGradient>
+    <Typography style={[styles.icon, styles.rotated]}>🕺🏻</Typography>
+  </View>
+);
+
+export default OnboardingSlideTwo;
+
+const styles = StyleSheet.create({
+  view: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  icon: {
+    fontSize: 80,
+    lineHeight: 120,
+    paddingVertical: 12,
+  },
+  rotated: {
+    transform: [
+      {
+        rotateZ: '180deg',
+      },
+      {
+        rotateY: '180deg',
+      },
+    ],
+  },
+  button: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+    borderRadius: 16,
+  },
+  buttonIcon: {
+    tintColor: Color.dark,
+    transform: [{scale: 1.5}],
+  },
+});
