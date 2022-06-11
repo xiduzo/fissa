@@ -8,7 +8,7 @@ const QuestionMarkIcon: FC<QuestionMarkIconProps> = ({style, ...props}) => (
   <VectorImage
     {...props}
     style={[{tintColor: Color.light}, style]}
-    source={require('../../../assets/icons/question_mark.svg')}
+    source={require('../../../../assets/icons/question_mark.svg')}
   />
 );
 

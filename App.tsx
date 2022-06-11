@@ -6,9 +6,9 @@ import {
   refresh,
   AuthorizeResult,
 } from 'react-native-app-auth';
-import ToastContainer from './components/atoms/Toast';
-import Routes from './routes/Routes';
-import AddContextProvider from './routes/session/Room.AddContext';
+import ToastContainer from './src/components/atoms/Toast';
+import Routes from './src/routes/Routes';
+import AddContextProvider from './src/routes/session/Room.AddContext';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const App = () => {
