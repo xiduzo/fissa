@@ -17,7 +17,7 @@ import SelectTracks from './session/Room.SelectTracks';
 const RootStack = createNativeStackNavigator();
 
 const Routes: FC = () => {
-  const onboarding = useRef(false);
+  const onboarding = useRef(true);
 
   return (
     <RootStack.Navigator

@@ -8,7 +8,7 @@ const ArrowLeftIcon: FC<ArrowIconProps> = ({style, ...props}) => (
   <VectorImage
     {...props}
     style={[{tintColor: Color.light}, style]}
-    source={require('../../../assets/icons/arrow.svg')}
+    source={require('../../../assets/icons/arrow_left.svg')}
   />
 );
 

@@ -1,8 +1,8 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
-import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
+import ArrowDownIcon from '../components/atoms/icons/ArrowDownIcon';
+import ArrowUpIcon from '../components/atoms/icons/ArrowUpIcon';
 import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';
 
@@ -12,21 +12,19 @@ const OnboardingSlideThree: FC = () => (
     <LinearGradient
       style={[styles.button, styles.buttonUp]}
       {...Color.gradient}>
-      <ArrowLeftIcon
-        style={[
-          {tintColor: Color.dark, transform: [{rotate: '90deg'}, {scale: 1.5}]},
-        ]}
+      <ArrowUpIcon
+        style={[{tintColor: Color.dark, transform: [{scale: 1.5}]}]}
       />
     </LinearGradient>
     <LinearGradient
       style={[styles.button, styles.buttonDown]}
       {...Color.gradient}
       colors={[Color.light, Color.light]}>
-      <ArrowLeftIcon
+      <ArrowDownIcon
         style={[
           {
             tintColor: Color.dark + '16',
-            transform: [{rotate: '-90deg'}, {scale: 1.5}],
+            transform: [{scale: 1.5}],
           },
         ]}
       />

@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import AddIcon from '../components/atoms/icons/AddIcon';
+import PlusIcons from '../components/atoms/icons/PlusIcon';
 import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';
 
@@ -9,7 +9,7 @@ const OnboardingSlideTwo: FC = () => (
   <View style={styles.view}>
     <Typography style={styles.icon}>💃🏾</Typography>
     <LinearGradient style={styles.button} {...Color.gradient}>
-      <AddIcon style={styles.buttonIcon} />
+      <PlusIcons style={styles.buttonIcon} />
     </LinearGradient>
     <Typography style={[styles.icon, styles.rotated]}>🕺🏻</Typography>
   </View>

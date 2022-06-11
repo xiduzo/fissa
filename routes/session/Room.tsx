@@ -3,10 +3,12 @@ import React, {FC, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
+  ImageStyle,
   Linking,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
+  StyleProp,
   StyleSheet,
   View,
 } from 'react-native';
@@ -14,7 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import Button from '../../components/atoms/Button';
 import Fab from '../../components/atoms/Fab';
-import AddIcon from '../../components/atoms/icons/AddIcon';
+import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import ArrowLeftIcon from '../../components/atoms/icons/ArrowLeftIcon';
 import QuestionMarkIcon from '../../components/atoms/icons/QuestionMarkIcon';
 import Typography from '../../components/atoms/Typography';
@@ -22,7 +24,8 @@ import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
-import {randSong, randSinger} from '@ngneat/falso';
+import {randSong, randSinger, randNumber} from '@ngneat/falso';
+import MoreIcon from '../../components/atoms/icons/MoreIcon';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -68,12 +71,34 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
   };
 
   const tracks = useRef(
-    Array.from({length: 150}).map((_, i) => ({
+    Array.from({length: 20}).map((_, i) => ({
       id: i.toString(),
       title: randSong(),
       subtitle: randSinger({length: 4}).join(', '),
+      votes: randNumber({min: -2, max: 2}),
     })),
   );
+
+  const trackEndIcon = (votes: number): JSX.Element => {
+    const style: StyleProp<ImageStyle> = {
+      tintColor: votes !== 0 ? Color.main : Color.light,
+    };
+
+    if (votes !== 0) {
+      return (
+        <ArrowLeftIcon
+          style={[
+            style,
+            {
+              transform: [{rotate: `${votes > 0 ? '' : '-'}90deg`}],
+            },
+          ]}
+        />
+      );
+    }
+
+    return <MoreIcon style={style} />;
+  };
 
   return (
     <View>
@@ -114,9 +139,11 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
             title={track.title}
             subtitle={track.subtitle}
             end={
-              <View style={{flexDirection: 'row'}}>
-                <Typography variant="bodyM">14</Typography>
-                <QuestionMarkIcon />
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Typography variant="bodyM" style={{marginRight: 4}}>
+                  {track.votes}
+                </Typography>
+                {trackEndIcon(track.votes)}
               </View>
             }
           />
@@ -195,7 +222,7 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
         style={styles.gradient}
       />
       <Fab title="Add songs" onPress={startAddingTracks}>
-        <AddIcon style={{tintColor: Color.dark}} />
+        <PlusIcons style={{tintColor: Color.dark}} />
       </Fab>
       <Animated.View
         style={[

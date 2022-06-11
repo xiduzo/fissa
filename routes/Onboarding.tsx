@@ -4,6 +4,7 @@ import {StyleSheet, TouchableHighlight, View} from 'react-native';
 import OnboardingSwiper from 'react-native-onboarding-swiper';
 import Button from '../components/atoms/Button';
 import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
+import ArrowRightIcon from '../components/atoms/icons/ArrowRightIcon';
 import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';
 import DotComponent from './Onboarding.DotComponent';
@@ -39,11 +40,10 @@ const Onboarding: FC<OnboardingProps> = ({navigation}) => {
             title="Yallah habibi"
             onPress={finishOnboarding}
             end={
-              <ArrowLeftIcon
+              <ArrowRightIcon
                 style={{
                   tintColor: Color.dark,
-                  marginLeft: 16,
-                  transform: [{rotate: '180deg'}],
+                  marginLeft: 12,
                 }}
               />
             }
