@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   code: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginVertical: 72,
@@ -151,7 +150,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     borderColor: Color.light,
     borderBottomWidth: 3,
-    display: 'flex',
     marginHorizontal: 16,
     paddingBottom: 8,
   },

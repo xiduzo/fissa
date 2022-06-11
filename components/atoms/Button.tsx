@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
   view: {
     borderWidth: 2,
     borderRadius: 12,
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

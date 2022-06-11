@@ -8,9 +8,17 @@ interface ActionProps extends ButtonProps {
   icon: JSX.Element;
   subtitle?: string;
   active?: boolean;
+  inverted?: boolean;
 }
 
-const Action: FC<ActionProps> = ({icon, title, subtitle, active, ...props}) => {
+const Action: FC<ActionProps> = ({
+  icon,
+  title,
+  subtitle,
+  active,
+  inverted,
+  ...props
+}) => {
   return (
     <TouchableHighlight {...props} style={[styles.container]}>
       <View style={styles.content}>
@@ -18,17 +26,30 @@ const Action: FC<ActionProps> = ({icon, title, subtitle, active, ...props}) => {
           style={[
             styles.icon,
             {
-              backgroundColor: active ? Color.dark : 'transparent',
+              backgroundColor: active
+                ? inverted
+                  ? Color.dark
+                  : Color.light
+                : 'transparent',
+              borderColor: (inverted ? Color.dark : Color.light) + '10',
             },
           ]}>
           {icon}
         </View>
         <View>
-          <Typography variant="h4" style={[styles.text, {marginBottom: 4}]}>
+          <Typography
+            variant="h4"
+            style={[
+              {marginBottom: 4, color: inverted ? Color.dark : Color.light},
+            ]}>
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="bodyM" style={[styles.text, {opacity: 0.6}]}>
+            <Typography
+              variant="bodyM"
+              style={[
+                {opacity: 0.6, color: inverted ? Color.dark : Color.light},
+              ]}>
               {subtitle}
             </Typography>
           )}
@@ -45,7 +66,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   content: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -53,10 +73,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 2,
     borderRadius: 12,
-    borderColor: Color.dark + '10',
     marginRight: 16,
-  },
-  text: {
-    color: Color.dark,
   },
 });

@@ -42,7 +42,6 @@ export default ToastContainer;
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
 

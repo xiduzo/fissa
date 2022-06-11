@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   button: {
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,

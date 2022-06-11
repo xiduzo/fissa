@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   actions: {
-    display: 'flex',
     flexDirection: 'row',
   },
 });

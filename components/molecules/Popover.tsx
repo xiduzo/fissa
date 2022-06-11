@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   },
   view: {
     height: '100%',
-    display: 'flex',
     justifyContent: 'flex-end',
   },
   card: {
@@ -113,7 +112,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   actions: {
-    display: 'flex',
     flexDirection: 'row',
   },
 });

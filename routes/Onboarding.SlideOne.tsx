@@ -46,7 +46,6 @@ export default OnboardingSlideOne;
 
 const styles = StyleSheet.create({
   item: {
-    display: 'flex',
     flexDirection: 'row',
     marginBottom: 15,
   },
@@ -56,7 +55,6 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   text: {
-    display: 'flex',
     justifyContent: 'center',
     width: 200,
   },

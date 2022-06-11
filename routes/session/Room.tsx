@@ -93,15 +93,32 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
             ({tracks.current.length})
           </Typography>
         </View>
+        <Action
+          title="Up vote song"
+          icon={
+            <ArrowLeftIcon
+              style={{
+                tintColor: Color.light + '40',
+                transform: [{rotate: '90deg'}],
+              }}
+            />
+          }
+          subtitle="And it will move up in the queue"
+        />
         {tracks.current.map(track => (
           <ListItem
             imageUri=""
             onPress={() => setSelectedTrack(track.id)}
-            onLongPress={() => Alert.alert('long press mofo')}
+            onLongPress={() => Alert.alert(`long press ${track.title}`)}
             key={track.id}
             title={track.title}
             subtitle={track.subtitle}
-            end={<QuestionMarkIcon />}
+            end={
+              <View style={{flexDirection: 'row'}}>
+                <Typography variant="bodyM">14</Typography>
+                <QuestionMarkIcon />
+              </View>
+            }
           />
         ))}
         <View style={{height: 120}} />
@@ -146,6 +163,7 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
           />
           <Action
             title="Up vote song"
+            inverted
             active
             icon={
               <ArrowLeftIcon
@@ -159,6 +177,7 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
           />
           <Action
             title="Down vote song"
+            inverted
             icon={
               <ArrowLeftIcon
                 style={{
@@ -208,7 +227,6 @@ const styles = StyleSheet.create({
   queue: {
     marginBottom: 16,
     marginTop: 40,
-    display: 'flex',
     flexDirection: 'row',
   },
   gradient: {
@@ -220,7 +238,6 @@ const styles = StyleSheet.create({
   },
   backToTop: {
     position: 'absolute',
-    display: 'flex',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

@@ -19,7 +19,6 @@ export default OnboardingSlideTwo;
 
 const styles = StyleSheet.create({
   view: {
-    display: 'flex',
     alignItems: 'center',
   },
   icon: {
@@ -38,7 +37,6 @@ const styles = StyleSheet.create({
     ],
   },
   button: {
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,

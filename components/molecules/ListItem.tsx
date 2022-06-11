@@ -148,7 +148,6 @@ export default ListItem;
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
     alignItems: 'center',
     flexDirection: 'row',
     marginVertical: 12,
@@ -161,7 +160,6 @@ const styles = StyleSheet.create({
   },
   selected: {
     position: 'absolute',
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
