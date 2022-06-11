@@ -1,3 +1,4 @@
+import {randNumber, randSinger, randSong} from '@ngneat/falso';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useRef, useState} from 'react';
 import {
@@ -16,16 +17,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import Button from '../../components/atoms/Button';
 import Fab from '../../components/atoms/Fab';
-import PlusIcons from '../../components/atoms/icons/PlusIcon';
+import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowLeftIcon from '../../components/atoms/icons/ArrowLeftIcon';
+import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
+import MoreIcon from '../../components/atoms/icons/MoreIcon';
+import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import QuestionMarkIcon from '../../components/atoms/icons/QuestionMarkIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
-import {randSong, randSinger, randNumber} from '@ngneat/falso';
-import MoreIcon from '../../components/atoms/icons/MoreIcon';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -85,16 +87,8 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
     };
 
     if (votes !== 0) {
-      return (
-        <ArrowLeftIcon
-          style={[
-            style,
-            {
-              transform: [{rotate: `${votes > 0 ? '' : '-'}90deg`}],
-            },
-          ]}
-        />
-      );
+      if (votes > 0) return <ArrowUpIcon style={style} />;
+      return <ArrowDownIcon style={style} />;
     }
 
     return <MoreIcon style={style} />;
@@ -111,25 +105,19 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
         <Typography variant="h2" style={{marginBottom: 16}}>
           Now Playing
         </Typography>
-        <ListItem imageUri="" title="Mojo so dope" subtitle="Kid Cudi" />
+        <ListItem
+          imageStyle={{width: 125, height: 125}}
+          imageUri=""
+          title="Mojo so dope"
+          subtitle="Kid Cudi"
+        />
         <View style={styles.queue}>
           <Typography variant="h2">Queue</Typography>
           <Typography variant="h2" style={{fontWeight: '300'}}>
             ({tracks.current.length})
           </Typography>
         </View>
-        <Action
-          title="Up vote song"
-          icon={
-            <ArrowLeftIcon
-              style={{
-                tintColor: Color.light + '40',
-                transform: [{rotate: '90deg'}],
-              }}
-            />
-          }
-          subtitle="And it will move up in the queue"
-        />
+
         {tracks.current.map(track => (
           <ListItem
             imageUri=""
@@ -248,12 +236,12 @@ export default Room;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 40,
+    paddingTop: 68,
     paddingHorizontal: 24,
   },
   queue: {
-    marginBottom: 16,
-    marginTop: 40,
+    marginBottom: 12,
+    marginTop: 38,
     flexDirection: 'row',
   },
   gradient: {

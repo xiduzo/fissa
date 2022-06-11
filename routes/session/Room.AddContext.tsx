@@ -18,6 +18,8 @@ interface RoomAddContextState {
   addTrack: (trackId: string) => void;
   removeTrack: (trackId: string) => void;
   addToQueue: () => void;
+  cancel: () => void;
+  reset: () => void;
 }
 
 const initialState: RoomAddContextState = {
@@ -25,6 +27,8 @@ const initialState: RoomAddContextState = {
   addTrack: () => {},
   removeTrack: () => {},
   addToQueue: () => {},
+  cancel: () => {},
+  reset: () => {},
 };
 
 const RoomAddContext = createContext<RoomAddContextState>(initialState);
@@ -45,7 +49,6 @@ const AddContextProvider: FC = ({children}) => {
   }, []);
 
   const addToQueue = useCallback(() => {
-    console.log('add to queue', selectedTracks);
     // @ts-ignore
     navigate('Room');
     Notification.show({
@@ -54,6 +57,16 @@ const AddContextProvider: FC = ({children}) => {
     setSelectedTracks([]);
   }, [selectedTracks]);
 
+  const cancel = useCallback(() => {
+    // @ts-ignore
+    navigate('Room');
+    setSelectedTracks([]);
+  }, []);
+
+  const reset = useCallback(() => {
+    setSelectedTracks([]);
+  }, []);
+
   return (
     <RoomAddContext.Provider
       value={{
@@ -61,6 +74,8 @@ const AddContextProvider: FC = ({children}) => {
         addTrack,
         removeTrack,
         addToQueue,
+        cancel,
+        reset,
       }}>
       {children}
     </RoomAddContext.Provider>
@@ -70,11 +85,11 @@ const AddContextProvider: FC = ({children}) => {
 export const useAddContext = () => useContext(RoomAddContext);
 
 export const AddContextBottomDrawer: FC = ({...props}) => {
-  const {selectedTracks, addToQueue} = useAddContext();
+  const {selectedTracks, addToQueue, reset} = useAddContext();
 
   return (
     <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
-      <BottomDrawer>
+      <BottomDrawer close={reset}>
         <Typography style={styles.text} variant="h6">
           {selectedTracks.length} songs selected
         </Typography>
@@ -96,5 +111,6 @@ const styles = StyleSheet.create({
     color: Color.dark,
     textAlign: 'center',
     margin: 24,
+    marginTop: 0,
   },
 });

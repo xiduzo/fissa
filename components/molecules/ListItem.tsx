@@ -1,6 +1,8 @@
 import React, {FC, useEffect, useRef} from 'react';
 import {
   Animated,
+  ImageStyle,
+  StyleProp,
   StyleSheet,
   TouchableWithoutFeedback,
   TouchableWithoutFeedbackProps,
@@ -14,6 +16,7 @@ interface ListItemProps extends TouchableWithoutFeedbackProps {
   imageUri: string;
   title: string;
   subtitle: string;
+  imageStyle?: StyleProp<ImageStyle>;
   inverted?: boolean;
   hasBorder?: boolean;
   end?: JSX.Element;
@@ -25,6 +28,7 @@ const ListItem: FC<ListItemProps> = ({
   title,
   subtitle,
   end,
+  imageStyle = {},
   inverted = false,
   hasBorder = false,
   selected = false,
@@ -79,6 +83,7 @@ const ListItem: FC<ListItemProps> = ({
                 borderTopRightRadius: hasBorder ? 0 : 12,
                 borderBottomRightRadius: hasBorder ? 0 : 12,
               },
+              imageStyle,
             ]}
             source={{
               uri: !!imageUri

@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
     paddingBottom: '100%',
-    marginBottom: 190,
+    marginBottom: 200,
   },
   image: {
     borderRadius: 8,
