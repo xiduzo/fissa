@@ -60,3 +60,4 @@ buck-out/
 /ios/Pods/
 /vendor/bundle/
 components/atoms/icons
+heroku/node_modules
