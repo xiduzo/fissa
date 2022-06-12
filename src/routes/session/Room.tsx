@@ -1,6 +1,6 @@
 import {randNumber, randSinger, randSong} from '@ngneat/falso';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
@@ -26,16 +26,22 @@ import QuestionMarkIcon from '../../components/atoms/icons/QuestionMarkIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
+import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
 
-const Room: FC<RoomProps> = ({navigation, ...props}) => {
+const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const backToTopOffset = useRef(new Animated.Value(-80));
   const [addingTracks, setAddingTracks] = useState(false);
+  const {spotify} = useSpotify();
+  const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
+
   const [selectedTrack, setSelectedTrack] = useState<string>();
+
+  const {playlistId} = route.params;
 
   const scrollRef = useRef<ScrollView>();
 
@@ -68,18 +74,10 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
 
     animateIn();
   };
+
   const scrollToTop = () => {
     scrollRef.current?.scrollTo({y: 0, animated: true});
   };
-
-  const tracks = useRef(
-    Array.from({length: 20}).map((_, i) => ({
-      id: i.toString(),
-      title: randSong(),
-      subtitle: randSinger({length: 4}).join(', '),
-      votes: randNumber({min: -2, max: 2}),
-    })),
-  );
 
   const trackEndIcon = (votes: number): JSX.Element => {
     const style: StyleProp<ImageStyle> = {
@@ -93,6 +91,25 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
 
     return <MoreIcon style={style} />;
   };
+
+  useEffect(() => {
+    const fetchTracks = async (offset: number) => {
+      spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
+        console.log(result);
+        setTracks(prev => [...prev, ...result.items]);
+        if (!result.next) return;
+        fetchTracks(offset + result.items.length);
+      });
+    };
+
+    spotify.getPlaylistTracks(playlistId).then(result => {
+      setTracks(result.items);
+      console.log(result);
+      if (!result.next) return;
+
+      fetchTracks(result.offset + result.items.length);
+    });
+  }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
 
   return (
     <View>
@@ -114,24 +131,26 @@ const Room: FC<RoomProps> = ({navigation, ...props}) => {
         <View style={styles.queue}>
           <Typography variant="h2">Queue</Typography>
           <Typography variant="h2" style={{fontWeight: '300'}}>
-            ({tracks.current.length})
+            ({tracks.length})
           </Typography>
         </View>
 
-        {tracks.current.map(track => (
+        {tracks.map(({track}) => (
           <ListItem
-            imageUri=""
+            // @ts-ignore
+            imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
             onPress={() => setSelectedTrack(track.id)}
-            onLongPress={() => Alert.alert(`long press ${track.title}`)}
+            onLongPress={() => Alert.alert(`long press ${track.name}`)}
             key={track.id}
-            title={track.title}
-            subtitle={track.subtitle}
+            title={track.name}
+            // @ts-ignore
+            subtitle={track.artists.map(x => x.name).join(', ')}
             end={
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Typography variant="bodyM" style={{marginRight: 4}}>
-                  {track.votes}
+                  {5}
                 </Typography>
-                {trackEndIcon(track.votes)}
+                {trackEndIcon(5)}
               </View>
             }
           />

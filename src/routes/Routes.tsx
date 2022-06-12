@@ -99,7 +99,9 @@ export type RootStackParamList = {
   };
   NewSession: undefined;
   JoinSession: undefined;
-  Room: undefined;
+  Room: {
+    playlistId: string;
+  };
   AddFromPlaylist: undefined;
   Onboarding: undefined;
 };

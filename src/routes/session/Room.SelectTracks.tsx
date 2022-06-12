@@ -24,8 +24,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
   const {selectedTracks, addTrack, removeTrack, cancel} = useAddContext();
   const {spotify} = useSpotify();
   const {playlistId} = route.params;
-  const [playlist, setPlaylists] =
-    useState<SpotifyApi.SinglePlaylistResponse>();
+  const [playlist, setPlaylist] = useState<SpotifyApi.SinglePlaylistResponse>();
   const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
 
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -47,10 +46,8 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
   };
 
   useEffect(() => {
-    console.log('fetch');
     const fetchTracks = async (offset: number) => {
       spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
-        console.log(result);
         setTracks(prev => [...prev, ...result.items]);
         if (!result.next) return;
         fetchTracks(offset + result.items.length);
@@ -58,22 +55,16 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
     };
 
     spotify.getPlaylist(playlistId).then(result => {
-      setPlaylists(result);
+      setPlaylist(result);
     });
 
     spotify.getPlaylistTracks(playlistId).then(result => {
       setTracks(result.items);
-      console.log(result);
       if (!result.next) return;
 
       fetchTracks(result.offset + result.items.length);
     });
-  }, [
-    playlistId,
-    spotify.getPlaylistTracks,
-    spotify.getPlaylist,
-    spotify.getPlaylistTracks,
-  ]);
+  }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
 
   useEffect(() => {
     navigation.setOptions({

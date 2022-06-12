@@ -12,7 +12,7 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const startFromBlank = () => {
     navigation.popToTop();
-    navigation.replace('Room');
+    navigation.replace('Room', {playlistId: 'TODO'});
     Notification.show({
       message: 'Aye, have a funky night sailor!',
       icon: '🚢',

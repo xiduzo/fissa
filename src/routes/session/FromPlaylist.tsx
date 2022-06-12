@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -10,29 +10,34 @@ import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
+import {DEFAULT_IMAGE} from '../../lib/constants/Image';
+import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
-import {randMusicGenre, randFullName, randNumber} from '@ngneat/falso';
 
 interface FromPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'FromPlaylist'> {}
 
 const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
-  const [selectedItem, setSelectedItem] = useState<string | undefined>(
-    undefined,
-  );
+  const [selectedPlaylist, setSelectedPlaylist] =
+    useState<SpotifyApi.PlaylistObjectSimplified>();
+  const {spotify} = useSpotify();
+  const [playlists, setPlaylists] = useState<
+    SpotifyApi.PlaylistObjectSimplified[]
+  >([]);
 
-  const closePopOver = () => setSelectedItem(undefined);
+  const closePopOver = () => setSelectedPlaylist(undefined);
 
   const startFromPlaylist = () => {
     closePopOver();
+    if (!selectedPlaylist) return;
     Notification.show({
       message: 'Aye, your playlist has been imported successfully!',
       icon: '🎉',
     });
     navigation.popToTop();
-    navigation.replace('Room');
+    navigation.replace('Room', {playlistId: selectedPlaylist.id});
   };
 
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -44,16 +49,9 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
     navigation.setOptions({headerTitle: 'Select playlist'});
   };
 
-  const playlists = useRef(
-    Array.from({length: 10}).map((_, i) => ({
-      id: i.toString(),
-      title: randMusicGenre(),
-      subtitle: `${randFullName()} • ${randNumber({
-        min: 10,
-        max: 1500,
-      })} songs`,
-    })),
-  );
+  useEffect(() => {
+    spotify.getUserPlaylists().then(result => setPlaylists(result.items));
+  }, [spotify.getUserPlaylists]);
 
   return (
     <ScrollView
@@ -63,23 +61,24 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       <Typography variant="h1" style={{marginBottom: 24}}>
         Select Playlist
       </Typography>
-      {playlists.current.map(playlist => (
+      {playlists.map(playlist => (
         <ListItem
-          imageUri=""
-          onPress={() => setSelectedItem(playlist.id)}
+          onPress={() => setSelectedPlaylist(playlist)}
+          imageUri={playlist.images[0]?.url ?? DEFAULT_IMAGE}
           key={playlist.id}
-          title={playlist.title}
-          subtitle={playlist.subtitle}
+          title={playlist.name}
+          subtitle={playlist.owner.display_name ?? ''}
         />
       ))}
-      <Popover visible={!!selectedItem} onRequestClose={closePopOver}>
+      <Popover visible={!!selectedPlaylist} onRequestClose={closePopOver}>
         <Typography variant="h2" style={styles.text}>
           Your group session will start based on
         </Typography>
+
         <ListItem
-          imageUri=""
-          title="FIRE FIRE FIRE"
-          subtitle="Milan van der Maaten • 1.502 songs"
+          imageUri={selectedPlaylist?.images[0]?.url ?? DEFAULT_IMAGE}
+          title={selectedPlaylist?.name ?? ''}
+          subtitle={selectedPlaylist?.owner.display_name ?? ''}
           inverted
           hasBorder
         />

@@ -81,7 +81,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     });
 
     navigation.popToTop();
-    navigation.replace('Room');
+    navigation.replace('Room', {playlistId: 'TODO'});
   }, [pin]);
 
   useEffect(() => {
