@@ -2,7 +2,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {FC, useRef} from 'react';
 import {Alert} from 'react-native';
 import IconButton from '../components/atoms/IconButton';
-import CLoseIcon from '../components/atoms/icons/CloseIcon';
 import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
 import {Color} from '../types/Color';
 import Home from './Home';
@@ -12,15 +11,13 @@ import FromPlaylist from './session/FromPlaylist';
 import JoinSession from './session/JoinSession';
 import NewSession from './session/NewSession';
 import Room from './session/Room';
-import {useAddContext} from './session/Room.AddContext';
 import AddFromPlaylist from './session/Room.AddFromPlaylist';
 import SelectTracks from './session/Room.SelectTracks';
 
 const RootStack = createNativeStackNavigator();
 
 const Routes: FC = () => {
-  const onboarding = useRef(true);
-  const {cancel} = useAddContext();
+  const onboarding = useRef(false);
 
   return (
     <RootStack.Navigator
@@ -84,24 +81,9 @@ const Routes: FC = () => {
           component={AddFromPlaylist}
           options={{
             animation: 'fade_from_bottom',
-            headerRight: () => (
-              <IconButton title="cancel" onPress={cancel}>
-                <CLoseIcon />
-              </IconButton>
-            ),
           }}
         />
-        <RootStack.Screen
-          name="SelectTracks"
-          component={SelectTracks}
-          options={{
-            headerRight: () => (
-              <IconButton title="cancel" onPress={cancel}>
-                <CLoseIcon />
-              </IconButton>
-            ),
-          }}
-        />
+        <RootStack.Screen name="SelectTracks" component={SelectTracks} />
       </RootStack.Group>
     </RootStack.Navigator>
   );
