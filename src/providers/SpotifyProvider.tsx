@@ -2,7 +2,7 @@ import React, {createContext, FC, useContext, useEffect, useRef} from 'react';
 import {
   AuthConfiguration,
   authorize,
-  refresh,
+  refresh as spotifyApiRefresh,
   AuthorizeResult,
 } from 'react-native-app-auth';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -42,50 +42,72 @@ const SpotifyProvider: FC = ({children}) => {
   const spotifyApi = useRef(initialState.spotify);
 
   useEffect(() => {
+    const refresh = async ({
+      refreshToken,
+      access_token,
+    }: {
+      refreshToken: string;
+      access_token: string;
+    }) => {
+      const result = await spotifyApiRefresh(
+        {
+          ...authConfig,
+          serviceConfiguration: {
+            ...authConfig.serviceConfiguration,
+            tokenEndpoint:
+              authConfig.serviceConfiguration.tokenEndpoint.replace(
+                '/token',
+                '/refresh',
+              ),
+          },
+          additionalParameters: {
+            access_token,
+          },
+        },
+        {
+          refreshToken,
+        },
+      );
+
+      spotifyApi.current.setAccessToken(result.accessToken);
+      EncryptedStorage.setItem(
+        'accessToken',
+        JSON.stringify({
+          ...result,
+          refreshToken, // keep the refresh token in the encrypted storage
+        }),
+      );
+
+      setTimeout(() => {
+        refresh({
+          refreshToken,
+          access_token: result.accessToken,
+        });
+      }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60_000));
+    };
+
     const auth = async () => {
       const item = await EncryptedStorage.getItem('accessToken');
       const {accessTokenExpirationDate, refreshToken, accessToken} = JSON.parse(
         item ?? JSON.stringify(''),
       ) as AuthorizeResult;
 
-      if (accessToken) {
-        // TODO: set timeout to update token
+      if (accessToken && refreshToken) {
+        // Current token is still valid, lets use it while it lasts
         if (new Date() < new Date(accessTokenExpirationDate)) {
           spotifyApi.current.setAccessToken(accessToken);
         }
 
-        if (refreshToken) {
-          console.log('refreshToken', refreshToken);
-          const result = await refresh(
-            {
-              ...authConfig,
-              serviceConfiguration: {
-                ...authConfig.serviceConfiguration,
-                tokenEndpoint:
-                  authConfig.serviceConfiguration.tokenEndpoint.replace(
-                    '/token',
-                    '/refresh',
-                  ),
-              },
-              additionalParameters: {
-                access_token: accessToken,
-              },
-            },
-            {
-              refreshToken,
-            },
-          );
-
-          spotifyApi.current.setAccessToken(result.accessToken);
-          EncryptedStorage.setItem('accessToken', JSON.stringify(result));
-        }
+        refresh({
+          refreshToken,
+          access_token: accessToken,
+        });
 
         return;
       }
 
       const result = await authorize(authConfig);
       spotifyApi.current.setAccessToken(result.accessToken);
-
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));
     };
 
