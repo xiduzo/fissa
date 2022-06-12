@@ -35,7 +35,7 @@ const authConfig: AuthConfiguration = {
   ], // the scopes you need to access
   serviceConfiguration: {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-    tokenEndpoint: 'https://fissa-spotify-token-swap.herokuapp.com/api/token',
+    tokenEndpoint: 'https://fissa-spotify-swap-api-xiduzo.vercel.app/api/token',
   },
 };
 const SpotifyProvider: FC = ({children}) => {
@@ -55,10 +55,7 @@ const SpotifyProvider: FC = ({children}) => {
           serviceConfiguration: {
             ...authConfig.serviceConfiguration,
             tokenEndpoint:
-              authConfig.serviceConfiguration.tokenEndpoint.replace(
-                '/token',
-                '/refresh',
-              ),
+              authConfig.serviceConfiguration.tokenEndpoint + '/refresh',
           },
           additionalParameters: {
             access_token,
