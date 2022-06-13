@@ -18,6 +18,8 @@ const initialState: SpotifyProviderState = {
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);
 
+const BASE_TOKEN_ENDPOINT =
+  'https://fissa-spotify-swap-api-xiduzo.vercel.app/api/token/';
 const authConfig: AuthConfiguration = {
   usePKCE: false,
   clientId: 'a2a88c4618324942859ce3e1f888b938', // available on the app page
@@ -35,7 +37,7 @@ const authConfig: AuthConfiguration = {
   ], // the scopes you need to access
   serviceConfiguration: {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-    tokenEndpoint: 'https://fissa-spotify-swap-api-xiduzo.vercel.app/api/token',
+    tokenEndpoint: BASE_TOKEN_ENDPOINT,
   },
 };
 const SpotifyProvider: FC = ({children}) => {
@@ -54,8 +56,7 @@ const SpotifyProvider: FC = ({children}) => {
           ...authConfig,
           serviceConfiguration: {
             ...authConfig.serviceConfiguration,
-            tokenEndpoint:
-              authConfig.serviceConfiguration.tokenEndpoint + '/refresh',
+            tokenEndpoint: BASE_TOKEN_ENDPOINT + 'refresh',
           },
           additionalParameters: {
             access_token,
@@ -74,6 +75,8 @@ const SpotifyProvider: FC = ({children}) => {
           refreshToken, // keep the refresh token in the encrypted storage
         }),
       );
+
+      console.log('refresh', result);
 
       setTimeout(() => {
         refresh({
@@ -102,8 +105,11 @@ const SpotifyProvider: FC = ({children}) => {
 
         return;
       }
+      console.log('authorize');
 
       const result = await authorize(authConfig);
+      console.log('authorize', result);
+
       spotifyApi.current.setAccessToken(result.accessToken);
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));
     };
