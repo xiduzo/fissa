@@ -20,7 +20,7 @@ export default Fab;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 32,
+    bottom: 62,
     right: 32,
     zIndex: 999,
     borderRadius: 16,

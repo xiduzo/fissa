@@ -1,13 +1,12 @@
-import {NativeStackHeaderProps} from '@react-navigation/native-stack';
+import {StackHeaderProps} from '@react-navigation/stack';
 import React, {FC, useEffect, useRef} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 import IconButton from '../components/atoms/IconButton';
 import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
-import CLoseIcon from '../components/atoms/icons/CloseIcon';
 import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';
 
-const Header: FC<NativeStackHeaderProps> = ({
+const Header: FC<StackHeaderProps> = ({
   back,
   options,
   navigation,
@@ -34,7 +33,7 @@ const Header: FC<NativeStackHeaderProps> = ({
       }).start();
     };
 
-    canGoBack ? animate({toValue: 1, duration: 500, delay: 120}) : animate();
+    canGoBack ? animate({toValue: 1, duration: 150, delay: 120}) : animate();
 
     return animate;
   }, [canGoBack]);

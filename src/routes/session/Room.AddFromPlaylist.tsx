@@ -15,6 +15,7 @@ import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {RootStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
+import {SharedElement} from 'react-navigation-shared-element';
 
 interface AddFromPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'AddFromPlaylist'> {}

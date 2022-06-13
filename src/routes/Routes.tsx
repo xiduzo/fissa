@@ -1,6 +1,6 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {FC, useRef} from 'react';
 import {Alert} from 'react-native';
+import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import IconButton from '../components/atoms/IconButton';
 import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
 import {Color} from '../types/Color';
@@ -14,7 +14,7 @@ import Room from './session/Room';
 import AddFromPlaylist from './session/Room.AddFromPlaylist';
 import SelectTracks from './session/Room.SelectTracks';
 
-const RootStack = createNativeStackNavigator();
+const RootStack = createSharedElementStackNavigator();
 
 const Routes: FC = () => {
   const onboarding = useRef(false);
@@ -23,7 +23,7 @@ const Routes: FC = () => {
     <RootStack.Navigator
       initialRouteName={onboarding.current ? 'Onboarding' : 'Home'}
       screenOptions={{
-        contentStyle: {
+        cardStyle: {
           backgroundColor: Color.dark,
         },
         header: Header,
@@ -36,55 +36,35 @@ const Routes: FC = () => {
         }}
       />
 
-      <RootStack.Group
-        navigationKey="WithPadding"
-        screenOptions={{
-          contentStyle: {
-            paddingHorizontal: 24,
-            backgroundColor: Color.dark,
-          },
-        }}>
-        <RootStack.Screen
-          name="Home"
-          options={{
-            animation: 'fade_from_bottom',
-          }}
-          component={Home}
-        />
-        <RootStack.Screen name="NewSession" component={NewSession} />
-        <RootStack.Screen
-          name="JoinSession"
-          options={{
-            headerRight: () => (
-              <IconButton title="hi" onPress={() => Alert.alert('hi there')}>
-                <QuestionMarkIcon />
-              </IconButton>
-            ),
-          }}
-          component={JoinSession}
-        />
-      </RootStack.Group>
+      <RootStack.Screen name="Home" component={Home} />
+      <RootStack.Screen name="NewSession" component={NewSession} />
+      <RootStack.Screen
+        name="JoinSession"
+        options={{
+          headerRight: () => (
+            <IconButton title="hi" onPress={() => Alert.alert('hi there')}>
+              <QuestionMarkIcon />
+            </IconButton>
+          ),
+        }}
+        component={JoinSession}
+      />
 
       <RootStack.Screen name="FromPlaylist" component={FromPlaylist} />
 
-      <RootStack.Group navigationKey="RoomGroup">
-        <RootStack.Screen
-          name="Room"
-          component={Room}
-          options={{
-            animation: 'fade',
-            headerShown: false,
-          }}
-        />
-        <RootStack.Screen
-          name="AddFromPlaylist"
-          component={AddFromPlaylist}
-          options={{
-            animation: 'fade_from_bottom',
-          }}
-        />
-        <RootStack.Screen name="SelectTracks" component={SelectTracks} />
-      </RootStack.Group>
+      <RootStack.Screen
+        name="Room"
+        component={Room}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <RootStack.Screen name="AddFromPlaylist" component={AddFromPlaylist} />
+      <RootStack.Screen
+        name="SelectTracks"
+        component={SelectTracks}
+        sharedElements={() => ['tracks-to-add-drawer']}
+      />
     </RootStack.Navigator>
   );
 };

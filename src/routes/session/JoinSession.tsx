@@ -42,7 +42,6 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     };
 
   const selectInput = (index: number) => () => {
-    console.log(index);
     const newCode = [...pin].map((code, codeIndex) => {
       if (codeIndex >= index) return '';
       return code;

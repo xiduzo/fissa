@@ -1,4 +1,3 @@
-import {randNumber, randSinger, randSong} from '@ngneat/falso';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {
@@ -6,12 +5,13 @@ import {
   Animated,
   ImageStyle,
   Linking,
+  ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollView,
   StyleProp,
   StyleSheet,
   View,
+  VirtualizedList,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
@@ -22,7 +22,6 @@ import ArrowLeftIcon from '../../components/atoms/icons/ArrowLeftIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
 import PlusIcons from '../../components/atoms/icons/PlusIcon';
-import QuestionMarkIcon from '../../components/atoms/icons/QuestionMarkIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
@@ -43,23 +42,27 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
   const {playlistId} = route.params;
 
-  const scrollRef = useRef<ScrollView>();
+  const scrollRef =
+    useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
 
-  const animate = (config?: Partial<Animated.SpringAnimationConfig>) => {
+  const animateBackToTop = (
+    config?: Partial<Animated.SpringAnimationConfig>,
+  ) => {
     Animated.spring(backToTopOffset.current, {
-      toValue: -80,
+      toValue: -20,
       useNativeDriver: false,
       ...(config ?? {}),
     }).start();
   };
 
   const animateIn = () =>
-    animate({
-      toValue: 30,
+    animateBackToTop({
+      toValue: 64,
     });
 
   const startAddingTracks = () => setAddingTracks(true);
   const stopAddingTracks = () => setAddingTracks(false);
+  const selectTrack = (id: string) => () => setSelectedTrack(id);
 
   const openSpotify = () => Linking.openURL('https://open.spotify.com');
   const addFromPlaylist = () => {
@@ -70,13 +73,16 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollHeight = event.nativeEvent.contentOffset.y;
 
-    if (scrollHeight < 500) return animate();
+    if (scrollHeight < 500) return animateBackToTop();
 
     animateIn();
   };
 
   const scrollToTop = () => {
-    scrollRef.current?.scrollTo({y: 0, animated: true});
+    scrollRef.current?.scrollToIndex({
+      index: 0,
+      viewOffset: 250,
+    });
   };
 
   const trackEndIcon = (votes: number): JSX.Element => {
@@ -95,7 +101,6 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   useEffect(() => {
     const fetchTracks = async (offset: number) => {
       spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
-        console.log(result);
         setTracks(prev => [...prev, ...result.items]);
         if (!result.next) return;
         fetchTracks(offset + result.items.length);
@@ -104,58 +109,76 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
     spotify.getPlaylistTracks(playlistId).then(result => {
       setTracks(result.items);
-      console.log(result);
       if (!result.next) return;
 
       fetchTracks(result.offset + result.items.length);
     });
   }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
 
+  const renderItem = (
+    render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
+  ) => {
+    const {track} = render.item;
+
+    return (
+      <ListItem
+        // @ts-ignore
+        subtitle={track.artists.map(x => x.name).join(', ')}
+        // @ts-ignore
+        imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
+        onPress={selectTrack(track.id)}
+        onLongPress={() => Alert.alert(`long press ${track.name}`)}
+        key={track.id}
+        title={track.name}
+        // @ts-ignore
+        subtitle={track.artists.map(x => x.name).join(', ')}
+        end={
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Typography variant="bodyM" style={{marginRight: 4}}>
+              {5}
+            </Typography>
+            {trackEndIcon(5)}
+          </View>
+        }
+      />
+    );
+  };
+
   return (
     <View>
-      <ScrollView
-        // @ts-ignore-next-line
-        ref={scrollRef}
+      <VirtualizedList<SpotifyApi.PlaylistTrackObject>
         style={[styles.container]}
+        ref={scrollRef}
+        ListFooterComponent={<View style={{paddingBottom: 200}} />}
+        ListHeaderComponent={
+          <>
+            <Typography variant="h2" style={{marginBottom: 16}}>
+              Now Playing
+            </Typography>
+            <ListItem
+              imageStyle={{width: 125, height: 125}}
+              imageUri=""
+              title="Mojo so dope"
+              subtitle="Kid Cudi"
+            />
+            <View style={styles.queue}>
+              <Typography variant="h2">Queue</Typography>
+              <Typography variant="h2" style={{fontWeight: '300'}}>
+                ({tracks.length})
+              </Typography>
+            </View>
+          </>
+        }
+        data={tracks ?? []}
+        initialNumToRender={5}
+        scrollEventThrottle={300}
         onScroll={scroll}
-        scrollEventThrottle={300}>
-        <Typography variant="h2" style={{marginBottom: 16}}>
-          Now Playing
-        </Typography>
-        <ListItem
-          imageStyle={{width: 125, height: 125}}
-          imageUri=""
-          title="Mojo so dope"
-          subtitle="Kid Cudi"
-        />
-        <View style={styles.queue}>
-          <Typography variant="h2">Queue</Typography>
-          <Typography variant="h2" style={{fontWeight: '300'}}>
-            ({tracks.length})
-          </Typography>
-        </View>
-
-        {tracks.map(({track}) => (
-          <ListItem
-            // @ts-ignore
-            imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
-            onPress={() => setSelectedTrack(track.id)}
-            onLongPress={() => Alert.alert(`long press ${track.name}`)}
-            key={track.id}
-            title={track.name}
-            // @ts-ignore
-            subtitle={track.artists.map(x => x.name).join(', ')}
-            end={
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Typography variant="bodyM" style={{marginRight: 4}}>
-                  {5}
-                </Typography>
-                {trackEndIcon(5)}
-              </View>
-            }
-          />
-        ))}
-        <View style={{height: 120}} />
+        renderItem={renderItem}
+        getItemCount={() => tracks.length}
+        getItem={(data, index) => data[index]}
+        keyExtractor={item => item.track.id}
+      />
+      <View accessibilityHint="popovers">
         <Popover visible={addingTracks} onRequestClose={stopAddingTracks}>
           <Typography variant="h2" style={styles.popoverText}>
             Add songs
@@ -223,30 +246,33 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
             subtitle="And it will move down in the queue"
           />
         </Popover>
-      </ScrollView>
-      <LinearGradient
-        colors={[Color.dark + '00', Color.dark]}
-        style={styles.gradient}
-      />
-      <Fab title="Add songs" onPress={startAddingTracks}>
-        <PlusIcons style={{tintColor: Color.dark}} />
-      </Fab>
-      <Animated.View
-        style={[
-          styles.backToTop,
-          {
-            bottom: backToTopOffset.current,
-          },
-        ]}>
-        <Button
-          title="Back to top"
-          variant="outlined"
-          size="small"
-          inverted
-          onPress={scrollToTop}
-          end={<QuestionMarkIcon />}
+      </View>
+
+      <View accessibilityHint="footer">
+        <LinearGradient
+          colors={[Color.dark + '00', Color.dark]}
+          style={styles.gradient}
         />
-      </Animated.View>
+        <Fab title="Add songs" onPress={startAddingTracks}>
+          <PlusIcons style={{tintColor: Color.dark}} />
+        </Fab>
+        <Animated.View
+          style={[
+            styles.backToTop,
+            {
+              bottom: backToTopOffset.current,
+            },
+          ]}>
+          <Button
+            title="Back to top"
+            variant="outlined"
+            size="small"
+            inverted
+            onPress={scrollToTop}
+            end={<ArrowUpIcon />}
+          />
+        </Animated.View>
+      </View>
     </View>
   );
 };

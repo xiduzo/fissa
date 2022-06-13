@@ -1,11 +1,12 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useState} from 'react';
 import {
+  ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollView,
   StyleSheet,
   View,
+  VirtualizedList,
 } from 'react-native';
 import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
@@ -19,6 +20,26 @@ import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
 
 interface SelectTracksProps
   extends NativeStackScreenProps<RootStackParamList, 'SelectTracks'> {}
+
+interface ListHeaderProps {
+  name?: string;
+  imageUri?: string;
+}
+const ListHeader: FC<ListHeaderProps> = ({name, imageUri}) => {
+  return (
+    <>
+      <Image
+        style={styles.image}
+        source={{
+          uri: imageUri ?? DEFAULT_IMAGE,
+        }}
+      />
+      <Typography variant="h1" style={{marginVertical: 24}}>
+        {name}
+      </Typography>
+    </>
+  );
+};
 
 const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
   const {selectedTracks, addTrack, removeTrack, cancel} = useAddContext();
@@ -76,34 +97,43 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
     });
   }, [navigation.setOptions, cancel]);
 
+  const renderItem = (
+    render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
+  ) => {
+    const {track} = render.item;
+
+    return (
+      <ListItem
+        // @ts-ignore
+        imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
+        onPress={toggleTrack(track.id)}
+        selected={selectedTracks.includes(track.id)}
+        title={track.name}
+        // @ts-ignore
+        subtitle={track.artists.map(x => x.name).join(', ')}
+      />
+    );
+  };
+
   return (
     <View>
-      <ScrollView
-        onScroll={scroll}
-        scrollEventThrottle={30}
-        style={[styles.container]}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: playlist?.images[0]?.url ?? DEFAULT_IMAGE,
-          }}
-        />
-        <Typography variant="h1" style={{marginVertical: 24}}>
-          {playlist?.name}
-        </Typography>
-        {tracks.map(({track}) => (
-          <ListItem
-            // @ts-ignore
-            imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
-            key={track.id}
-            onPress={toggleTrack(track.id)}
-            selected={selectedTracks.includes(track.id)}
-            title={track.name}
-            // @ts-ignore
-            subtitle={track.artists.map(x => x.name).join(', ')}
+      <VirtualizedList<SpotifyApi.PlaylistTrackObject>
+        style={[styles.container]}
+        ListHeaderComponent={
+          <ListHeader
+            name={playlist?.name}
+            imageUri={playlist?.images[0]?.url}
           />
-        ))}
-      </ScrollView>
+        }
+        data={tracks ?? []}
+        initialNumToRender={4}
+        scrollEventThrottle={30}
+        onScroll={scroll}
+        renderItem={renderItem}
+        getItemCount={() => tracks.length}
+        getItem={(data, index) => data[index]}
+        keyExtractor={item => item.track.id}
+      />
       <AddContextBottomDrawer />
     </View>
   );

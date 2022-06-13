@@ -76,8 +76,6 @@ const SpotifyProvider: FC = ({children}) => {
         }),
       );
 
-      console.log('refresh', result);
-
       setTimeout(() => {
         refresh({
           refreshToken,
@@ -105,10 +103,7 @@ const SpotifyProvider: FC = ({children}) => {
 
         return;
       }
-      console.log('authorize');
-
       const result = await authorize(authConfig);
-      console.log('authorize', result);
 
       spotifyApi.current.setAccessToken(result.accessToken);
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));

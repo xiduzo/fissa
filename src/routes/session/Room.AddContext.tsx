@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import {StyleSheet, View} from 'react-native';
+import {SharedElement} from 'react-navigation-shared-element';
 import BottomDrawer from '../../components/atoms/BottomDrawer';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
@@ -88,19 +89,21 @@ export const AddContextBottomDrawer: FC = ({...props}) => {
   const {selectedTracks, addToQueue, reset} = useAddContext();
 
   return (
-    <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
-      <BottomDrawer close={reset}>
-        <Typography style={styles.text} variant="h6">
-          {selectedTracks.length} songs selected
-        </Typography>
-        <Button
-          inverted
-          title="Add to queue"
-          onPress={addToQueue}
-          disabled={selectedTracks.length <= 0}
-        />
-      </BottomDrawer>
-    </View>
+    <SharedElement id="tracks-to-add-drawer">
+      <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
+        <BottomDrawer close={reset}>
+          <Typography style={styles.text} variant="h6">
+            {selectedTracks.length} songs selected
+          </Typography>
+          <Button
+            inverted
+            title="Add to queue"
+            onPress={addToQueue}
+            disabled={selectedTracks.length <= 0}
+          />
+        </BottomDrawer>
+      </View>
+    </SharedElement>
   );
 };
 
