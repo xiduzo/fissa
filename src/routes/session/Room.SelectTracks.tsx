@@ -132,7 +132,8 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
         renderItem={renderItem}
         getItemCount={() => tracks.length}
         getItem={(data, index) => data[index]}
-        keyExtractor={item => item.track.id}
+        // TODO: filter tracks to be unique, no need for double tracks
+        keyExtractor={item => item.track.id + item.added_at}
       />
       <AddContextBottomDrawer />
     </View>
