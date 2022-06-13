@@ -8,11 +8,9 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSwipe} from '../../hooks/useSwipe';
 import {Color} from '../../types/Color';
 import BottomDrawer from '../atoms/BottomDrawer';
-import IconButton from '../atoms/IconButton';
-import CLoseIcon from '../atoms/icons/CloseIcon';
-import QuestionMarkIcon from '../atoms/icons/QuestionMarkIcon';
 
 interface PopOverProps extends ModalProps {
   back?: () => void;
@@ -46,6 +44,8 @@ const Popover: FC<PopOverProps> = ({
     onRequestClose && onRequestClose();
   };
 
+  const {touchStart, touchEnd} = useSwipe({onSwipeDown: close});
+
   useEffect(() => {
     props.visible
       ? animate({toValue: 1, duration: 300, delay: 300})
@@ -63,9 +63,11 @@ const Popover: FC<PopOverProps> = ({
         onRequestClose={close}
         style={style}>
         <View style={styles.view}>
-          <BottomDrawer back={back} close={close}>
-            {children}
-          </BottomDrawer>
+          <View onTouchStart={touchStart} onTouchEnd={touchEnd}>
+            <BottomDrawer back={back} close={close}>
+              {children}
+            </BottomDrawer>
+          </View>
           {fadeAnim.current && (
             <Animated.View
               style={[
