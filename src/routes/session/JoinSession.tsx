@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import Typography from '../../components/atoms/Typography';
+import {request} from '../../lib/utils/api';
 import {Color} from '../../types/Color';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
@@ -63,25 +64,47 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       keys[index - 1].current?.focus();
     };
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setPin(['', '', '', '']);
     setTimeout(() => {
       keys[0].current?.focus();
     }, 0);
-  };
+  }, []);
 
   useEffect(() => {
     if (pin.includes('')) return;
 
     keys.forEach(key => key.current?.blur());
 
-    Notification.show({
-      message: `Joined ${pin.join('')}`,
-    });
+    const joinedPin = pin.join('');
+    request('POST', '/room/join', {pin: joinedPin}).then(async response => {
+      console.log(response);
+      if (response.status === 404) {
+        reset();
+        return Notification.show({
+          message: `Room ${joinedPin} does not exist`,
+        });
+      }
 
-    navigation.popToTop();
-    navigation.replace('Room', {playlistId: 'TODO'});
-  }, [pin]);
+      if (response.status === 500) {
+        reset();
+        return Notification.show({
+          message: `Oops... something went wrong`,
+        });
+      }
+
+      if (response.status !== 200) return console.log(response);
+
+      const room = await response.json();
+
+      Notification.show({
+        message: `Joined ${joinedPin}`,
+      });
+
+      navigation.popToTop();
+      navigation.replace('Room', {playlistId: room.playlistId});
+    });
+  }, [pin, reset]);
 
   useEffect(() => {
     keys[0].current?.focus();

@@ -27,8 +27,10 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation, ...props}) => {
     SpotifyApi.PlaylistObjectSimplified[]
   >([]);
 
-  const gotoPlaylist = (playlistId: string) => () =>
+  const gotoPlaylist = (playlistId: string) => () => {
+    console.log(playlistId);
     navigation.navigate('SelectTracks', {playlistId});
+  };
 
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollHeight = event.nativeEvent.contentOffset.y;
