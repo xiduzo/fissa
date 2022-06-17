@@ -25,8 +25,10 @@ import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
+import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
+import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 
 interface RoomProps
@@ -40,7 +42,8 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
   const [selectedTrack, setSelectedTrack] = useState<string>();
 
-  const {playlistId} = route.params;
+  const [playlistId, setPlaylistId] = useState<string>();
+  const {pin} = route.params;
 
   const scrollRef =
     useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
@@ -99,6 +102,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   };
 
   useEffect(() => {
+    if (!playlistId) return;
     const fetchTracks = async (offset: number) => {
       spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
         setTracks(prev => [...prev, ...result.items]);
@@ -114,6 +118,36 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
       fetchTracks(result.offset + result.items.length);
     });
   }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
+
+  useEffect(() => {
+    request('POST', '/room/join', {pin}).then(async response => {
+      console.log(response);
+      if (response.status === 404) {
+        // return Notification.show({
+        //   message: `Room ${joinedPin} does not exist`,
+        // });
+        return;
+      }
+
+      if (response.status === 500) {
+        // return Notification.show({
+        //   message: `Oops... something went wrong`,
+        // });
+        return;
+      }
+
+      if (response.status !== 200) return console.log(response);
+
+      const room = await response.json();
+
+      Notification.show({
+        icon: '🪩',
+        message: `Joined ${pin}, add your favorite tracks to keep to party going!`,
+      });
+
+      setPlaylistId(room.playlistId);
+    });
+  }, [pin]);
 
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,

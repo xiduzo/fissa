@@ -80,7 +80,7 @@ export type RootStackParamList = {
   NewSession: undefined;
   JoinSession: undefined;
   Room: {
-    playlistId: string;
+    pin: string;
   };
   AddFromPlaylist: undefined;
   Onboarding: undefined;

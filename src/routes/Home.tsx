@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     justifyContent: 'space-evenly',
+    marginHorizontal: 24,
   },
   text: {
     textAlign: 'center',

@@ -11,6 +11,7 @@ import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
+import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import Notification from '../../utils/Notification';
@@ -27,17 +28,35 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
     SpotifyApi.PlaylistObjectSimplified[]
   >([]);
 
+  const [waitForResponse, setWaitForResponse] = useState(false);
+
   const closePopOver = () => setSelectedPlaylist(undefined);
 
   const startFromPlaylist = () => {
     closePopOver();
     if (!selectedPlaylist) return;
-    Notification.show({
-      message: 'Aye, your playlist has been imported successfully!',
-      icon: '🎉',
-    });
-    navigation.popToTop();
-    navigation.replace('Room', {playlistId: selectedPlaylist.id});
+    setWaitForResponse(true);
+    request('POST', '/room/create', {
+      accessToken: spotify.getAccessToken(),
+      playlistId: selectedPlaylist.id,
+    })
+      .then(async response => {
+        console.log(response);
+        if (response.status !== 200) {
+          return;
+        }
+
+        const room = await response.json();
+        navigation.popToTop();
+        navigation.replace('Room', {pin: room.pin});
+        Notification.show({
+          message: 'Aye, your playlist has been imported successfully!',
+          icon: '🎉',
+        });
+      })
+      .catch(() => {
+        setWaitForResponse(false);
+      });
   };
 
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -82,7 +101,12 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
           inverted
           hasBorder
         />
-        <Button title="Let's kick it!" inverted onPress={startFromPlaylist} />
+        <Button
+          title="Let's kick it!"
+          inverted
+          onPress={startFromPlaylist}
+          disabled={waitForResponse}
+        />
       </Popover>
     </ScrollView>
   );

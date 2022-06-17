@@ -18,8 +18,7 @@ const initialState: SpotifyProviderState = {
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);
 
-const BASE_TOKEN_ENDPOINT =
-  'https://fissa-spotify-swap-api-xiduzo.vercel.app/api/token/';
+const BASE_TOKEN_ENDPOINT = 'https://server-xiduzo.vercel.app/api/token/';
 const authConfig: AuthConfiguration = {
   usePKCE: false,
   clientId: 'a2a88c4618324942859ce3e1f888b938', // available on the app page

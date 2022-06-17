@@ -82,6 +82,8 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       if (response.status === 404) {
         reset();
         return Notification.show({
+          type: 'info',
+          icon: '🕵️',
           message: `Room ${joinedPin} does not exist`,
         });
       }
@@ -89,6 +91,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       if (response.status === 500) {
         reset();
         return Notification.show({
+          type: 'error',
           message: `Oops... something went wrong`,
         });
       }
@@ -97,12 +100,8 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
 
       const room = await response.json();
 
-      Notification.show({
-        message: `Joined ${joinedPin}`,
-      });
-
       navigation.popToTop();
-      navigation.replace('Room', {playlistId: room.playlistId});
+      navigation.replace('Room', {pin: room.pin});
     });
   }, [pin, reset]);
 
