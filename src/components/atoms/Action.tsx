@@ -1,6 +1,5 @@
 import React, {FC} from 'react';
 import {ButtonProps, StyleSheet, TouchableHighlight, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {Color} from '../../types/Color';
 import Typography from './Typography';
 
@@ -39,17 +38,19 @@ const Action: FC<ActionProps> = ({
         <View>
           <Typography
             variant="h4"
-            style={[
-              {marginBottom: 4, color: inverted ? Color.dark : Color.light},
-            ]}>
+            style={{
+              marginBottom: 4,
+              color: inverted ? Color.dark : Color.light,
+            }}>
             {title}
           </Typography>
           {subtitle && (
             <Typography
               variant="bodyM"
-              style={[
-                {opacity: 0.6, color: inverted ? Color.dark : Color.light},
-              ]}>
+              style={{
+                opacity: 0.6,
+                color: inverted ? Color.dark : Color.light,
+              }}>
               {subtitle}
             </Typography>
           )}

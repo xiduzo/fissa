@@ -55,7 +55,7 @@ const Popover: FC<PopOverProps> = ({
   }, [props.visible, animate]);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, position: 'absolute'}}>
       <Modal
         animationType="slide"
         transparent

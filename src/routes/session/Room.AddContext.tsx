@@ -61,20 +61,23 @@ const AddContextProvider: FC = ({children}) => {
   }, [canGoBack, goBack]);
 
   const addToQueue = useCallback(() => {
+    setSelectedTracks([]);
+    goToRoom();
     request('POST', '/room/tracks', {
       trackUris: selectedTracks,
       pin: room.pin,
       accessToken: spotify.getAccessToken(),
     }).then(response => {
       if (response.status !== 200) {
+        Notification.show({
+          type: 'warning',
+          message: `Oops... something went wrong`,
+        });
         return;
       }
-
-      goToRoom();
       Notification.show({
         message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
       });
-      setSelectedTracks([]);
     });
   }, [selectedTracks, goToRoom]);
 
@@ -85,7 +88,7 @@ const AddContextProvider: FC = ({children}) => {
 
   const reset = useCallback(() => {
     setSelectedTracks([]);
-  }, [goToRoom]);
+  }, []);
 
   return (
     <RoomAddContext.Provider

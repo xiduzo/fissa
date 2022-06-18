@@ -26,7 +26,6 @@ import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
-import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from './Room.PlaylistContext';
@@ -37,10 +36,9 @@ interface RoomProps
 const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const {pin} = route.params;
 
-  const backToTopOffset = useRef(new Animated.Value(-80));
+  const backToTopOffset = useRef(new Animated.Value(-100));
   const [addingTracks, setAddingTracks] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
-  const {spotify} = useSpotify();
   const {tracks, room} = useRoomPlaylist(pin);
 
   const [selectedTrack, setSelectedTrack] =
@@ -53,7 +51,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
     config?: Partial<Animated.SpringAnimationConfig>,
   ) => {
     Animated.spring(backToTopOffset.current, {
-      toValue: -20,
+      toValue: -100,
       useNativeDriver: false,
       ...(config ?? {}),
     }).start();
@@ -61,7 +59,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
   const animateIn = () =>
     animateBackToTop({
-      toValue: 64,
+      toValue: 32,
     });
 
   const startAddingTracks = () => setAddingTracks(true);
@@ -144,11 +142,11 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   if (!room) return null;
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <VirtualizedList<SpotifyApi.PlaylistTrackObject>
-        style={[styles.container]}
+        style={styles.container}
         ref={scrollRef}
-        ListFooterComponent={<View style={{paddingBottom: 200}} />}
+        ListFooterComponent={<View style={{paddingBottom: 100}} />}
         ListHeaderComponent={
           <>
             <Typography variant="h2" style={{marginBottom: 16}}>
@@ -186,113 +184,106 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         getItem={(data, index) => data[index]}
         keyExtractor={(item, index) => item.track.id + index}
       />
-      <View accessibilityHint="popovers">
-        <Popover
-          visible={!!showRoomDetails}
-          onRequestClose={() => setShowRoomDetails(false)}>
-          <Typography variant="h2" style={styles.popoverText}>
-            {pin}
-          </Typography>
-          <Action
-            title="Leave session"
-            subtitle="No worries, you can always come back"
-            inverted
-            onPress={() => navigation.replace('Home')}
-            icon={
-              <ArrowUpIcon
-                style={{
-                  tintColor: Color.main,
-                }}
-              />
-            }
-          />
-        </Popover>
-        <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
-          <Typography variant="h2" style={styles.popoverText}>
-            Add songs
-          </Typography>
-          <Typography variant="h6" style={styles.popoverText}>
-            Copy A Spotify song link or browse in your Spotify playlists
-          </Typography>
-          <View style={styles.popoverButtons}>
-            <View style={{marginBottom: 16}}>
-              <Button
-                onPress={addFromPlaylist}
-                inverted
-                title="Browse my Spotify playlists"
-              />
-            </View>
+      <Popover
+        visible={!!showRoomDetails}
+        onRequestClose={() => setShowRoomDetails(false)}>
+        <Typography variant="h2" style={styles.popoverText}>
+          {pin}
+        </Typography>
+        <Action
+          title="Leave session"
+          subtitle="No worries, you can always come back"
+          inverted
+          onPress={() => navigation.replace('Home')}
+          icon={
+            <ArrowUpIcon
+              style={{
+                tintColor: Color.main,
+              }}
+            />
+          }
+        />
+      </Popover>
+      <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
+        <Typography variant="h2" style={styles.popoverText}>
+          Add songs
+        </Typography>
+        <Typography variant="h6" style={styles.popoverText}>
+          Copy A Spotify song link or browse in your Spotify playlists
+        </Typography>
+        <View style={styles.popoverButtons}>
+          <View style={{marginBottom: 16}}>
             <Button
-              onPress={openSpotify}
+              onPress={addFromPlaylist}
               inverted
-              title="Copy song link in Spotify"
+              title="Browse my Spotify playlists"
             />
           </View>
-        </Popover>
-        <Popover
-          visible={!!selectedTrack}
-          onRequestClose={() => setSelectedTrack(undefined)}>
-          {selectedTrack && (
-            <ListItem
-              // @ts-ignore
-              imageUri={selectedTrack.album.images[0]?.url ?? DEFAULT_IMAGE}
-              title={selectedTrack.name}
-              // @ts-ignore
-              subtitle={selectedTrack.artists
-                .map((x: any) => x.name)
-                .join(', ')}
-              inverted
-              hasBorder
-            />
-          )}
-          <View
-            style={{
-              borderBottomWidth: 2,
-              borderBottomColor: Color.dark + '10',
-              marginVertical: 16,
-            }}
-          />
-          <Action
-            title="Up vote song"
-            inverted
-            active
-            icon={<ArrowUpIcon />}
-            subtitle="And it will move up in the queue"
-          />
-          <Action
-            title="Down vote song"
-            inverted
-            icon={<ArrowDownIcon style={{tintColor: Color.main}} />}
-            subtitle="And it will move down in the queue"
-          />
-        </Popover>
-      </View>
-
-      <View accessibilityHint="footer">
-        <LinearGradient
-          colors={[Color.dark + '00', Color.dark]}
-          style={styles.gradient}
-        />
-        <Fab title="Add songs" onPress={startAddingTracks}>
-          <PlusIcons style={{tintColor: Color.dark}} />
-        </Fab>
-        <Animated.View
-          style={[
-            styles.backToTop,
-            {
-              bottom: backToTopOffset.current,
-            },
-          ]}>
           <Button
-            title="Back to top"
-            variant="outlined"
-            size="small"
+            onPress={openSpotify}
             inverted
-            onPress={scrollToTop}
-            end={<ArrowUpIcon />}
+            title="Copy song link in Spotify"
           />
-        </Animated.View>
-      </View>
+        </View>
+      </Popover>
+      <Popover
+        visible={!!selectedTrack}
+        onRequestClose={() => setSelectedTrack(undefined)}>
+        {selectedTrack && (
+          <ListItem
+            // @ts-ignore
+            imageUri={selectedTrack.album.images[0]?.url ?? DEFAULT_IMAGE}
+            title={selectedTrack.name}
+            // @ts-ignore
+            subtitle={selectedTrack.artists.map((x: any) => x.name).join(', ')}
+            inverted
+            hasBorder
+          />
+        )}
+        <View
+          style={{
+            borderBottomWidth: 2,
+            borderBottomColor: Color.dark + '10',
+            marginVertical: 16,
+          }}
+        />
+        <Action
+          title="Up vote song"
+          inverted
+          active
+          icon={<ArrowUpIcon />}
+          subtitle="And it will move up in the queue"
+        />
+        <Action
+          title="Down vote song"
+          inverted
+          icon={<ArrowDownIcon style={{tintColor: Color.main}} />}
+          subtitle="And it will move down in the queue"
+        />
+      </Popover>
+      <LinearGradient
+        colors={[Color.dark + '00', Color.dark]}
+        style={styles.gradient}
+      />
+      <Fab title="Add songs" onPress={startAddingTracks}>
+        <PlusIcons style={{tintColor: Color.dark}} />
+      </Fab>
+      <Animated.View
+        style={[
+          styles.backToTop,
+          {
+            bottom: backToTopOffset.current,
+          },
+        ]}>
+        <Button
+          title="Back to top"
+          variant="outlined"
+          size="small"
+          inverted
+          onPress={scrollToTop}
+          end={<ArrowUpIcon />}
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -314,12 +305,13 @@ const styles = StyleSheet.create({
     left: 0,
     height: 100,
     width: '100%',
+    backgroundColor: 'transparent',
   },
   backToTop: {
     position: 'absolute',
-    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
   },
   popoverText: {
     color: Color.dark,

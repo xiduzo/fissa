@@ -102,9 +102,7 @@ const ListItem: FC<ListItemProps> = ({
               style={{
                 transform: [{scale: iconScaleInterpolation}],
               }}>
-              <Typography style={[{fontSize: 25, lineHeight: 35}]}>
-                ✅
-              </Typography>
+              <Typography style={{fontSize: 25, lineHeight: 35}}>✅</Typography>
             </Animated.View>
           </Animated.View>
         </View>
@@ -117,22 +115,18 @@ const ListItem: FC<ListItemProps> = ({
           <Typography
             numberOfLines={2}
             variant="h4"
-            style={[
-              styles.title,
-              {
-                color: inverted ? Color.dark : Color.light,
-              },
-            ]}>
+            style={{
+              ...styles.title,
+              color: inverted ? Color.dark : Color.light,
+            }}>
             {title}
           </Typography>
           <Typography
             numberOfLines={1}
-            style={[
-              styles.subtitle,
-              {
-                color: inverted ? Color.dark : Color.light,
-              },
-            ]}
+            style={{
+              ...styles.subtitle,
+              color: inverted ? Color.dark : Color.light,
+            }}
             variant="bodyM">
             {subtitle}
           </Typography>
