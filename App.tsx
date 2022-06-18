@@ -1,5 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
+import NetworkMonitor from './src/components/atoms/NetworkMonitor';
 import ToastContainer from './src/components/atoms/Toast';
 import SpotifyProvider from './src/providers/SpotifyProvider';
 import Routes from './src/routes/Routes';
@@ -13,6 +14,7 @@ const App = () => {
         <PlaylistContextProvider>
           <AddContextProvider>
             <Routes />
+            <NetworkMonitor />
           </AddContextProvider>
         </PlaylistContextProvider>
         <ToastContainer />

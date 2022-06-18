@@ -6,6 +6,7 @@ interface ShowProps {
   type?: ToastType;
   icon?: string;
   message: string;
+  duration?: number;
 }
 
 class Notification {
@@ -24,8 +25,15 @@ class Notification {
     }
   }
 
-  public show({type = 'success', message, ...props}: ShowProps) {
-    const icon = props.icon ?? this.defaultIcon(type);
+  public show({
+    type = 'success',
+    message,
+    duration,
+    icon,
+    ...props
+  }: ShowProps) {
+    const text2 = icon ?? this.defaultIcon(type);
+    const visibilityTime = duration ?? ToastAndroid.SHORT;
 
     switch (Platform.OS) {
       case 'ios':
@@ -33,11 +41,12 @@ class Notification {
         Toast.show({
           type,
           text1: message,
-          text2: icon,
+          text2,
+          visibilityTime,
         });
         break;
       case 'android':
-        ToastAndroid.show(message, ToastAndroid.SHORT);
+        ToastAndroid.show(message, visibilityTime);
         break;
     }
   }
