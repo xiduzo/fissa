@@ -19,7 +19,10 @@ const Action: FC<ActionProps> = ({
   ...props
 }) => {
   return (
-    <TouchableHighlight {...props} style={[styles.container]}>
+    <TouchableHighlight
+      {...props}
+      underlayColor="transparent"
+      style={[styles.container]}>
       <View style={styles.content}>
         <View
           style={[
