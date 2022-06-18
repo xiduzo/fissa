@@ -63,30 +63,30 @@ const PlaylistContextProvider: FC = ({children}) => {
 
   useEffect(() => {
     if (!pin) return;
-    if (!!room.playlistId) return;
 
     request('POST', '/room/join', {pin}).then(async response => {
       if (response.status === 404) {
-        // return Notification.show({
-        //   message: `Room ${joinedPin} does not exist`,
-        // });
+        Notification.show({
+          type: 'warning',
+          message: `The sessions you are trying to join does not exist`,
+        });
         return;
       }
 
-      if (response.status === 500) {
-        // return Notification.show({
-        //   message: `Oops... something went wrong`,
-        // });
+      if (response.status !== 200) {
+        console.warn(response);
+        Notification.show({
+          type: 'warning',
+          message: `Oops... something went wrong`,
+        });
         return;
       }
-
-      if (response.status !== 200) return console.log(response);
 
       const room = await response.json();
 
       Notification.show({
         icon: '🪩',
-        message: `Joined ${pin}, add your favorite tracks to keep to party going!`,
+        message: `You've joined ${pin}, add some of your favorite tracks to keep the party going!`,
       });
 
       setRoom(room);

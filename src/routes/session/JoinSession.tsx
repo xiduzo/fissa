@@ -78,25 +78,23 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
 
     const joinedPin = pin.join('');
     request('POST', '/room/join', {pin: joinedPin}).then(async response => {
-      console.log(response);
       if (response.status === 404) {
         reset();
         return Notification.show({
           type: 'info',
           icon: '🕵️',
-          message: `Room ${joinedPin} does not exist`,
+          message: `Oops! We can not find a fissa with the code ${joinedPin}. Try another code.`,
         });
       }
 
-      if (response.status === 500) {
+      if (response.status !== 200) {
+        console.warn(response);
         reset();
         return Notification.show({
-          type: 'error',
+          type: 'warning',
           message: `Oops... something went wrong`,
         });
       }
-
-      if (response.status !== 200) return console.log(response);
 
       const room = await response.json();
 
@@ -159,6 +157,7 @@ export default JoinSession;
 const styles = StyleSheet.create({
   container: {
     marginTop: 72,
+    paddingHorizontal: 24,
   },
   title: {
     textAlign: 'center',
