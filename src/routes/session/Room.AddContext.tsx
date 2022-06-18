@@ -11,8 +11,11 @@ import {SharedElement} from 'react-navigation-shared-element';
 import BottomDrawer from '../../components/atoms/BottomDrawer';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
+import {request} from '../../lib/utils/api';
+import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import Notification from '../../utils/Notification';
+import {useRoomPlaylist} from './Room.PlaylistContext';
 
 interface RoomAddContextState {
   selectedTracks: string[];
@@ -36,6 +39,8 @@ const RoomAddContext = createContext<RoomAddContextState>(initialState);
 
 const AddContextProvider: FC = ({children}) => {
   const {goBack, canGoBack} = useNavigation();
+  const {spotify} = useSpotify();
+  const {room} = useRoomPlaylist();
 
   const [selectedTracks, setSelectedTracks] = useState<string[]>(
     initialState.selectedTracks,
@@ -56,11 +61,21 @@ const AddContextProvider: FC = ({children}) => {
   }, [canGoBack, goBack]);
 
   const addToQueue = useCallback(() => {
-    goToRoom();
-    Notification.show({
-      message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
+    request('POST', '/room/tracks', {
+      trackUris: selectedTracks,
+      pin: room.pin,
+      accessToken: spotify.getAccessToken(),
+    }).then(response => {
+      if (response.status !== 200) {
+        return;
+      }
+
+      goToRoom();
+      Notification.show({
+        message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
+      });
+      setSelectedTracks([]);
     });
-    setSelectedTracks([]);
   }, [selectedTracks, goToRoom]);
 
   const cancel = useCallback(() => {

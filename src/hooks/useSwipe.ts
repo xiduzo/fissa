@@ -29,8 +29,6 @@ export const useSwipe = (
       nativeEvent: {pageX, pageY},
     } = event;
 
-    console.table(pageY, yRef.current);
-
     if (pageX + triggerAmount < xRef.current) {
       onSwipeLeft && onSwipeLeft();
     }

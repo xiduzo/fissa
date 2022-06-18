@@ -15,11 +15,11 @@ import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {RootStackParamList} from '../Routes';
+import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
 
 interface SelectTracksProps
-  extends NativeStackScreenProps<RootStackParamList, 'SelectTracks'> {}
+  extends NativeStackScreenProps<SharedElementStackParamList, 'SelectTracks'> {}
 
 interface ListHeaderProps {
   name?: string;

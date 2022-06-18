@@ -114,9 +114,6 @@ export type RootStackParamList = {
   FromPlaylist?: {
     scrollHeight?: number;
   };
-  SelectTracks: {
-    playlistId: string;
-  };
   NewSession: undefined;
   JoinSession: undefined;
   Room: {
@@ -125,6 +122,13 @@ export type RootStackParamList = {
   AddTracks: undefined;
   Onboarding: undefined;
   Initial: undefined;
+};
+
+export type SharedElementStackParamList = {
+  AddFromPlaylist: undefined;
+  SelectTracks: {
+    playlistId: string;
+  };
 };
 
 export default Routes;

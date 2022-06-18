@@ -13,13 +13,20 @@ import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {RootStackParamList} from '../Routes';
+import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
 
 interface AddFromPlaylistProps
-  extends NativeStackScreenProps<RootStackParamList> {}
+  extends NativeStackScreenProps<
+    SharedElementStackParamList,
+    'AddFromPlaylist'
+  > {}
 
-const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation, ...props}) => {
+const AddFromPlaylist: FC<AddFromPlaylistProps> = ({
+  navigation,
+  route,
+  ...props
+}) => {
   const {cancel} = useAddContext();
   const {spotify} = useSpotify();
   const [playlists, setPlaylists] = useState<

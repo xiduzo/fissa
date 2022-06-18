@@ -1,23 +1,24 @@
+import mqtt from '@taoqf/react-native-mqtt';
 import React, {
   createContext,
   FC,
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from 'react';
+import {AppState} from 'react-native';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
-import mqtt from '@taoqf/react-native-mqtt';
-import {AppState} from 'react-native';
+import Config from 'react-native-config';
 
 interface RoomPlaylistContextState {
   tracks: SpotifyApi.PlaylistTrackObject[];
   room: {
     playlistId: string;
     currentIndex: number;
+    pin: string;
   };
   setPin: (pin: string) => void;
 }
@@ -27,6 +28,7 @@ const initialState: RoomPlaylistContextState = {
   room: {
     playlistId: '',
     currentIndex: 0,
+    pin: '',
   },
   setPin: () => {},
 };
@@ -96,14 +98,15 @@ const PlaylistContextProvider: FC = ({children}) => {
     const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
       port: 9001,
       protocol: 'mqtt',
-      username: process.env.MQTT_USER,
-      password: process.env.MQTT_PASSWORD,
+      username: Config.MQTT_USER,
+      password: Config.MQTT_PASSWORD,
       clientId: 'fissa_' + Math.random().toString(16).substr(2, 8),
     });
 
-    const topics = [`fissa/room/${pin}`, `fissa/room/${pin}/tracksAdded`];
-
-    mqttClient.subscribe(topics);
+    mqttClient.on('connect', () => {
+      const topics = [`fissa/room/${pin}`, `fissa/room/${pin}/tracks/added`];
+      mqttClient.subscribe(topics);
+    });
 
     mqttClient.on('error', console.error);
 
@@ -111,8 +114,8 @@ const PlaylistContextProvider: FC = ({children}) => {
       switch (topic) {
         case `fissa/room/${pin}`:
           break;
-        case `fissa/room/${pin}/tracksAdded`:
-          console.log('tracks added', JSON.parse(payload.toString()));
+        case `fissa/room/${pin}/tracks/added`:
+          fetchTracks([]);
           break;
       }
     });
@@ -120,12 +123,11 @@ const PlaylistContextProvider: FC = ({children}) => {
     return () => {
       mqttClient.end();
     };
-  }, [pin]);
+  }, [pin, fetchTracks]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', () => {
       if (AppState.currentState !== 'active') return;
-
       fetchTracks([]);
     });
 
@@ -144,7 +146,7 @@ const PlaylistContextProvider: FC = ({children}) => {
   );
 };
 
-export const useRoomPlaylist = (pin: string) => {
+export const useRoomPlaylist = (pin?: string) => {
   const context = useContext(RoomPlaylistContext);
   if (!context)
     throw new Error(
@@ -152,7 +154,7 @@ export const useRoomPlaylist = (pin: string) => {
     );
 
   useEffect(() => {
-    context.setPin(pin);
+    if (pin) context.setPin(pin);
 
     return () => {
       context.setPin('');
