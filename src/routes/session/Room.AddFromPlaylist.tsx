@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useMemo, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -27,7 +27,6 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation, ...props}) => {
   >([]);
 
   const gotoPlaylist = (playlistId: string) => () => {
-    console.log(playlistId);
     navigation.navigate('SelectTracks', {playlistId});
   };
 

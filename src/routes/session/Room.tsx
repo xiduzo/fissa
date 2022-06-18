@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
@@ -13,18 +13,19 @@ import {
   View,
   VirtualizedList,
 } from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import Button from '../../components/atoms/Button';
 import Fab from '../../components/atoms/Fab';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
-import ArrowLeftIcon from '../../components/atoms/icons/ArrowLeftIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
 import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
+import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
@@ -37,12 +38,17 @@ interface RoomProps
 const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const backToTopOffset = useRef(new Animated.Value(-80));
   const [addingTracks, setAddingTracks] = useState(false);
+  const [showRoomDetails, setShowRoomDetails] = useState(false);
   const {spotify} = useSpotify();
   const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
 
-  const [selectedTrack, setSelectedTrack] = useState<string>();
+  const [selectedTrack, setSelectedTrack] =
+    useState<SpotifyApi.TrackObjectFull>();
 
-  const [playlistId, setPlaylistId] = useState<string>();
+  const [room, setRoom] = useState<{
+    playlistId: string;
+    currentIndex: number;
+  }>();
   const {pin} = route.params;
 
   const scrollRef =
@@ -65,7 +71,8 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
   const startAddingTracks = () => setAddingTracks(true);
   const stopAddingTracks = () => setAddingTracks(false);
-  const selectTrack = (id: string) => () => setSelectedTrack(id);
+  const selectTrack = (track: SpotifyApi.TrackObjectFull) => () =>
+    setSelectedTrack(track);
 
   const openSpotify = () => Linking.openURL('https://open.spotify.com');
   const addFromPlaylist = () => {
@@ -84,7 +91,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const scrollToTop = () => {
     scrollRef.current?.scrollToIndex({
       index: 0,
-      viewOffset: 250,
+      viewOffset: 500,
     });
   };
 
@@ -102,25 +109,31 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   };
 
   useEffect(() => {
-    if (!playlistId) return;
+    if (!room) return;
+    let newTracks: SpotifyApi.PlaylistTrackObject[] = [];
     const fetchTracks = async (offset: number) => {
-      spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
-        setTracks(prev => [...prev, ...result.items]);
-        if (!result.next) return;
+      spotify.getPlaylistTracks(room.playlistId, {offset}).then(result => {
+        newTracks = newTracks.concat(result.items);
+        if (!result.next) return setTracks(newTracks);
         fetchTracks(offset + result.items.length);
       });
     };
 
-    spotify.getPlaylistTracks(playlistId).then(result => {
-      setTracks(result.items);
-      if (!result.next) return;
+    fetchTracks(room.currentIndex);
+  }, [
+    room?.playlistId,
+    room?.currentIndex,
+    spotify.getPlaylist,
+    spotify.getPlaylistTracks,
+  ]);
 
-      fetchTracks(result.offset + result.items.length);
-    });
-  }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
+  useMemo(async () => {
+    const user = await spotify.getMe();
+    console.log(user); // Use user uri for voting
+  }, [spotify.getUser]);
 
   useEffect(() => {
-    if (playlistId) return;
+    if (room) return;
     request('POST', '/room/join', {pin}).then(async response => {
       console.log(response);
       if (response.status === 404) {
@@ -146,9 +159,17 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         message: `Joined ${pin}, add your favorite tracks to keep to party going!`,
       });
 
-      setPlaylistId(room.playlistId);
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableWithoutFeedback onPress={() => setShowRoomDetails(true)}>
+            <Typography variant="h6">{pin}</Typography>
+          </TouchableWithoutFeedback>
+        ),
+      });
+
+      setRoom(room);
     });
-  }, [pin, playlistId]);
+  }, [pin, room]);
 
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
@@ -161,9 +182,8 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         subtitle={track.artists.map(x => x.name).join(', ')}
         // @ts-ignore
         imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
-        onPress={selectTrack(track.id)}
+        onPress={selectTrack(track as SpotifyApi.TrackObjectFull)}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        key={track.id}
         title={track.name}
         // @ts-ignore
         subtitle={track.artists.map(x => x.name).join(', ')}
@@ -179,6 +199,8 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
     );
   };
 
+  if (!room) return null;
+
   return (
     <View>
       <VirtualizedList<SpotifyApi.PlaylistTrackObject>
@@ -188,33 +210,62 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         ListHeaderComponent={
           <>
             <Typography variant="h2" style={{marginBottom: 16}}>
-              Now Playing - {pin}
+              Now Playing
             </Typography>
             <ListItem
               imageStyle={{width: 125, height: 125}}
-              imageUri=""
-              title="Mojo so dope"
-              subtitle="Kid Cudi"
+              imageUri={
+                // @ts-ignore
+                tracks[room.currentIndex]?.track.album.images[0]?.url ??
+                DEFAULT_IMAGE
+              }
+              title={tracks[room.currentIndex]?.track.name}
+              // @ts-ignore
+              subtitle={tracks[room.currentIndex]?.track.artists
+                .map((x: any) => x.name)
+                .join(', ')}
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
               <Typography variant="h2" style={{fontWeight: '300'}}>
-                ({tracks.length})
+                ({Math.max(0, tracks.length - 1 - room.currentIndex)})
               </Typography>
             </View>
           </>
         }
-        data={tracks ?? []}
+        data={tracks.slice(1 + room.currentIndex, tracks.length)}
         initialNumToRender={5}
         scrollEventThrottle={300}
         onScroll={scroll}
         renderItem={renderItem}
-        getItemCount={() => tracks.length}
+        getItemCount={() =>
+          tracks.slice(1 + room.currentIndex, tracks.length).length
+        }
         getItem={(data, index) => data[index]}
-        keyExtractor={item => item.track.id}
+        keyExtractor={(item, index) => item.track.id + index}
       />
       <View accessibilityHint="popovers">
-        <Popover visible={addingTracks} onRequestClose={stopAddingTracks}>
+        <Popover
+          visible={!!showRoomDetails}
+          onRequestClose={() => setShowRoomDetails(false)}>
+          <Typography variant="h2" style={styles.popoverText}>
+            {pin}
+          </Typography>
+          <Action
+            title="Leave session"
+            subtitle="No worries, you can always come back"
+            inverted
+            onPress={() => navigation.replace('Home')}
+            icon={
+              <ArrowUpIcon
+                style={{
+                  tintColor: Color.main,
+                }}
+              />
+            }
+          />
+        </Popover>
+        <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
           <Typography variant="h2" style={styles.popoverText}>
             Add songs
           </Typography>
@@ -239,16 +290,22 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         <Popover
           visible={!!selectedTrack}
           onRequestClose={() => setSelectedTrack(undefined)}>
-          <ListItem
-            imageUri=""
-            title={'Track ' + selectedTrack}
-            subtitle={'Kid cudi'}
-            inverted
-            hasBorder
-          />
+          {selectedTrack && (
+            <ListItem
+              // @ts-ignore
+              imageUri={selectedTrack.album.images[0]?.url ?? DEFAULT_IMAGE}
+              title={selectedTrack.name}
+              // @ts-ignore
+              subtitle={selectedTrack.artists
+                .map((x: any) => x.name)
+                .join(', ')}
+              inverted
+              hasBorder
+            />
+          )}
           <View
             style={{
-              borderBottomWidth: 1,
+              borderBottomWidth: 2,
               borderBottomColor: Color.dark + '10',
               marginVertical: 16,
             }}
@@ -257,27 +314,13 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
             title="Up vote song"
             inverted
             active
-            icon={
-              <ArrowLeftIcon
-                style={{
-                  tintColor: Color.main,
-                  transform: [{rotate: '90deg'}],
-                }}
-              />
-            }
+            icon={<ArrowUpIcon />}
             subtitle="And it will move up in the queue"
           />
           <Action
             title="Down vote song"
             inverted
-            icon={
-              <ArrowLeftIcon
-                style={{
-                  tintColor: Color.dark + '40',
-                  transform: [{rotate: '-90deg'}],
-                }}
-              />
-            }
+            icon={<ArrowDownIcon style={{tintColor: Color.main}} />}
             subtitle="And it will move down in the queue"
           />
         </Popover>
@@ -316,7 +359,6 @@ export default Room;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 68,
     paddingHorizontal: 24,
   },
   queue: {

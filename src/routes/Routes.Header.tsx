@@ -1,3 +1,4 @@
+import {NativeStackHeaderProps} from '@react-navigation/native-stack';
 import {StackHeaderProps} from '@react-navigation/stack';
 import React, {FC, useEffect, useRef} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
@@ -6,7 +7,7 @@ import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
 import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';
 
-const Header: FC<StackHeaderProps> = ({
+const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   back,
   options,
   navigation,

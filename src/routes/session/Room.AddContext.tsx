@@ -35,7 +35,7 @@ const initialState: RoomAddContextState = {
 const RoomAddContext = createContext<RoomAddContextState>(initialState);
 
 const AddContextProvider: FC = ({children}) => {
-  const {navigate} = useNavigation();
+  const {goBack, canGoBack} = useNavigation();
 
   const [selectedTracks, setSelectedTracks] = useState<string[]>(
     initialState.selectedTracks,
@@ -49,24 +49,28 @@ const AddContextProvider: FC = ({children}) => {
     setSelectedTracks(tracks => tracks.filter(id => id !== trackId));
   }, []);
 
+  const goToRoom = useCallback(() => {
+    if (!canGoBack()) return;
+    goBack();
+    goToRoom();
+  }, [canGoBack, goBack]);
+
   const addToQueue = useCallback(() => {
-    // @ts-ignore
-    navigate('Room');
+    goToRoom();
     Notification.show({
       message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
     });
     setSelectedTracks([]);
-  }, [selectedTracks]);
+  }, [selectedTracks, goToRoom]);
 
   const cancel = useCallback(() => {
-    // @ts-ignore
-    navigate('Room');
+    goToRoom();
     setSelectedTracks([]);
-  }, []);
+  }, [goToRoom]);
 
   const reset = useCallback(() => {
     setSelectedTracks([]);
-  }, []);
+  }, [goToRoom]);
 
   return (
     <RoomAddContext.Provider

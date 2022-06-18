@@ -1,7 +1,6 @@
-import {createStackNavigator} from '@react-navigation/stack';
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {FC} from 'react';
 import {Alert} from 'react-native';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import IconButton from '../components/atoms/IconButton';
 import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
@@ -17,7 +16,7 @@ import Room from './session/Room';
 import AddFromPlaylist from './session/Room.AddFromPlaylist';
 import SelectTracks from './session/Room.SelectTracks';
 
-const RootStack = createStackNavigator();
+const RootStack = createNativeStackNavigator();
 const SharedElementStack = createSharedElementStackNavigator();
 
 const SharedViewComponent: FC = () => {
@@ -48,7 +47,7 @@ const Routes: FC = () => {
     <RootStack.Navigator
       initialRouteName="Initial"
       screenOptions={{
-        cardStyle: {
+        contentStyle: {
           backgroundColor: Color.dark,
         },
         header: Header,
@@ -68,7 +67,13 @@ const Routes: FC = () => {
         }}
       />
 
-      <RootStack.Screen name="Home" component={Home} />
+      <RootStack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          animation: 'fade',
+        }}
+      />
       <RootStack.Screen name="NewSession" component={NewSession} />
       <RootStack.Screen
         name="JoinSession"
@@ -88,7 +93,7 @@ const Routes: FC = () => {
         name="Room"
         component={Room}
         options={{
-          headerShown: false,
+          animation: 'fade',
         }}
       />
       <RootStack.Screen
@@ -96,6 +101,8 @@ const Routes: FC = () => {
         component={SharedViewComponent}
         options={{
           headerShown: false,
+          animation: 'slide_from_bottom',
+          presentation: 'containedModal',
         }}
       />
     </RootStack.Navigator>
