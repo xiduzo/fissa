@@ -12,7 +12,5 @@ export const request = async (method: Method, route: string, body?: any) => {
     options.body = JSON.stringify(body);
   }
 
-  console.log(options);
-
   return fetch('https://server-xiduzo.vercel.app/api' + route, options);
 };

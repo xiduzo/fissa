@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
@@ -26,30 +26,25 @@ import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
-import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
-import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
+import {useRoomPlaylist} from './Room.PlaylistContext';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
 
 const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
+  const {pin} = route.params;
+
   const backToTopOffset = useRef(new Animated.Value(-80));
   const [addingTracks, setAddingTracks] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
   const {spotify} = useSpotify();
-  const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
+  const {tracks, room} = useRoomPlaylist(pin);
 
   const [selectedTrack, setSelectedTrack] =
     useState<SpotifyApi.TrackObjectFull>();
-
-  const [room, setRoom] = useState<{
-    playlistId: string;
-    currentIndex: number;
-  }>();
-  const {pin} = route.params;
 
   const scrollRef =
     useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
@@ -109,67 +104,14 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   };
 
   useEffect(() => {
-    if (!room) return;
-    let newTracks: SpotifyApi.PlaylistTrackObject[] = [];
-    const fetchTracks = async (offset: number) => {
-      spotify.getPlaylistTracks(room.playlistId, {offset}).then(result => {
-        newTracks = newTracks.concat(result.items);
-        if (!result.next) return setTracks(newTracks);
-        fetchTracks(offset + result.items.length);
-      });
-    };
-
-    fetchTracks(room.currentIndex);
-  }, [
-    room?.playlistId,
-    room?.currentIndex,
-    spotify.getPlaylist,
-    spotify.getPlaylistTracks,
-  ]);
-
-  useMemo(async () => {
-    const user = await spotify.getMe();
-    console.log(user); // Use user uri for voting
-  }, [spotify.getUser]);
-
-  useEffect(() => {
-    if (room) return;
-    request('POST', '/room/join', {pin}).then(async response => {
-      console.log(response);
-      if (response.status === 404) {
-        // return Notification.show({
-        //   message: `Room ${joinedPin} does not exist`,
-        // });
-        return;
-      }
-
-      if (response.status === 500) {
-        // return Notification.show({
-        //   message: `Oops... something went wrong`,
-        // });
-        return;
-      }
-
-      if (response.status !== 200) return console.log(response);
-
-      const room = await response.json();
-
-      Notification.show({
-        icon: '🪩',
-        message: `Joined ${pin}, add your favorite tracks to keep to party going!`,
-      });
-
-      navigation.setOptions({
-        headerRight: () => (
-          <TouchableWithoutFeedback onPress={() => setShowRoomDetails(true)}>
-            <Typography variant="h6">{pin}</Typography>
-          </TouchableWithoutFeedback>
-        ),
-      });
-
-      setRoom(room);
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableWithoutFeedback onPress={() => setShowRoomDetails(true)}>
+          <Typography variant="h6">{pin}</Typography>
+        </TouchableWithoutFeedback>
+      ),
     });
-  }, [pin, room]);
+  }, [pin]);
 
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
