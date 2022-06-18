@@ -1,10 +1,13 @@
-import React, {FC, useRef} from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert} from 'react-native';
+import EncryptedStorage from 'react-native-encrypted-storage';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import IconButton from '../components/atoms/IconButton';
 import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
 import {Color} from '../types/Color';
 import Home from './Home';
+import Initial from './Initial';
 import Onboarding from './Onboarding';
 import Header from './Routes.Header';
 import FromPlaylist from './session/FromPlaylist';
@@ -14,20 +17,49 @@ import Room from './session/Room';
 import AddFromPlaylist from './session/Room.AddFromPlaylist';
 import SelectTracks from './session/Room.SelectTracks';
 
-const RootStack = createSharedElementStackNavigator();
+const RootStack = createStackNavigator();
+const SharedElementStack = createSharedElementStackNavigator();
+
+const SharedViewComponent: FC = () => {
+  return (
+    <SharedElementStack.Navigator
+      initialRouteName="AddFromPlaylist"
+      screenOptions={{
+        header: Header,
+        cardStyle: {
+          backgroundColor: Color.dark,
+        },
+      }}>
+      <SharedElementStack.Screen
+        name="AddFromPlaylist"
+        component={AddFromPlaylist}
+      />
+      <SharedElementStack.Screen
+        name="SelectTracks"
+        component={SelectTracks}
+        sharedElements={() => ['tracks-to-add-drawer']}
+      />
+    </SharedElementStack.Navigator>
+  );
+};
 
 const Routes: FC = () => {
-  const onboarding = useRef(false);
-
   return (
     <RootStack.Navigator
-      initialRouteName={onboarding.current ? 'Onboarding' : 'Home'}
+      initialRouteName="Initial"
       screenOptions={{
         cardStyle: {
           backgroundColor: Color.dark,
         },
         header: Header,
       }}>
+      <RootStack.Screen
+        name="Initial"
+        component={Initial}
+        options={{
+          headerShown: false,
+        }}
+      />
       <RootStack.Screen
         name="Onboarding"
         component={Onboarding}
@@ -59,11 +91,12 @@ const Routes: FC = () => {
           headerShown: false,
         }}
       />
-      <RootStack.Screen name="AddFromPlaylist" component={AddFromPlaylist} />
       <RootStack.Screen
-        name="SelectTracks"
-        component={SelectTracks}
-        sharedElements={() => ['tracks-to-add-drawer']}
+        name="AddTracks"
+        component={SharedViewComponent}
+        options={{
+          headerShown: false,
+        }}
       />
     </RootStack.Navigator>
   );
@@ -82,8 +115,9 @@ export type RootStackParamList = {
   Room: {
     pin: string;
   };
-  AddFromPlaylist: undefined;
+  AddTracks: undefined;
   Onboarding: undefined;
+  Initial: undefined;
 };
 
 export default Routes;

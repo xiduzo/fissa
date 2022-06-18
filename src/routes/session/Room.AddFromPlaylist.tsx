@@ -17,7 +17,7 @@ import {RootStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
 
 interface AddFromPlaylistProps
-  extends NativeStackScreenProps<RootStackParamList, 'AddFromPlaylist'> {}
+  extends NativeStackScreenProps<RootStackParamList> {}
 
 const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation, ...props}) => {
   const {cancel} = useAddContext();

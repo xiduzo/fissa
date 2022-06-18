@@ -1,8 +1,15 @@
 import React, {FC} from 'react';
-import {StyleSheet, Text, TextProps} from 'react-native';
+import {
+  Animated,
+  RegisteredStyle,
+  StyleSheet,
+  Text,
+  TextProps,
+  TextStyle,
+} from 'react-native';
 import {Color} from '../../types/Color';
 
-interface TypographyProps extends TextProps {
+interface TypographyProps extends Omit<TextProps, 'style'> {
   variant?:
     | 'h1'
     | 'h2'
@@ -14,6 +21,14 @@ interface TypographyProps extends TextProps {
     | 'body2'
     | 'bodyL'
     | 'bodyM';
+  style?:
+    | false
+    | RegisteredStyle<TextStyle>
+    | Animated.Value
+    | Animated.AnimatedInterpolation
+    | Animated.WithAnimatedObject<TextStyle>
+    | null
+    | undefined;
 }
 
 const Typography: FC<TypographyProps> = ({
@@ -23,9 +38,9 @@ const Typography: FC<TypographyProps> = ({
   ...props
 }) => {
   return (
-    <Text style={[styles.all, styles[variant], style]} {...props}>
+    <Animated.Text style={[styles.all, styles[variant], style]} {...props}>
       {children}
-    </Text>
+    </Animated.Text>
   );
 };
 

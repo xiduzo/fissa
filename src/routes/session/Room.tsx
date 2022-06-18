@@ -69,7 +69,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
   const openSpotify = () => Linking.openURL('https://open.spotify.com');
   const addFromPlaylist = () => {
-    navigation.navigate('AddFromPlaylist');
+    navigation.navigate('AddTracks');
     stopAddingTracks();
   };
 
@@ -120,6 +120,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
 
   useEffect(() => {
+    if (playlistId) return;
     request('POST', '/room/join', {pin}).then(async response => {
       console.log(response);
       if (response.status === 404) {
@@ -147,7 +148,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
 
       setPlaylistId(room.playlistId);
     });
-  }, [pin]);
+  }, [pin, playlistId]);
 
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
@@ -187,7 +188,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         ListHeaderComponent={
           <>
             <Typography variant="h2" style={{marginBottom: 16}}>
-              Now Playing
+              Now Playing - {pin}
             </Typography>
             <ListItem
               imageStyle={{width: 125, height: 125}}

@@ -57,13 +57,13 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
     navigation.setOptions({headerTitle: playlist?.name});
   };
 
-  const toggleTrack = (trackId: string) => () => {
-    if (selectedTracks.includes(trackId)) {
-      removeTrack(trackId);
+  const toggleTrack = (trackUri: string) => () => {
+    if (selectedTracks.includes(trackUri)) {
+      removeTrack(trackUri);
       return;
     }
 
-    addTrack(trackId);
+    addTrack(trackUri);
   };
 
   useEffect(() => {
@@ -106,8 +106,8 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
       <ListItem
         // @ts-ignore
         imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
-        onPress={toggleTrack(track.id)}
-        selected={selectedTracks.includes(track.id)}
+        onPress={toggleTrack(track.uri)}
+        selected={selectedTracks.includes(track.uri)}
         title={track.name}
         // @ts-ignore
         subtitle={track.artists.map(x => x.name).join(', ')}

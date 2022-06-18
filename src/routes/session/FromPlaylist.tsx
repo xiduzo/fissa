@@ -33,7 +33,6 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
   const closePopOver = () => setSelectedPlaylist(undefined);
 
   const startFromPlaylist = () => {
-    closePopOver();
     if (!selectedPlaylist) return;
     setWaitForResponse(true);
     request('POST', '/room/create', {
@@ -41,18 +40,14 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       playlistId: selectedPlaylist.id,
     })
       .then(async response => {
-        console.log(response);
         if (response.status !== 200) {
           return;
         }
 
+        closePopOver();
         const room = await response.json();
         navigation.popToTop();
         navigation.replace('Room', {pin: room.pin});
-        Notification.show({
-          message: 'Aye, your playlist has been imported successfully!',
-          icon: '🎉',
-        });
       })
       .catch(() => {
         setWaitForResponse(false);

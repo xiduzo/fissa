@@ -9,7 +9,7 @@ type Theme = {
   };
 };
 
-const pinkey: Theme = {
+export const pinkey: Theme = {
   main: '#FF5FE5',
   dark: '#150423',
   light: '#FFCAF7',
