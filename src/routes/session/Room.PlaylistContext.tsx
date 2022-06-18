@@ -11,6 +11,7 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import mqtt from '@taoqf/react-native-mqtt';
+import {AppState} from 'react-native';
 
 interface RoomPlaylistContextState {
   tracks: SpotifyApi.PlaylistTrackObject[];
@@ -43,6 +44,7 @@ const PlaylistContextProvider: FC = ({children}) => {
 
   const fetchTracks = useCallback(
     async (newTracks: SpotifyApi.PlaylistTrackObject[], offset = 0) => {
+      if (!room.playlistId) return;
       spotify.getPlaylistTracks(room.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
         if (!result.next) return setTracks(newTracks);
@@ -89,7 +91,6 @@ const PlaylistContextProvider: FC = ({children}) => {
     });
   }, [pin, room.playlistId]);
 
-  console.log(process.env);
   useEffect(() => {
     if (!pin) return;
     const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
@@ -100,20 +101,36 @@ const PlaylistContextProvider: FC = ({children}) => {
       clientId: 'fissa_' + Math.random().toString(16).substr(2, 8),
     });
 
-    const topic = `fissa/room/${pin}`;
+    const topics = [`fissa/room/${pin}`, `fissa/room/${pin}/tracksAdded`];
 
-    mqttClient.subscribe(topic);
+    mqttClient.subscribe(topics);
 
     mqttClient.on('error', console.error);
 
     mqttClient.on('message', (topic, payload) => {
-      console.log(topic, JSON.parse(payload.toString()));
+      switch (topic) {
+        case `fissa/room/${pin}`:
+          break;
+        case `fissa/room/${pin}/tracksAdded`:
+          console.log('tracks added', JSON.parse(payload.toString()));
+          break;
+      }
     });
 
     return () => {
       mqttClient.end();
     };
   }, [pin]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', () => {
+      if (AppState.currentState !== 'active') return;
+
+      fetchTracks([]);
+    });
+
+    return subscription.remove;
+  }, [fetchTracks]);
 
   return (
     <RoomPlaylistContext.Provider
