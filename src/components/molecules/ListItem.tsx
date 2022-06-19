@@ -12,7 +12,7 @@ import {Color} from '../../types/Color';
 import Image from '../atoms/Image';
 import Typography from '../atoms/Typography';
 
-interface ListItemProps extends TouchableWithoutFeedbackProps {
+export interface ListItemProps extends TouchableWithoutFeedbackProps {
   imageUri: string;
   title: string;
   subtitle: string;

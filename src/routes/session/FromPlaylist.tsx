@@ -1,20 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useState} from 'react';
-import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Button from '../../components/atoms/Button';
+import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
-import ListItem from '../../components/molecules/ListItem';
+import Playlist from '../../components/molecules/ListItem.Playlist';
 import Popover from '../../components/molecules/Popover';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
-import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 
 interface FromPlaylistProps
@@ -30,6 +24,10 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
 
   const [waitForResponse, setWaitForResponse] = useState(false);
 
+  const selectPlaylist =
+    (playlist: SpotifyApi.PlaylistObjectSimplified) => () => {
+      setSelectedPlaylist(playlist);
+    };
   const closePopOver = () => setSelectedPlaylist(undefined);
 
   const startFromPlaylist = () => {
@@ -54,34 +52,24 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       });
   };
 
-  const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scrollHeight = event.nativeEvent.contentOffset.y;
-
-    if (scrollHeight < 35)
-      return navigation.setOptions({headerTitle: undefined});
-
-    navigation.setOptions({headerTitle: 'Select playlist'});
-  };
-
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
   }, [spotify.getUserPlaylists]);
 
   return (
-    <ScrollView
+    <ScrollViewWithHeaderTitle
+      title="Your playlists"
       style={styles.scrollView}
-      onScroll={scroll}
+      navigation={navigation}
       scrollEventThrottle={30}>
       <Typography variant="h1" style={{marginBottom: 24}}>
         Select Playlist
       </Typography>
       {playlists.map(playlist => (
-        <ListItem
-          onPress={() => setSelectedPlaylist(playlist)}
-          imageUri={playlist.images[0]?.url ?? DEFAULT_IMAGE}
+        <Playlist
+          playlist={playlist}
           key={playlist.id}
-          title={playlist.name}
-          subtitle={playlist.owner.display_name ?? ''}
+          onPress={selectPlaylist(playlist)}
         />
       ))}
       <Popover visible={!!selectedPlaylist} onRequestClose={closePopOver}>
@@ -89,13 +77,8 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
           Your group session will start based on
         </Typography>
 
-        <ListItem
-          imageUri={selectedPlaylist?.images[0]?.url ?? DEFAULT_IMAGE}
-          title={selectedPlaylist?.name ?? ''}
-          subtitle={selectedPlaylist?.owner.display_name ?? ''}
-          inverted
-          hasBorder
-        />
+        <Playlist playlist={selectedPlaylist} inverted hasBorder />
+
         <Button
           title="Let's kick it!"
           inverted
@@ -103,7 +86,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </Popover>
-    </ScrollView>
+    </ScrollViewWithHeaderTitle>
   );
 };
 

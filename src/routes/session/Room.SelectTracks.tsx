@@ -6,13 +6,13 @@ import {
   NativeSyntheticEvent,
   StyleSheet,
   View,
-  VirtualizedList,
 } from 'react-native';
 import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import Image from '../../components/atoms/Image';
 import Typography from '../../components/atoms/Typography';
-import ListItem from '../../components/molecules/ListItem';
+import VirtualizedListWithHeader from '../../components/atoms/VirtualizedListWithHeader';
+import Track from '../../components/molecules/ListItem.Track';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {SharedElementStackParamList} from '../Routes';
@@ -100,24 +100,23 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
   ) => {
-    const {track} = render.item;
+    const track = render.item.track as SpotifyApi.TrackObjectFull;
 
     return (
-      <ListItem
-        // @ts-ignore
-        imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
+      <Track
+        track={track}
         onPress={toggleTrack(track.uri)}
         selected={selectedTracks.includes(track.uri)}
-        title={track.name}
-        // @ts-ignore
-        subtitle={track.artists.map(x => x.name).join(', ')}
       />
     );
   };
 
   return (
     <View>
-      <VirtualizedList<SpotifyApi.PlaylistTrackObject>
+      <VirtualizedListWithHeader<SpotifyApi.PlaylistTrackObject>
+        navigation={navigation}
+        scrollHeightTrigger={230}
+        title={playlist?.name}
         style={[styles.container]}
         ListHeaderComponent={
           <ListHeader
@@ -125,10 +124,9 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
             imageUri={playlist?.images[0]?.url}
           />
         }
-        data={tracks ?? []}
+        data={tracks}
         initialNumToRender={4}
         scrollEventThrottle={30}
-        onScroll={scroll}
         renderItem={renderItem}
         getItemCount={() => tracks.length}
         getItem={(data, index) => data[index]}

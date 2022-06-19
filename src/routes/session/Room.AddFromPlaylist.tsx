@@ -1,17 +1,11 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useState} from 'react';
-import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
+import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
-import ListItem from '../../components/molecules/ListItem';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
+import Playlist from '../../components/molecules/ListItem.Playlist';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
@@ -37,15 +31,6 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({
     navigation.navigate('SelectTracks', {playlistId});
   };
 
-  const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scrollHeight = event.nativeEvent.contentOffset.y;
-
-    if (scrollHeight < 35)
-      return navigation.setOptions({headerTitle: undefined});
-
-    navigation.setOptions({headerTitle: 'Your playlists'});
-  };
-
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
   }, [spotify.getUserPlaylists]);
@@ -62,23 +47,22 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({
 
   return (
     <View>
-      <ScrollView
+      <ScrollViewWithHeaderTitle
+        title="Your playlists"
+        navigation={navigation}
         style={styles.container}
-        onScroll={scroll}
         scrollEventThrottle={30}>
         <Typography style={styles.title} variant="h1">
           Your playlists
         </Typography>
         {playlists.map(playlist => (
-          <ListItem
-            imageUri={playlist.images[0]?.url ?? DEFAULT_IMAGE}
-            onPress={gotoPlaylist(playlist.id)}
+          <Playlist
+            playlist={playlist}
             key={playlist.id}
-            title={playlist.name}
-            subtitle={playlist.owner.display_name ?? ''}
+            onPress={gotoPlaylist(playlist.id)}
           />
         ))}
-      </ScrollView>
+      </ScrollViewWithHeaderTitle>
       <AddContextBottomDrawer />
     </View>
   );

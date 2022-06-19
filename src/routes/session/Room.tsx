@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
@@ -13,7 +13,6 @@ import {
   View,
   VirtualizedList,
 } from 'react-native';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import Button from '../../components/atoms/Button';
@@ -23,11 +22,9 @@ import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
 import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
-import ListItem from '../../components/molecules/ListItem';
+import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {Color} from '../../types/Color';
-import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from './Room.PlaylistContext';
 
@@ -89,45 +86,29 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
     });
   };
 
-  const trackEndIcon = (votes: number): JSX.Element => {
-    const style: StyleProp<ImageStyle> = {
-      tintColor: votes !== 0 ? Color.main : Color.light,
-    };
-
-    if (votes !== 0) {
-      if (votes > 0) return <ArrowUpIcon style={style} />;
-      return <ArrowDownIcon style={style} />;
-    }
-
-    return <MoreIcon style={style} />;
-  };
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableWithoutFeedback onPress={() => setShowRoomDetails(true)}>
-          <Typography variant="h6">{pin}</Typography>
-        </TouchableWithoutFeedback>
-      ),
-    });
-  }, [pin]);
-
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
   ) => {
-    const {track} = render.item;
+    const track = render.item.track as SpotifyApi.TrackObjectFull;
+
+    const trackEndIcon = (votes: number): JSX.Element => {
+      const style: StyleProp<ImageStyle> = {
+        tintColor: votes !== 0 ? Color.main : Color.light,
+      };
+
+      if (votes !== 0) {
+        if (votes > 0) return <ArrowUpIcon style={style} />;
+        return <ArrowDownIcon style={style} />;
+      }
+
+      return <MoreIcon style={style} />;
+    };
 
     return (
-      <ListItem
-        // @ts-ignore
-        subtitle={track.artists.map(x => x.name).join(', ')}
-        // @ts-ignore
-        imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
-        onPress={selectTrack(track as SpotifyApi.TrackObjectFull)}
+      <Track
+        track={track}
+        onPress={selectTrack(track)}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        title={track.name}
-        // @ts-ignore
-        subtitle={track.artists.map(x => x.name).join(', ')}
         end={
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Typography variant="bodyM" style={{marginRight: 4}}>
@@ -150,21 +131,15 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
         ListFooterComponent={<View style={{paddingBottom: 100}} />}
         ListHeaderComponent={
           <>
-            <Typography variant="h2" style={{marginBottom: 16}}>
-              Now Playing
-            </Typography>
-            <ListItem
+            <View style={styles.header}>
+              <Typography variant="h2">Now Playing</Typography>
+              <Typography variant="bodyM">{pin}</Typography>
+            </View>
+            <Track
               imageStyle={{width: 125, height: 125}}
-              imageUri={
-                // @ts-ignore
-                tracks[room.currentIndex]?.track.album.images[0]?.url ??
-                DEFAULT_IMAGE
+              track={
+                tracks[room.currentIndex].track as SpotifyApi.TrackObjectFull
               }
-              title={tracks[room.currentIndex]?.track.name}
-              // @ts-ignore
-              subtitle={tracks[room.currentIndex]?.track.artists
-                .map((x: any) => x.name)
-                .join(', ')}
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
@@ -230,17 +205,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
       <Popover
         visible={!!selectedTrack}
         onRequestClose={() => setSelectedTrack(undefined)}>
-        {selectedTrack && (
-          <ListItem
-            // @ts-ignore
-            imageUri={selectedTrack.album.images[0]?.url ?? DEFAULT_IMAGE}
-            title={selectedTrack.name}
-            // @ts-ignore
-            subtitle={selectedTrack.artists.map((x: any) => x.name).join(', ')}
-            inverted
-            hasBorder
-          />
-        )}
+        <Track track={selectedTrack} inverted hasBorder />
         <View
           style={{
             borderBottomWidth: 2,
@@ -294,6 +259,13 @@ export default Room;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
+    paddingTop: 68,
+  },
+  header: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   queue: {
     marginBottom: 12,

@@ -93,6 +93,7 @@ const Routes: FC = () => {
         name="Room"
         component={Room}
         options={{
+          headerShown: false,
           animation: 'fade',
         }}
       />

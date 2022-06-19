@@ -11,7 +11,7 @@ const OnboardingSlideTwo: FC = () => (
     <LinearGradient style={styles.button} {...Color.gradient}>
       <PlusIcons style={styles.buttonIcon} />
     </LinearGradient>
-    <Typography style={[styles.icon, styles.rotated]}>🕺🏻</Typography>
+    <Typography style={{...styles.icon, ...styles.rotated}}>🕺🏻</Typography>
   </View>
 );
 

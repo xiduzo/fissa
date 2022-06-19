@@ -8,7 +8,7 @@ import {Color} from '../types/Color';
 
 const OnboardingSlideThree: FC = () => (
   <View>
-    <Typography style={[styles.icon, styles.rotate]}>🎉</Typography>
+    <Typography style={{...styles.icon, ...styles.rotate}}>🎉</Typography>
     <LinearGradient
       style={[styles.button, styles.buttonUp]}
       {...Color.gradient}>
@@ -29,7 +29,7 @@ const OnboardingSlideThree: FC = () => (
         ]}
       />
     </LinearGradient>
-    <Typography style={[styles.icon, styles.shit]}>💩</Typography>
+    <Typography style={{...styles.icon, ...styles.shit}}>💩</Typography>
   </View>
 );
 
