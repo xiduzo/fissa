@@ -1,4 +1,12 @@
-import React, {createContext, FC, useContext, useEffect, useRef} from 'react';
+import React, {
+  createContext,
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
+import {AppState, NativeEventSubscription} from 'react-native';
 import {
   AuthConfiguration,
   authorize,
@@ -42,8 +50,8 @@ const authConfig: AuthConfiguration = {
 const SpotifyProvider: FC = ({children}) => {
   const spotifyApi = useRef(initialState.spotify);
 
-  useEffect(() => {
-    const refresh = async ({
+  const refresh = useCallback(
+    async ({
       refreshToken,
       access_token,
     }: {
@@ -75,14 +83,20 @@ const SpotifyProvider: FC = ({children}) => {
         }),
       );
 
+      console.log(result.accessToken);
+
       setTimeout(() => {
         refresh({
           refreshToken,
           access_token: result.accessToken,
         });
       }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60_000));
-    };
+    },
+    [],
+  );
 
+  useEffect(() => {
+    let subscription: NativeEventSubscription;
     const auth = async () => {
       const item = await EncryptedStorage.getItem('accessToken');
       const {accessTokenExpirationDate, refreshToken, accessToken} = JSON.parse(
@@ -95,9 +109,16 @@ const SpotifyProvider: FC = ({children}) => {
           spotifyApi.current.setAccessToken(accessToken);
         }
 
-        refresh({
+        const tokens = {
           refreshToken,
           access_token: accessToken,
+        };
+
+        refresh(tokens);
+
+        subscription = AppState.addEventListener('change', () => {
+          if (AppState.currentState !== 'active') return;
+          refresh(tokens);
         });
 
         return;
@@ -108,12 +129,16 @@ const SpotifyProvider: FC = ({children}) => {
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));
     };
 
+    const removeSubscription = () => subscription.remove();
+
     try {
       auth();
     } catch (e) {
       console.error(e);
     }
-  }, []);
+
+    return removeSubscription;
+  }, [refresh]);
 
   return (
     <SpotifyContext.Provider

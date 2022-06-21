@@ -37,7 +37,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const backToTopOffset = useRef(new Animated.Value(-100));
   const [addingTracks, setAddingTracks] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
-  const {tracks, room} = useRoomPlaylist(pin);
+  const {tracks, room, activeTrack} = useRoomPlaylist(pin);
 
   const [selectedTrack, setSelectedTrack] =
     useState<SpotifyApi.TrackObjectFull>();
@@ -121,7 +121,7 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
     );
   };
 
-  if (!room) return null;
+  if (!room?.pin) return null;
 
   return (
     <View style={{flex: 1}}>
@@ -133,13 +133,18 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
           <>
             <View style={styles.header}>
               <Typography variant="h2">Now Playing</Typography>
-              <Typography variant="bodyM">{pin}</Typography>
+              <Typography
+                variant="bodyM"
+                onPress={() => setShowRoomDetails(true)}>
+                {pin}
+              </Typography>
             </View>
             <Track
               imageStyle={{width: 125, height: 125}}
               track={
-                tracks[room.currentIndex].track as SpotifyApi.TrackObjectFull
+                tracks[room.currentIndex]?.track as SpotifyApi.TrackObjectFull
               }
+              progressPercentage={activeTrack?.progress_percentage}
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>

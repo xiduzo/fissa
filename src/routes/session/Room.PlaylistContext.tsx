@@ -13,23 +13,29 @@ import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import Config from 'react-native-config';
 
+interface ActiveTrack {
+  is_playing: boolean;
+  progress_percentage: number;
+  currentIndex: number;
+  // Id of playlist
+  id: string;
+}
+
+interface Room {
+  playlistId: string;
+  currentIndex: number;
+  pin: string;
+}
+
 interface RoomPlaylistContextState {
   tracks: SpotifyApi.PlaylistTrackObject[];
-  room: {
-    playlistId: string;
-    currentIndex: number;
-    pin: string;
-  };
+  room?: Room;
+  activeTrack?: ActiveTrack;
   setPin: (pin: string) => void;
 }
 
 const initialState: RoomPlaylistContextState = {
   tracks: [],
-  room: {
-    playlistId: '',
-    currentIndex: 0,
-    pin: '',
-  },
   setPin: () => {},
 };
 
@@ -39,6 +45,7 @@ const RoomPlaylistContext =
 const PlaylistContextProvider: FC = ({children}) => {
   const [tracks, setTracks] = useState(initialState.tracks);
   const [room, setRoom] = useState(initialState.room);
+  const [activeTrack, setActiveTrack] = useState<ActiveTrack>();
   const [pin, setStatePin] = useState('');
   const {spotify} = useSpotify();
 
@@ -46,8 +53,8 @@ const PlaylistContextProvider: FC = ({children}) => {
 
   const fetchTracks = useCallback(
     async (newTracks: SpotifyApi.PlaylistTrackObject[], offset = 0) => {
-      if (!room.playlistId) return;
-      spotify.getPlaylistTracks(room.playlistId, {offset}).then(result => {
+      if (!room?.playlistId) return;
+      spotify.getPlaylistTracks(room?.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
         if (!result.next) return setTracks(newTracks);
         fetchTracks(newTracks, newTracks.length);
@@ -57,9 +64,9 @@ const PlaylistContextProvider: FC = ({children}) => {
   );
 
   useEffect(() => {
-    if (!room.playlistId) return;
+    if (!room?.playlistId) return;
     fetchTracks([]);
-  }, [fetchTracks, room.playlistId]);
+  }, [fetchTracks, room?.playlistId]);
 
   useEffect(() => {
     if (!pin) return;
@@ -91,7 +98,7 @@ const PlaylistContextProvider: FC = ({children}) => {
 
       setRoom(room);
     });
-  }, [pin, room.playlistId]);
+  }, [pin, room?.playlistId]);
 
   useEffect(() => {
     if (!pin) return;
@@ -104,7 +111,11 @@ const PlaylistContextProvider: FC = ({children}) => {
     });
 
     mqttClient.on('connect', () => {
-      const topics = [`fissa/room/${pin}`, `fissa/room/${pin}/tracks/added`];
+      const topics = [
+        `fissa/room/${pin}`,
+        `fissa/room/${pin}/tracks/added`,
+        `fissa/room/${pin}/tracks/active`,
+      ];
       mqttClient.subscribe(topics);
     });
 
@@ -112,6 +123,9 @@ const PlaylistContextProvider: FC = ({children}) => {
 
     mqttClient.on('message', (topic, payload) => {
       switch (topic) {
+        case `fissa/room/${pin}/tracks/active`:
+          setActiveTrack(JSON.parse(payload.toString()));
+          break;
         case `fissa/room/${pin}`:
           break;
         case `fissa/room/${pin}/tracks/added`:
@@ -138,6 +152,7 @@ const PlaylistContextProvider: FC = ({children}) => {
     <RoomPlaylistContext.Provider
       value={{
         tracks,
+        activeTrack,
         room,
         setPin,
       }}>
@@ -164,6 +179,7 @@ export const useRoomPlaylist = (pin?: string) => {
   return {
     tracks: context.tracks,
     room: context.room,
+    activeTrack: context.activeTrack,
   };
 };
 

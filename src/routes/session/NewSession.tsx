@@ -20,7 +20,6 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
       accessToken: spotify.getAccessToken(),
     })
       .then(async response => {
-        console.log(response);
         if (response.status !== 200) {
           return;
         }

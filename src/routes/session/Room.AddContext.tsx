@@ -61,8 +61,14 @@ const AddContextProvider: FC = ({children}) => {
   }, [canGoBack, goBack]);
 
   const addToQueue = useCallback(() => {
+    if (!room?.pin) return;
+
     setSelectedTracks([]);
     goToRoom();
+
+    Notification.show({
+      message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
+    });
     request('POST', '/room/tracks', {
       trackUris: selectedTracks,
       pin: room.pin,
@@ -75,11 +81,8 @@ const AddContextProvider: FC = ({children}) => {
         });
         return;
       }
-      Notification.show({
-        message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
-      });
     });
-  }, [selectedTracks, goToRoom]);
+  }, [room?.pin, selectedTracks, goToRoom]);
 
   const cancel = useCallback(() => {
     goToRoom();

@@ -72,6 +72,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   }, []);
 
   useEffect(() => {
+    console.log(pin);
     if (pin.includes('')) return;
 
     keys.forEach(key => key.current?.blur());

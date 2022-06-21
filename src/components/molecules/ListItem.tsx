@@ -16,6 +16,7 @@ export interface ListItemProps extends TouchableWithoutFeedbackProps {
   imageUri: string;
   title: string;
   subtitle: string;
+  extra?: JSX.Element;
   imageStyle?: StyleProp<ImageStyle>;
   inverted?: boolean;
   hasBorder?: boolean;
@@ -27,6 +28,7 @@ const ListItem: FC<ListItemProps> = ({
   imageUri,
   title,
   subtitle,
+  extra,
   end,
   imageStyle = {},
   inverted = false,
@@ -130,6 +132,7 @@ const ListItem: FC<ListItemProps> = ({
             variant="bodyM">
             {subtitle}
           </Typography>
+          {extra}
         </Animated.View>
         <Animated.View
           style={{
