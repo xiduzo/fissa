@@ -1,9 +1,10 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useMemo, useRef} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, StyleSheet} from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import Animation from '../components/atoms/animations/Animation';
 import Typography from '../components/atoms/Typography';
-import {Color, pinkey} from '../types/Color';
+import {Color, colors} from '../types/Color';
 import {RootStackParamList} from './Routes';
 
 interface InitialProps
@@ -16,32 +17,31 @@ const Initial: FC<InitialProps> = ({navigation, ...props}) => {
     const onboardingVersion = await EncryptedStorage.getItem('onboarding');
     await EncryptedStorage.setItem('onboarding', '1');
 
-    setTimeout(() => {
+    colorAnimation.current.addListener(response => {
+      if (response.value < 1) return;
+
       if (onboardingVersion !== '1') {
         navigation.replace('Onboarding');
         return;
       }
       navigation.replace('Home');
-    }, 1_500);
-  }, [navigation]);
+    });
 
-  useEffect(() => {
     Animated.timing(colorAnimation.current, {
       toValue: 1,
-      duration: 500,
-      delay: 500,
+      duration: 3_000,
       useNativeDriver: false,
     }).start();
   }, []);
 
   const backgroundColorInterpolation = colorAnimation.current.interpolate({
     inputRange: [0, 1],
-    outputRange: [pinkey.dark, Color.dark],
+    outputRange: ['#000', Color.dark],
   });
 
   const colorInterpolation = colorAnimation.current.interpolate({
     inputRange: [0, 1],
-    outputRange: [pinkey.light, Color.light],
+    outputRange: ['#FFFFFF90', Color.light],
   });
 
   return (
@@ -50,11 +50,17 @@ const Initial: FC<InitialProps> = ({navigation, ...props}) => {
         styles.container,
         {backgroundColor: backgroundColorInterpolation},
       ]}>
-      <View style={styles.appName}>
-        <Typography variant="h1" style={{color: colorInterpolation}}>
-          FISSA
-        </Typography>
-      </View>
+      {colors.map(color => {
+        return (
+          <Typography
+            key={color.name}
+            style={{fontWeight: 'bold', color: color.main}}>
+            {color.name}
+          </Typography>
+        );
+      })}
+      <Animation progress={colorAnimation.current} />
+
       <Typography variant="bodyM" style={{color: colorInterpolation}}>
         Made by Xiduzo and Milanovski
       </Typography>
@@ -68,11 +74,7 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     paddingVertical: 50,
-  },
-  appName: {
-    height: '80%',
-    justifyContent: 'center',
   },
 });
