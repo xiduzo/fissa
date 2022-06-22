@@ -15,7 +15,7 @@ import Notification from '../../utils/Notification';
 
 interface ActiveTrack {
   is_playing: boolean;
-  progress_percentage: number;
+  progress_ms: number;
   currentIndex: number;
   // Id of playlist
   id: string;
@@ -132,7 +132,8 @@ const PlaylistContextProvider: FC = ({children}) => {
     mqttClient.on('message', (topic, payload) => {
       switch (topic) {
         case `fissa/room/${pin}/tracks/active`:
-          setActiveTrack(JSON.parse(payload.toString()));
+          const _track = JSON.parse(payload.toString()) as ActiveTrack;
+          setActiveTrack(_track);
           break;
         case `fissa/room/${pin}`:
           break;

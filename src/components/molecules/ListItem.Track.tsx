@@ -5,10 +5,11 @@ import ListItem, {ListItemProps} from './ListItem';
 
 interface TrackProps extends Partial<ListItemProps> {
   track?: SpotifyApi.TrackObjectFull;
-  progressPercentage?: number;
+  progressMs?: number;
+  isPlaying?: boolean;
 }
 
-const Track: FC<TrackProps> = ({track, progressPercentage, ...props}) => {
+const Track: FC<TrackProps> = ({track, progressMs, isPlaying, ...props}) => {
   if (!track) {
     return null;
   }
@@ -19,7 +20,12 @@ const Track: FC<TrackProps> = ({track, progressPercentage, ...props}) => {
       title={track.name}
       subtitle={track.artists.map((x: any) => x.name).join(', ')}
       extra={
-        <ProgressBar progress={progressPercentage} style={{marginTop: 16}} />
+        <ProgressBar
+          progress={progressMs ? progressMs / track.duration_ms : undefined}
+          track={track}
+          isPlaying={isPlaying}
+          style={{marginTop: 16}}
+        />
       }
       {...props}
     />

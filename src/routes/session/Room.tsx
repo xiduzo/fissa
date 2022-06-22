@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
@@ -38,6 +38,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const [addingTracks, setAddingTracks] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
   const {tracks, room, activeTrack} = useRoomPlaylist(pin);
+
+  const activeTrackIndex = useMemo(() => {
+    return activeTrack?.currentIndex ?? -1;
+  }, [activeTrack]);
+
+  const tracksToShow = useMemo(() => {
+    return tracks.slice(1 + activeTrackIndex, tracks.length);
+  }, [tracks, activeTrackIndex]);
 
   const [selectedTrack, setSelectedTrack] =
     useState<SpotifyApi.TrackObjectFull>();
@@ -148,26 +156,25 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             <Track
               imageStyle={{width: 125, height: 125}}
               track={
-                tracks[room.currentIndex]?.track as SpotifyApi.TrackObjectFull
+                tracks[activeTrackIndex]?.track as SpotifyApi.TrackObjectFull
               }
-              progressPercentage={activeTrack?.progress_percentage}
+              isPlaying={activeTrack?.is_playing}
+              progressMs={activeTrack?.progress_ms ?? 0}
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
               <Typography variant="h2" style={{fontWeight: '300'}}>
-                ({Math.max(0, tracks.length - 1 - room.currentIndex)})
+                ({Math.max(0, tracksToShow.length)})
               </Typography>
             </View>
           </>
         }
-        data={tracks.slice(1 + room.currentIndex, tracks.length)}
+        data={tracksToShow}
         initialNumToRender={5}
         scrollEventThrottle={300}
         onScroll={scroll}
         renderItem={renderItem}
-        getItemCount={() =>
-          tracks.slice(1 + room.currentIndex, tracks.length).length
-        }
+        getItemCount={() => tracksToShow.length}
         getItem={(data, index) => data[index]}
         keyExtractor={(item, index) => item.track.id + index}
       />
