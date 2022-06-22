@@ -1,4 +1,4 @@
-import React, {FC, useRef, useCallback, useEffect} from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {Animated, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {DotProps} from 'react-native-onboarding-swiper';
@@ -28,7 +28,8 @@ const DotComponent: FC<DotProps> = ({selected, ...props}) => {
       <Animated.View
         style={{
           width: widthAnimation.current,
-        }}></Animated.View>
+        }}
+      />
     </LinearGradient>
   );
 };

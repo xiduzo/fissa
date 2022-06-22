@@ -15,7 +15,7 @@ interface ToastProps extends ToastConfigParams<any> {
   text2?: string;
 }
 
-const Toaster: FC<ToastProps> = ({text1, text2, ...props}) => {
+const Toaster: FC<ToastProps> = ({text1, text2}) => {
   return (
     <SafeAreaView style={[styles.container]} accessibilityRole="alert">
       {text2 && <Text style={styles.emoji}>{text2}</Text>}
@@ -34,7 +34,9 @@ const ToastContainer: FC = () => {
     info: props => <Toaster {...props} />,
   };
 
-  if (Platform.OS === 'android') return null;
+  if (Platform.OS === 'android') {
+    return null;
+  }
   return <Toast config={toastConfig} />;
 };
 

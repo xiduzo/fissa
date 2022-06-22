@@ -1,16 +1,16 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useMemo, useRef} from 'react';
+import React, {FC, useMemo, useRef} from 'react';
 import {Animated, StyleSheet} from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Animation from '../components/atoms/animations/Animation';
 import Typography from '../components/atoms/Typography';
-import {Color, colors} from '../types/Color';
+import {Color} from '../types/Color';
 import {RootStackParamList} from './Routes';
 
 interface InitialProps
   extends NativeStackScreenProps<RootStackParamList, 'Initial'> {}
 
-const Initial: FC<InitialProps> = ({navigation, ...props}) => {
+const Initial: FC<InitialProps> = ({navigation}) => {
   const colorAnimation = useRef(new Animated.Value(0));
 
   useMemo(async () => {
@@ -18,25 +18,28 @@ const Initial: FC<InitialProps> = ({navigation, ...props}) => {
     await EncryptedStorage.setItem('onboarding', '1');
 
     colorAnimation.current.addListener(response => {
-      if (response.value < 1) return;
+      if (response.value < 1) {
+        return;
+      }
 
       if (onboardingVersion !== '1') {
         navigation.replace('Onboarding');
         return;
       }
+
       navigation.replace('Home');
     });
 
     Animated.timing(colorAnimation.current, {
       toValue: 1,
-      duration: 3_000,
+      duration: 2_500,
       useNativeDriver: false,
     }).start();
-  }, []);
+  }, [navigation]);
 
   const backgroundColorInterpolation = colorAnimation.current.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['#000', Color.dark],
+    inputRange: [0, 0.4, 0.6, 1],
+    outputRange: ['#000000', '#000000', Color.dark, Color.dark],
   });
 
   const colorInterpolation = colorAnimation.current.interpolate({
@@ -50,19 +53,13 @@ const Initial: FC<InitialProps> = ({navigation, ...props}) => {
         styles.container,
         {backgroundColor: backgroundColorInterpolation},
       ]}>
-      {colors.map(color => {
-        return (
-          <Typography
-            key={color.name}
-            style={{fontWeight: 'bold', color: color.main}}>
-            {color.name}
-          </Typography>
-        );
-      })}
-      <Animation progress={colorAnimation.current} />
+      <Animation
+        style={{transform: [{scale: 1.75}]}}
+        progress={colorAnimation.current}
+      />
 
       <Typography variant="bodyM" style={{color: colorInterpolation}}>
-        Made by Xiduzo and Milanovski
+        Made by Milanovski and Xiduzo
       </Typography>
     </Animated.View>
   );
@@ -75,6 +72,6 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingVertical: 50,
+    paddingVertical: 34,
   },
 });

@@ -31,7 +31,9 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
   const closePopOver = () => setSelectedPlaylist(undefined);
 
   const startFromPlaylist = () => {
-    if (!selectedPlaylist) return;
+    if (!selectedPlaylist) {
+      return;
+    }
     setWaitForResponse(true);
     request('POST', '/room/create', {
       accessToken: spotify.getAccessToken(),
@@ -54,7 +56,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
 
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
-  }, [spotify.getUserPlaylists]);
+  }, [spotify]);
 
   return (
     <ScrollViewWithHeaderTitle

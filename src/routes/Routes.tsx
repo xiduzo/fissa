@@ -71,7 +71,7 @@ const Routes: FC = () => {
         name="Home"
         component={Home}
         options={{
-          animation: 'fade',
+          animation: 'slide_from_bottom',
         }}
       />
       <RootStack.Screen name="NewSession" component={NewSession} />

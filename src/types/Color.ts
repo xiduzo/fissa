@@ -10,7 +10,7 @@ type Theme = {
   };
 };
 
-export const pinkey: Theme = {
+const pinkey: Theme = {
   name: 'pinkey',
   main: '#FF5FE5',
   dark: '#150423',
@@ -22,7 +22,7 @@ export const pinkey: Theme = {
   },
 };
 
-export const orangy: Theme = {
+const orangy: Theme = {
   name: 'orangy',
   main: '#FF5F5F',
   dark: '#1C0A00',
@@ -34,7 +34,7 @@ export const orangy: Theme = {
   },
 };
 
-export const greeny: Theme = {
+const greeny: Theme = {
   name: 'greeny',
   main: '#5FFF95',
   dark: '#021600',
@@ -46,7 +46,7 @@ export const greeny: Theme = {
   },
 };
 
-export const blueey: Theme = {
+const blueey: Theme = {
   name: 'blueey',
   main: '#5FB2FF',
   dark: '#001428',
@@ -58,7 +58,7 @@ export const blueey: Theme = {
   },
 };
 
-export const sunny: Theme = {
+const sunny: Theme = {
   name: 'sunny',
   main: '#FFAD33',
   dark: '#241800',
@@ -70,7 +70,7 @@ export const sunny: Theme = {
   },
 };
 
-export const limey: Theme = {
+const limey: Theme = {
   name: 'limey',
   main: '#CCFF5F',
   dark: '#0B1A00',
@@ -82,9 +82,8 @@ export const limey: Theme = {
   },
 };
 
-export const colors = [sunny, limey, blueey, pinkey, orangy, greeny];
+const colors = [sunny, limey, blueey, pinkey, orangy, greeny];
 
 const {floor, random} = Math;
 
-// export const Color: Theme = colors[floor(random() * colors.length)];
-export const Color = blueey;
+export const Color: Theme = colors[floor(random() * colors.length)];

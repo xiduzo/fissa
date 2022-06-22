@@ -1,12 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useState} from 'react';
-import {
-  ListRenderItemInfo,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {ListRenderItemInfo, StyleSheet, View} from 'react-native';
 import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import Image from '../../components/atoms/Image';
@@ -41,21 +35,12 @@ const ListHeader: FC<ListHeaderProps> = ({name, imageUri}) => {
   );
 };
 
-const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
+const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   const {selectedTracks, addTrack, removeTrack, cancel} = useAddContext();
   const {spotify} = useSpotify();
   const {playlistId} = route.params;
   const [playlist, setPlaylist] = useState<SpotifyApi.SinglePlaylistResponse>();
   const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
-
-  const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scrollHeight = event.nativeEvent.contentOffset.y;
-
-    if (scrollHeight < 230)
-      return navigation.setOptions({headerTitle: undefined});
-
-    navigation.setOptions({headerTitle: playlist?.name});
-  };
 
   const toggleTrack = (trackUri: string) => () => {
     if (selectedTracks.includes(trackUri)) {
@@ -70,7 +55,9 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
     const fetchTracks = async (offset: number) => {
       spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
         setTracks(prev => [...prev, ...result.items]);
-        if (!result.next) return;
+        if (!result.next) {
+          return;
+        }
         fetchTracks(offset + result.items.length);
       });
     };
@@ -81,11 +68,13 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
 
     spotify.getPlaylistTracks(playlistId).then(result => {
       setTracks(result.items);
-      if (!result.next) return;
+      if (!result.next) {
+        return;
+      }
 
       fetchTracks(result.offset + result.items.length);
     });
-  }, [playlistId, spotify.getPlaylist, spotify.getPlaylistTracks]);
+  }, [playlistId, spotify]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -95,7 +84,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation, ...props}) => {
         </IconButton>
       ),
     });
-  }, [navigation.setOptions, cancel]);
+  }, [navigation, cancel]);
 
   const renderItem = (
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,

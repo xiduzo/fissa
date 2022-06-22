@@ -12,8 +12,10 @@ interface PlaylistProps extends Partial<ListItemProps> {
   };
 }
 
-const Playlist: FC<PlaylistProps> = ({playlist, imageStyle, ...props}) => {
-  if (!playlist) return null;
+const Playlist: FC<PlaylistProps> = ({playlist, ...props}) => {
+  if (!playlist) {
+    return null;
+  }
 
   return (
     <ListItem

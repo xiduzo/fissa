@@ -1,19 +1,24 @@
-import React, {FC, useEffect} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
+import {FC, useEffect} from 'react';
 import Notification from '../../utils/Notification';
 
 const NetworkMonitor: FC = () => {
-  const {isConnected, isInternetReachable} = useNetInfo();
+  const {isConnected, isInternetReachable, type} = useNetInfo();
 
   useEffect(() => {
-    if (!!isConnected && !!isInternetReachable) return;
+    if (type) {
+      return;
+    }
+    if (!!isConnected && !!isInternetReachable) {
+      return;
+    }
 
     Notification.show({
       type: 'warning',
       message: 'You seem to be disconnected from the internet!',
       duration: 10_000,
     });
-  }, [isConnected, isInternetReachable]);
+  }, [isConnected, isInternetReachable, type]);
 
   return null;
 };

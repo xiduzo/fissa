@@ -1,5 +1,12 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -25,7 +32,10 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   const key3 = useRef<TextInput>(null);
   const key4 = useRef<TextInput>(null);
 
-  const keys = [key1, key2, key3, key4];
+  const keys = useMemo(
+    () => [key1, key2, key3, key4],
+    [key1, key2, key3, key4],
+  );
 
   const changeCode =
     (index: number) => (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
@@ -36,7 +46,9 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       newCode[index] = input;
       setPin(newCode);
 
-      if (index >= pin.length) return;
+      if (index >= pin.length) {
+        return;
+      }
 
       const next = keys[index + 1];
       next?.current?.focus();
@@ -44,14 +56,18 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
 
   const selectInput = (index: number) => () => {
     const newCode = [...pin].map((code, codeIndex) => {
-      if (codeIndex >= index) return '';
+      if (codeIndex >= index) {
+        return '';
+      }
       return code;
     });
 
     setPin(newCode);
 
     const emptyIndex = pin.findIndex(code => code === '');
-    if (emptyIndex === -1) return;
+    if (emptyIndex === -1) {
+      return;
+    }
 
     keys[emptyIndex].current?.focus();
   };
@@ -59,8 +75,12 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   const checkForBackSpace =
     (index: number) =>
     (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-      if (index === 0) return;
-      if (event.nativeEvent.key !== 'Backspace') return;
+      if (index === 0) {
+        return;
+      }
+      if (event.nativeEvent.key !== 'Backspace') {
+        return;
+      }
       keys[index - 1].current?.focus();
     };
 
@@ -69,11 +89,13 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     setTimeout(() => {
       keys[0].current?.focus();
     }, 0);
-  }, []);
+  }, [keys]);
 
   useEffect(() => {
     console.log(pin);
-    if (pin.includes('')) return;
+    if (pin.includes('')) {
+      return;
+    }
 
     keys.forEach(key => key.current?.blur());
 
@@ -93,7 +115,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
         reset();
         return Notification.show({
           type: 'warning',
-          message: `Oops... something went wrong`,
+          message: 'Oops... something went wrong',
         });
       }
 
@@ -102,11 +124,11 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       navigation.popToTop();
       navigation.replace('Room', {pin: room.pin});
     });
-  }, [pin, reset]);
+  }, [pin, reset, keys, navigation]);
 
   useEffect(() => {
     keys[0].current?.focus();
-  }, []);
+  }, [keys]);
 
   return (
     <View style={styles.container}>

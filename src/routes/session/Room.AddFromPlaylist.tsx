@@ -16,11 +16,7 @@ interface AddFromPlaylistProps
     'AddFromPlaylist'
   > {}
 
-const AddFromPlaylist: FC<AddFromPlaylistProps> = ({
-  navigation,
-  route,
-  ...props
-}) => {
+const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
   const {cancel} = useAddContext();
   const {spotify} = useSpotify();
   const [playlists, setPlaylists] = useState<
@@ -33,7 +29,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({
 
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
-  }, [spotify.getUserPlaylists]);
+  }, [spotify]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -43,7 +39,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({
         </IconButton>
       ),
     });
-  }, [navigation.setOptions, cancel]);
+  }, [navigation, cancel]);
 
   return (
     <View>

@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
@@ -18,7 +18,6 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
   close,
   children,
   style,
-  ...props
 }) => {
   return (
     <LinearGradient {...Color.gradient} style={[styles.card, style]}>

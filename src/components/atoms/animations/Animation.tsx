@@ -1,5 +1,4 @@
 import React, {FC} from 'react';
-import {StyleSheet} from 'react-native';
 import LottieView, {AnimatedLottieViewProps} from 'lottie-react-native';
 import {Color} from '../../../types/Color';
 
@@ -12,45 +11,34 @@ const Animation: FC<AnimationProps> = ({...props}) => {
         <LottieView
           autoPlay
           loop={false}
-          source={require(`../../../../assets/animations/animation_blueey.json`)}
+          source={require('../../../../assets/animations/animation_blueey.json')}
           {...props}
         />
       );
     case 'pinkey':
-      return null;
-    //   return (
-    //     <LottieView
-    //       autoPlay
-    //       loop={false}
-    //       source={require(`../../../../assets/animations/animation_pinkey.json`)}
-    //       {...props}
-    //     />
-    //   );
+      return (
+        <LottieView
+          autoPlay
+          loop={false}
+          source={require('../../../../assets/animations/animation_pinkey.json')}
+          {...props}
+        />
+      );
     case 'greeny':
       return (
         <LottieView
           autoPlay
           loop={false}
-          source={require(`../../../../assets/animations/animation_greeny.json`)}
+          source={require('../../../../assets/animations/animation_greeny.json')}
           {...props}
         />
       );
-    case 'orangy':
-      return null;
-    //   return (
-    //     <LottieView
-    //       autoPlay
-    //       loop={false}
-    //       source={require(`../../../../assets/animations/animation_greeny_orangy.json`)}
-    //       {...props}
-    //     />
-    //   );
     case 'limey':
       return (
         <LottieView
           autoPlay
           loop={false}
-          source={require(`../../../../assets/animations/animation_limey.json`)}
+          source={require('../../../../assets/animations/animation_limey.json')}
           {...props}
         />
       );
@@ -59,15 +47,22 @@ const Animation: FC<AnimationProps> = ({...props}) => {
         <LottieView
           autoPlay
           loop={false}
-          source={require(`../../../../assets/animations/animation_sunny.json`)}
+          source={require('../../../../assets/animations/animation_sunny.json')}
           {...props}
         />
       );
+    // TODO add orangy lottie file
+    case 'orangy':
     default:
-      return null;
+      return (
+        <LottieView
+          autoPlay
+          loop={false}
+          source={require('../../../../assets/animations/animation_sunny.json')}
+          {...props}
+        />
+      );
   }
 };
 
 export default Animation;
-
-const styles = StyleSheet.create({});

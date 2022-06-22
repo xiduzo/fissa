@@ -55,13 +55,17 @@ const AddContextProvider: FC = ({children}) => {
   }, []);
 
   const goToRoom = useCallback(() => {
-    if (!canGoBack()) return;
+    if (!canGoBack()) {
+      return;
+    }
     goBack();
     goToRoom();
   }, [canGoBack, goBack]);
 
   const addToQueue = useCallback(() => {
-    if (!room?.pin) return;
+    if (!room?.pin) {
+      return;
+    }
 
     setSelectedTracks([]);
     goToRoom();
@@ -77,12 +81,12 @@ const AddContextProvider: FC = ({children}) => {
       if (response.status !== 200) {
         Notification.show({
           type: 'warning',
-          message: `Oops... something went wrong`,
+          message: 'Oops... something went wrong',
         });
         return;
       }
     });
-  }, [room?.pin, selectedTracks, goToRoom]);
+  }, [room?.pin, spotify, selectedTracks, goToRoom]);
 
   const cancel = useCallback(() => {
     goToRoom();
@@ -110,7 +114,7 @@ const AddContextProvider: FC = ({children}) => {
 
 export const useAddContext = () => useContext(RoomAddContext);
 
-export const AddContextBottomDrawer: FC = ({...props}) => {
+export const AddContextBottomDrawer: FC = () => {
   const {selectedTracks, addToQueue, reset} = useAddContext();
 
   return (

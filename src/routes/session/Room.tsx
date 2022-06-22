@@ -31,7 +31,7 @@ import {useRoomPlaylist} from './Room.PlaylistContext';
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
 
-const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
+const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
 
   const backToTopOffset = useRef(new Animated.Value(-100));
@@ -74,7 +74,9 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollHeight = event.nativeEvent.contentOffset.y;
 
-    if (scrollHeight < 500) return animateBackToTop();
+    if (scrollHeight < 500) {
+      return animateBackToTop();
+    }
 
     animateIn();
   };
@@ -97,7 +99,9 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
       };
 
       if (votes !== 0) {
-        if (votes > 0) return <ArrowUpIcon style={style} />;
+        if (votes > 0) {
+          return <ArrowUpIcon style={style} />;
+        }
         return <ArrowDownIcon style={style} />;
       }
 
@@ -121,7 +125,9 @@ const Room: FC<RoomProps> = ({route, navigation, ...props}) => {
     );
   };
 
-  if (!room?.pin) return null;
+  if (!room?.pin) {
+    return null;
+  }
 
   return (
     <View style={{flex: 1}}>

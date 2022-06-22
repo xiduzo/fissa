@@ -25,13 +25,7 @@ class Notification {
     }
   }
 
-  public show({
-    type = 'success',
-    message,
-    duration,
-    icon,
-    ...props
-  }: ShowProps) {
+  public show({type = 'success', message, duration, icon}: ShowProps) {
     const text2 = icon ?? this.defaultIcon(type);
     const visibilityTime = duration ?? ToastAndroid.SHORT;
 

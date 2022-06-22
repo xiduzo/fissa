@@ -3,7 +3,6 @@ import React, {FC, useState} from 'react';
 import {StyleSheet, TouchableHighlight, View} from 'react-native';
 import OnboardingSwiper from 'react-native-onboarding-swiper';
 import Button from '../components/atoms/Button';
-import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
 import ArrowRightIcon from '../components/atoms/icons/ArrowRightIcon';
 import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';

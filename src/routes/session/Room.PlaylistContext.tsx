@@ -8,10 +8,10 @@ import React, {
   useState,
 } from 'react';
 import {AppState} from 'react-native';
+import Config from 'react-native-config';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
-import Config from 'react-native-config';
 
 interface ActiveTrack {
   is_playing: boolean;
@@ -46,36 +46,42 @@ const PlaylistContextProvider: FC = ({children}) => {
   const [tracks, setTracks] = useState(initialState.tracks);
   const [room, setRoom] = useState(initialState.room);
   const [activeTrack, setActiveTrack] = useState<ActiveTrack>();
-  const [pin, setStatePin] = useState('');
+  const [pin, setPin] = useState('');
   const {spotify} = useSpotify();
-
-  const setPin = useCallback(setStatePin, []);
 
   const fetchTracks = useCallback(
     async (newTracks: SpotifyApi.PlaylistTrackObject[], offset = 0) => {
-      if (!room?.playlistId) return;
+      if (!room?.playlistId) {
+        return;
+      }
       spotify.getPlaylistTracks(room?.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
-        if (!result.next) return setTracks(newTracks);
+        if (!result.next) {
+          return setTracks(newTracks);
+        }
         fetchTracks(newTracks, newTracks.length);
       });
     },
-    [room?.playlistId, spotify.getPlaylist, spotify.getPlaylistTracks],
+    [room?.playlistId, spotify],
   );
 
   useEffect(() => {
-    if (!room?.playlistId) return;
+    if (!room?.playlistId) {
+      return;
+    }
     fetchTracks([]);
   }, [fetchTracks, room?.playlistId]);
 
   useEffect(() => {
-    if (!pin) return;
+    if (!pin) {
+      return;
+    }
 
     request('POST', '/room/join', {pin}).then(async response => {
       if (response.status === 404) {
         Notification.show({
           type: 'warning',
-          message: `The sessions you are trying to join does not exist`,
+          message: 'The sessions you are trying to join does not exist',
         });
         return;
       }
@@ -84,24 +90,26 @@ const PlaylistContextProvider: FC = ({children}) => {
         console.warn(response);
         Notification.show({
           type: 'warning',
-          message: `Oops... something went wrong`,
+          message: 'Oops... something went wrong',
         });
         return;
       }
 
-      const room = await response.json();
+      const newRoom = await response.json();
 
       Notification.show({
         icon: '🪩',
         message: `You've joined ${pin}, add some of your favorite tracks to keep the party going!`,
       });
 
-      setRoom(room);
+      setRoom(newRoom);
     });
   }, [pin, room?.playlistId]);
 
   useEffect(() => {
-    if (!pin) return;
+    if (!pin) {
+      return;
+    }
     const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
       port: 9001,
       protocol: 'mqtt',
@@ -141,7 +149,9 @@ const PlaylistContextProvider: FC = ({children}) => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', () => {
-      if (AppState.currentState !== 'active') return;
+      if (AppState.currentState !== 'active') {
+        return;
+      }
       fetchTracks([]);
     });
 
@@ -163,18 +173,21 @@ const PlaylistContextProvider: FC = ({children}) => {
 
 export const useRoomPlaylist = (pin?: string) => {
   const context = useContext(RoomPlaylistContext);
-  if (!context)
+  if (!context) {
     throw new Error(
       'useRoomPlaylist must be used within a RoomPlaylistContext',
     );
+  }
 
   useEffect(() => {
-    if (pin) context.setPin(pin);
+    if (pin) {
+      context.setPin(pin);
+    }
 
     return () => {
       context.setPin('');
     };
-  }, [context.setPin, pin]);
+  }, [context, pin]);
 
   return {
     tracks: context.tracks,

@@ -3,7 +3,6 @@ import {
   Animated,
   RegisteredStyle,
   StyleSheet,
-  Text,
   TextProps,
   TextStyle,
 } from 'react-native';

@@ -8,10 +8,8 @@ import Typography from '../components/atoms/Typography';
 import {Color} from '../types/Color';
 
 const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
-  back,
   options,
   navigation,
-  ...props
 }) => {
   const backAnimation = useRef(new Animated.Value(0));
   const animateTitle = useRef(new Animated.Value(-80));
@@ -19,7 +17,9 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   const canGoBack = navigation.canGoBack();
 
   const goBack = () => {
-    if (!canGoBack) return;
+    if (!canGoBack) {
+      return;
+    }
     navigation.goBack();
   };
 
@@ -83,7 +83,7 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
       {options.headerRight ? (
         options.headerRight({canGoBack})
       ) : (
-        <View style={{width: 24}}></View>
+        <View style={{width: 24}} />
       )}
     </View>
   );

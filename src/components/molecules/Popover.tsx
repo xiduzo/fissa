@@ -14,7 +14,6 @@ import BottomDrawer from '../atoms/BottomDrawer';
 
 interface PopOverProps extends ModalProps {
   back?: () => void;
-  backdrop?: boolean;
 }
 
 const Popover: FC<PopOverProps> = ({
@@ -22,7 +21,6 @@ const Popover: FC<PopOverProps> = ({
   style,
   onRequestClose,
   back,
-  backdrop = true,
   ...props
 }) => {
   const fadeAnim = useRef(new Animated.Value(0));

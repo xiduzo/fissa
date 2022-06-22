@@ -117,7 +117,9 @@ const SpotifyProvider: FC = ({children}) => {
         refresh(tokens);
 
         subscription = AppState.addEventListener('change', () => {
-          if (AppState.currentState !== 'active') return;
+          if (AppState.currentState !== 'active') {
+            return;
+          }
           refresh(tokens);
         });
 

@@ -1,10 +1,7 @@
 import React, {FC} from 'react';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
-import ListItem, {ListItemProps} from './ListItem';
-import {Color} from '../../types/Color';
-import {View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import ProgressBar from '../atoms/ProgressBar';
+import ListItem, {ListItemProps} from './ListItem';
 
 interface TrackProps extends Partial<ListItemProps> {
   track?: SpotifyApi.TrackObjectFull;
@@ -12,7 +9,9 @@ interface TrackProps extends Partial<ListItemProps> {
 }
 
 const Track: FC<TrackProps> = ({track, progressPercentage, ...props}) => {
-  if (!track) return null;
+  if (!track) {
+    return null;
+  }
 
   return (
     <ListItem
