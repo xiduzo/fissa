@@ -24,6 +24,8 @@ import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
+import {request} from '../../lib/utils/api';
+import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from './Room.PlaylistContext';
@@ -37,7 +39,9 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const backToTopOffset = useRef(new Animated.Value(-100));
   const [addingTracks, setAddingTracks] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
-  const {tracks, room, activeTrack} = useRoomPlaylist(pin);
+  const {tracks, room, votes, activeTrack} = useRoomPlaylist(pin);
+
+  const {spotify} = useSpotify();
 
   const activeTrackIndex = useMemo(() => {
     return activeTrack?.currentIndex ?? -1;
@@ -100,14 +104,16 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
   ) => {
     const track = render.item.track as SpotifyApi.TrackObjectFull;
+    const trackVotes = votes[track.uri];
+    const count = trackVotes?.total ?? 0;
 
-    const trackEndIcon = (votes: number): JSX.Element => {
+    const trackEndIcon = (_votes: number): JSX.Element => {
       const style: StyleProp<ImageStyle> = {
-        tintColor: votes !== 0 ? Color.main : Color.light,
+        tintColor: _votes !== 0 ? Color.main : Color.light,
       };
 
-      if (votes !== 0) {
-        if (votes > 0) {
+      if (_votes !== 0) {
+        if (_votes > 0) {
           return <ArrowUpIcon style={style} />;
         }
         return <ArrowDownIcon style={style} />;
@@ -123,14 +129,25 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
         end={
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Typography variant="bodyM" style={{marginRight: 4}}>
-              {5}
-            </Typography>
-            {trackEndIcon(5)}
+            {count !== 0 && (
+              <Typography variant="bodyM" style={{marginRight: 4}}>
+                {count}
+              </Typography>
+            )}
+            {trackEndIcon(count)}
           </View>
         }
       />
     );
+  };
+
+  const castVote = (state: 'up' | 'down') => () => {
+    request('POST', '/room/vote', {
+      state,
+      accessToken: spotify.getAccessToken(),
+      pin,
+      trackUri: selectedTrack?.uri,
+    }).finally(() => setSelectedTrack(undefined));
   };
 
   if (!room?.pin) {
@@ -153,6 +170,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
                 {pin}
               </Typography>
             </View>
+            {activeTrackIndex < 0 && <Typography>Loading....</Typography>}
             <Track
               imageStyle={{width: 125, height: 125}}
               track={
@@ -234,6 +252,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <Action
           title="Up vote song"
           inverted
+          onPress={castVote('up')}
           active
           icon={<ArrowUpIcon />}
           subtitle="And it will move up in the queue"
@@ -241,6 +260,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <Action
           title="Down vote song"
           inverted
+          onPress={castVote('down')}
           icon={<ArrowDownIcon style={{tintColor: Color.main}} />}
           subtitle="And it will move down in the queue"
         />

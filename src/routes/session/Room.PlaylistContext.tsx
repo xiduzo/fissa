@@ -23,19 +23,25 @@ interface ActiveTrack {
 
 interface Room {
   playlistId: string;
-  currentIndex: number;
   pin: string;
+}
+
+interface Vote {
+  trackId: string;
+  total: number;
 }
 
 interface RoomPlaylistContextState {
   tracks: SpotifyApi.PlaylistTrackObject[];
   room?: Room;
+  votes: {[key: string]: Vote};
   activeTrack?: ActiveTrack;
   setPin: (pin: string) => void;
 }
 
 const initialState: RoomPlaylistContextState = {
   tracks: [],
+  votes: {},
   setPin: () => {},
 };
 
@@ -44,6 +50,7 @@ const RoomPlaylistContext =
 
 const PlaylistContextProvider: FC = ({children}) => {
   const [tracks, setTracks] = useState(initialState.tracks);
+  const [votes, setVotes] = useState(initialState.votes);
   const [room, setRoom] = useState(initialState.room);
   const [activeTrack, setActiveTrack] = useState<ActiveTrack>();
   const [pin, setPin] = useState('');
@@ -115,12 +122,14 @@ const PlaylistContextProvider: FC = ({children}) => {
       protocol: 'mqtt',
       username: Config.MQTT_USER,
       password: Config.MQTT_PASSWORD,
+      resubscribe: true,
       clientId: 'fissa_' + Math.random().toString(16).substr(2, 8),
     });
 
     mqttClient.on('connect', () => {
       const topics = [
         `fissa/room/${pin}`,
+        `fissa/room/${pin}/votes`,
         `fissa/room/${pin}/tracks/added`,
         `fissa/room/${pin}/tracks/active`,
       ];
@@ -129,22 +138,32 @@ const PlaylistContextProvider: FC = ({children}) => {
 
     mqttClient.on('error', console.error);
 
-    mqttClient.on('message', (topic, payload) => {
+    mqttClient.on('message', (topic, message) => {
+      // TODO: validate message to expected format?
+      console.log(message);
+      const payload = JSON.parse(message.toString());
+      console.log(payload);
       switch (topic) {
         case `fissa/room/${pin}/tracks/active`:
-          const _track = JSON.parse(payload.toString()) as ActiveTrack;
-          setActiveTrack(_track);
+          setActiveTrack(payload as ActiveTrack);
           break;
         case `fissa/room/${pin}`:
           break;
         case `fissa/room/${pin}/tracks/added`:
           fetchTracks([]);
           break;
+        case `fissa/room/${pin}/votes`:
+          setVotes(payload as {[key: string]: Vote});
+          fetchTracks([]); // We refetch because playlist might be updated
+          break;
+        default:
+          console.log(topic, payload);
+          break;
       }
     });
 
     return () => {
-      mqttClient.end();
+      mqttClient.end(true);
     };
   }, [pin, fetchTracks]);
 
@@ -165,6 +184,7 @@ const PlaylistContextProvider: FC = ({children}) => {
         tracks,
         activeTrack,
         room,
+        votes,
         setPin,
       }}>
       {children}
@@ -194,6 +214,7 @@ export const useRoomPlaylist = (pin?: string) => {
     tracks: context.tracks,
     room: context.room,
     activeTrack: context.activeTrack,
+    votes: context.votes,
   };
 };
 

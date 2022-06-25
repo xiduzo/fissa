@@ -47,52 +47,60 @@ const authConfig: AuthConfiguration = {
     tokenEndpoint: BASE_TOKEN_ENDPOINT,
   },
 };
+type Tokens = {
+  refreshToken: string;
+  access_token: string;
+};
+
 const SpotifyProvider: FC = ({children}) => {
   const spotifyApi = useRef(initialState.spotify);
 
+  const spotifyAuth = useCallback(async () => {
+    const result = await authorize(authConfig);
+
+    spotifyApi.current.setAccessToken(result.accessToken);
+    EncryptedStorage.setItem('accessToken', JSON.stringify(result));
+  }, []);
+
   const refresh = useCallback(
-    async ({
-      refreshToken,
-      access_token,
-    }: {
-      refreshToken: string;
-      access_token: string;
-    }) => {
-      const result = await spotifyApiRefresh(
-        {
-          ...authConfig,
-          serviceConfiguration: {
-            ...authConfig.serviceConfiguration,
-            tokenEndpoint: BASE_TOKEN_ENDPOINT + 'refresh',
+    async ({refreshToken, access_token}: Tokens) => {
+      try {
+        const result = await spotifyApiRefresh(
+          {
+            ...authConfig,
+            serviceConfiguration: {
+              ...authConfig.serviceConfiguration,
+              tokenEndpoint: BASE_TOKEN_ENDPOINT + 'refresh',
+            },
+            additionalParameters: {
+              access_token,
+            },
           },
-          additionalParameters: {
-            access_token,
+          {
+            refreshToken,
           },
-        },
-        {
-          refreshToken,
-        },
-      );
+        );
 
-      spotifyApi.current.setAccessToken(result.accessToken);
-      EncryptedStorage.setItem(
-        'accessToken',
-        JSON.stringify({
-          ...result,
-          refreshToken, // keep the refresh token in the encrypted storage
-        }),
-      );
+        spotifyApi.current.setAccessToken(result.accessToken);
+        EncryptedStorage.setItem(
+          'accessToken',
+          JSON.stringify({
+            ...result,
+            refreshToken, // keep the refresh token in the encrypted storage
+          }),
+        );
 
-      console.log(result.accessToken);
-
-      setTimeout(() => {
-        refresh({
-          refreshToken,
-          access_token: result.accessToken,
-        });
-      }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60_000));
+        setTimeout(() => {
+          refresh({
+            refreshToken,
+            access_token: result.accessToken,
+          });
+        }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60_000));
+      } catch (e) {
+        await spotifyAuth();
+      }
     },
-    [],
+    [spotifyAuth],
   );
 
   useEffect(() => {
@@ -103,6 +111,7 @@ const SpotifyProvider: FC = ({children}) => {
         item ?? JSON.stringify(''),
       ) as AuthorizeResult;
 
+      // TODO: if access token is invalid, just auth
       if (accessToken && refreshToken) {
         // Current token is still valid, lets use it while it lasts
         if (new Date() < new Date(accessTokenExpirationDate)) {
@@ -125,10 +134,8 @@ const SpotifyProvider: FC = ({children}) => {
 
         return;
       }
-      const result = await authorize(authConfig);
 
-      spotifyApi.current.setAccessToken(result.accessToken);
-      EncryptedStorage.setItem('accessToken', JSON.stringify(result));
+      await spotifyAuth();
     };
 
     const removeSubscription = () => subscription.remove();
@@ -136,11 +143,11 @@ const SpotifyProvider: FC = ({children}) => {
     try {
       auth();
     } catch (e) {
-      console.error(e);
+      console.error('error', e);
     }
 
     return removeSubscription;
-  }, [refresh]);
+  }, [refresh, spotifyAuth]);
 
   return (
     <SpotifyContext.Provider

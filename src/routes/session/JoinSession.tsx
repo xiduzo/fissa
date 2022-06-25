@@ -92,7 +92,6 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   }, [keys]);
 
   useEffect(() => {
-    console.log(pin);
     if (pin.includes('')) {
       return;
     }
