@@ -44,11 +44,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {spotify} = useSpotify();
 
   const activeTrackIndex = useMemo(() => {
-    return activeTrack?.currentIndex ?? -1;
-  }, [activeTrack]);
+    return activeTrack?.currentIndex ?? room?.currentIndex ?? -1;
+  }, [activeTrack, room]);
 
-  const tracksToShow = useMemo(() => {
-    return tracks.slice(1 + activeTrackIndex, tracks.length);
+  const queue = useMemo(() => {
+    return tracks.slice(activeTrackIndex + 1, tracks.length);
   }, [tracks, activeTrackIndex]);
 
   const [selectedTrack, setSelectedTrack] =
@@ -104,6 +104,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
   ) => {
     const track = render.item.track as SpotifyApi.TrackObjectFull;
+    // console.log(votes, track.uri);
     const trackVotes = votes[track.uri];
     const count = trackVotes?.total ?? 0;
 
@@ -159,16 +160,28 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       <VirtualizedList<SpotifyApi.PlaylistTrackObject>
         style={styles.container}
         ref={scrollRef}
-        ListFooterComponent={<View style={{paddingBottom: 100}} />}
+        ListFooterComponent={<View style={{paddingBottom: 200}} />}
         ListHeaderComponent={
           <>
             <View style={styles.header}>
               <Typography variant="h2">Now Playing</Typography>
-              <Typography
-                variant="bodyM"
-                onPress={() => setShowRoomDetails(true)}>
-                {pin}
-              </Typography>
+              <LinearGradient
+                {...Color.gradient}
+                style={{
+                  borderRadius: 6,
+                }}>
+                <Typography
+                  variant="bodyM"
+                  style={{
+                    color: Color.dark,
+                    fontWeight: 'bold',
+                    paddingHorizontal: 4,
+                    paddingVertical: 2,
+                  }}
+                  onPress={() => setShowRoomDetails(true)}>
+                  {pin}
+                </Typography>
+              </LinearGradient>
             </View>
             {activeTrackIndex < 0 && <Typography>Loading....</Typography>}
             <Track
@@ -181,18 +194,18 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
-              <Typography variant="h2" style={{fontWeight: '300'}}>
-                ({Math.max(0, tracksToShow.length)})
+              <Typography variant="bodyM" style={{opacity: 0.6}}>
+                {Math.max(0, queue.length)} songs
               </Typography>
             </View>
           </>
         }
-        data={tracksToShow}
+        data={queue}
         initialNumToRender={5}
         scrollEventThrottle={300}
         onScroll={scroll}
         renderItem={renderItem}
-        getItemCount={() => tracksToShow.length}
+        getItemCount={() => queue.length}
         getItem={(data, index) => data[index]}
         keyExtractor={(item, index) => item.track.id + index}
       />
@@ -309,6 +322,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginTop: 38,
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   gradient: {
     position: 'absolute',

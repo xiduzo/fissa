@@ -39,8 +39,8 @@ const RoomAddContext = createContext<RoomAddContextState>(initialState);
 
 const AddContextProvider: FC = ({children}) => {
   const {goBack, canGoBack} = useNavigation();
-  const {spotify} = useSpotify();
   const {room} = useRoomPlaylist();
+  const {spotify} = useSpotify();
 
   const [selectedTracks, setSelectedTracks] = useState<string[]>(
     initialState.selectedTracks,

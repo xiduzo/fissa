@@ -2,5 +2,6 @@
   "explorer.fileNesting.patterns": {
     "README.md": "babel.config.js, react-native.config.js, .gitignore, .prettierrc.js, tsconfig.json, .ruby-version, babel-config.json, Gemfile, metro.config.js, .eslintrc.js, .buckconfig, .watchmanconfig",
     "App.tsx": "app.json, index.js"
-  }
+  },
+  "cSpell.words": ["fissa"]
 }

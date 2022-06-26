@@ -24,6 +24,7 @@ interface ActiveTrack {
 interface Room {
   playlistId: string;
   pin: string;
+  currentIndex: number;
 }
 
 interface Vote {
@@ -140,9 +141,8 @@ const PlaylistContextProvider: FC = ({children}) => {
 
     mqttClient.on('message', (topic, message) => {
       // TODO: validate message to expected format?
-      console.log(message);
       const payload = JSON.parse(message.toString());
-      console.log(payload);
+      console.log('payload', payload);
       switch (topic) {
         case `fissa/room/${pin}/tracks/active`:
           setActiveTrack(payload as ActiveTrack);
@@ -150,6 +150,7 @@ const PlaylistContextProvider: FC = ({children}) => {
         case `fissa/room/${pin}`:
           break;
         case `fissa/room/${pin}/tracks/added`:
+          console.log('tracks added');
           fetchTracks([]);
           break;
         case `fissa/room/${pin}/votes`:

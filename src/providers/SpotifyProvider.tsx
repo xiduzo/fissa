@@ -97,6 +97,7 @@ const SpotifyProvider: FC = ({children}) => {
           });
         }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60_000));
       } catch (e) {
+        console.log(e);
         await spotifyAuth();
       }
     },
@@ -134,8 +135,6 @@ const SpotifyProvider: FC = ({children}) => {
 
         return;
       }
-
-      await spotifyAuth();
     };
 
     const removeSubscription = () => subscription.remove();
@@ -147,7 +146,7 @@ const SpotifyProvider: FC = ({children}) => {
     }
 
     return removeSubscription;
-  }, [refresh, spotifyAuth]);
+  }, [refresh]);
 
   return (
     <SpotifyContext.Provider
