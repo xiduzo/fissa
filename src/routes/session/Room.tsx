@@ -41,7 +41,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const [showRoomDetails, setShowRoomDetails] = useState(false);
   const {tracks, room, votes, activeTrack} = useRoomPlaylist(pin);
 
+  const mySpotifyId = useRef('');
   const {spotify} = useSpotify();
+
+  useMemo(async () => {
+    const me = await spotify.getMe();
+
+    mySpotifyId.current = me?.id ?? '';
+  }, [spotify]);
 
   const activeTrackIndex = useMemo(() => {
     return activeTrack?.currentIndex ?? room?.currentIndex ?? -1;
@@ -104,17 +111,21 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
   ) => {
     const track = render.item.track as SpotifyApi.TrackObjectFull;
-    // console.log(votes, track.uri);
     const trackVotes = votes[track.uri];
     const count = trackVotes?.total ?? 0;
+    const byMe = trackVotes?.votes
+      .map(_track => _track.createdBy)
+      .includes(mySpotifyId.current);
 
-    const trackEndIcon = (_votes: number): JSX.Element => {
+    // const me = await spotify.getMe();
+    const trackEndIcon = (total: number): JSX.Element => {
       const style: StyleProp<ImageStyle> = {
-        tintColor: _votes !== 0 ? Color.main : Color.light,
+        tintColor: byMe ? Color.main : Color.light + '80',
       };
 
-      if (_votes !== 0) {
-        if (_votes > 0) {
+      if (total !== 0) {
+        console.log(votes, track.uri);
+        if (total > 0) {
           return <ArrowUpIcon style={style} />;
         }
         return <ArrowDownIcon style={style} />;
@@ -130,11 +141,9 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
         end={
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {count !== 0 && (
-              <Typography variant="bodyM" style={{marginRight: 4}}>
-                {count}
-              </Typography>
-            )}
+            <Typography variant="bodyM" style={{marginRight: 4}}>
+              {count}
+            </Typography>
             {trackEndIcon(count)}
           </View>
         }

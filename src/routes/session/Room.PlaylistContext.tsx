@@ -30,6 +30,10 @@ interface Room {
 interface Vote {
   trackId: string;
   total: number;
+  votes: {
+    createdBy: string;
+    state: string;
+  }[];
 }
 
 interface RoomPlaylistContextState {
