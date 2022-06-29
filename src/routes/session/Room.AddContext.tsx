@@ -67,6 +67,8 @@ const AddContextProvider: FC = ({children}) => {
       return;
     }
 
+    console.log('adding tracks for room', room.pin);
+
     setSelectedTracks([]);
     goToRoom();
 

@@ -68,8 +68,10 @@ const PlaylistContextProvider: FC = ({children}) => {
       if (!room?.playlistId) {
         return;
       }
+      console.log('fetching tracks for room', room.playlistId);
       spotify.getPlaylistTracks(room?.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
+        console.log(newTracks);
         if (!result.next) {
           return setTracks(newTracks);
         }
@@ -88,9 +90,6 @@ const PlaylistContextProvider: FC = ({children}) => {
   }, []);
 
   useEffect(() => {
-    if (!room?.playlistId) {
-      return;
-    }
     fetchTracks([]);
   }, [fetchTracks, room?.playlistId]);
 
