@@ -3,12 +3,10 @@ import React, {FC, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
-  ImageStyle,
   Linking,
   ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  StyleProp,
   StyleSheet,
   View,
   VirtualizedList,
@@ -113,26 +111,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     const track = render.item.track as SpotifyApi.TrackObjectFull;
     const trackVotes = votes[track.uri];
     const count = trackVotes?.total ?? 0;
-    const byMe = trackVotes?.votes
-      .map(_track => _track.createdBy)
-      .includes(mySpotifyId.current);
-
-    // const me = await spotify.getMe();
-    const trackEndIcon = (total: number): JSX.Element => {
-      const style: StyleProp<ImageStyle> = {
-        tintColor: byMe ? Color.main : Color.light + '80',
-      };
-
-      if (total !== 0) {
-        console.log(votes, track.uri);
-        if (total > 0) {
-          return <ArrowUpIcon style={style} />;
-        }
-        return <ArrowDownIcon style={style} />;
-      }
-
-      return <MoreIcon style={style} />;
-    };
 
     return (
       <Track
@@ -144,11 +122,30 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             <Typography variant="bodyM" style={{marginRight: 4}}>
               {count}
             </Typography>
-            {trackEndIcon(count)}
+            <MoreIcon style={{tintColor: Color.light + '80'}} />
           </View>
         }
       />
     );
+  };
+
+  const didIVoteThis = (
+    check: 'up' | 'down',
+    track?: SpotifyApi.TrackObjectFull,
+  ) => {
+    if (!track) {
+      return false;
+    }
+
+    const trackVotes = votes[track.uri];
+    const byMe = trackVotes?.votes.find(
+      _track => _track.createdBy === mySpotifyId.current,
+    );
+
+    if (!byMe) {
+      return false;
+    }
+    return byMe.state === check;
   };
 
   const castVote = (state: 'up' | 'down') => () => {
@@ -261,6 +258,21 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         </View>
       </Popover>
       <Popover
+        title={
+          <View
+            style={{
+              opacity: 0.6,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <ArrowUpIcon
+              style={{tintColor: Color.dark, transform: [{scale: 0.6}]}}
+            />
+            <Typography style={{color: Color.dark}} variant="bodyM">
+              {votes[selectedTrack?.uri ?? '']?.total ?? 0}
+            </Typography>
+          </View>
+        }
         visible={!!selectedTrack}
         onRequestClose={() => setSelectedTrack(undefined)}>
         <Track track={selectedTrack} inverted hasBorder />
@@ -275,15 +287,32 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           title="Up vote song"
           inverted
           onPress={castVote('up')}
-          active
-          icon={<ArrowUpIcon />}
+          active={didIVoteThis('up', selectedTrack)}
+          icon={
+            <ArrowUpIcon
+              style={{
+                tintColor: didIVoteThis('up', selectedTrack)
+                  ? Color.main
+                  : Color.dark + '40',
+              }}
+            />
+          }
           subtitle="And it will move up in the queue"
         />
         <Action
           title="Down vote song"
           inverted
+          active={didIVoteThis('down', selectedTrack)}
           onPress={castVote('down')}
-          icon={<ArrowDownIcon style={{tintColor: Color.main}} />}
+          icon={
+            <ArrowDownIcon
+              style={{
+                tintColor: didIVoteThis('down', selectedTrack)
+                  ? Color.main
+                  : Color.dark + '40',
+              }}
+            />
+          }
           subtitle="And it will move down in the queue"
         />
       </Popover>

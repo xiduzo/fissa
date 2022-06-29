@@ -13,14 +13,14 @@ import {Color} from '../../types/Color';
 import BottomDrawer from '../atoms/BottomDrawer';
 
 interface PopOverProps extends ModalProps {
-  back?: () => void;
+  title?: JSX.Element;
 }
 
 const Popover: FC<PopOverProps> = ({
   children,
   style,
   onRequestClose,
-  back,
+  title,
   ...props
 }) => {
   const fadeAnim = useRef(new Animated.Value(0));
@@ -61,11 +61,13 @@ const Popover: FC<PopOverProps> = ({
         onRequestClose={close}
         style={style}>
         <View style={styles.view}>
-          <View onTouchStart={touchStart} onTouchEnd={touchEnd}>
-            <BottomDrawer back={back} close={close}>
-              {children}
-            </BottomDrawer>
-          </View>
+          {
+            <View onTouchStart={touchStart} onTouchEnd={touchEnd}>
+              <BottomDrawer title={title} close={close}>
+                {children}
+              </BottomDrawer>
+            </View>
+          }
           {fadeAnim.current && (
             <Animated.View
               style={[

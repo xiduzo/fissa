@@ -6,15 +6,14 @@ import LinearGradient, {
 import {Color} from '../../types/Color';
 import IconButton from './IconButton';
 import CLoseIcon from './icons/CloseIcon';
-import QuestionMarkIcon from './icons/QuestionMarkIcon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
-  back?: () => void;
+  title?: JSX.Element;
   close?: () => void;
 }
 
 const BottomDrawer: FC<BottomDrawerProps> = ({
-  back,
+  title,
   close,
   children,
   style,
@@ -25,17 +24,16 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
         style={[
           styles.actions,
           {
-            justifyContent: back ? 'space-between' : 'flex-end',
+            justifyContent: title ? 'space-between' : 'flex-end',
+            alignItems: 'center',
           },
         ]}>
-        {back && (
-          <IconButton title="back" variant="contained">
-            <QuestionMarkIcon style={{tintColor: Color.dark}} />
-          </IconButton>
-        )}
+        {title}
         {close && (
           <IconButton title="close" onPress={close} variant="contained">
-            <CLoseIcon style={{tintColor: Color.dark}} />
+            <CLoseIcon
+              style={{tintColor: Color.dark, transform: [{scale: 0.6}]}}
+            />
           </IconButton>
         )}
       </View>
