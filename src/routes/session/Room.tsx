@@ -37,7 +37,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const backToTopOffset = useRef(new Animated.Value(-100));
   const [addingTracks, setAddingTracks] = useState(false);
   const [showRoomDetails, setShowRoomDetails] = useState(false);
-  const {tracks, room, votes, activeTrack} = useRoomPlaylist(pin);
+  const {tracks, room, votes, activeTrack, leaveRoom} = useRoomPlaylist(pin);
 
   const mySpotifyId = useRef('');
   const {spotify} = useSpotify();
@@ -109,22 +109,13 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
   ) => {
     const track = render.item.track as SpotifyApi.TrackObjectFull;
-    const trackVotes = votes[track.uri];
-    const count = trackVotes?.total ?? 0;
 
     return (
       <Track
         track={track}
         onPress={selectTrack(track)}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        end={
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Typography variant="bodyM" style={{marginRight: 4}}>
-              {count}
-            </Typography>
-            <MoreIcon style={{tintColor: Color.light + '80'}} />
-          </View>
-        }
+        end={<MoreIcon style={{tintColor: Color.light + '80'}} />}
       />
     );
   };
@@ -225,7 +216,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           title="Leave session"
           subtitle="No worries, you can always come back"
           inverted
-          onPress={() => navigation.replace('Home')}
+          onPress={() => {
+            leaveRoom();
+            setShowRoomDetails(false);
+            navigation.replace('Home');
+          }}
           icon={
             <ArrowUpIcon
               style={{
@@ -286,6 +281,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <Action
           title="Up vote song"
           inverted
+          disabled={didIVoteThis('up', selectedTrack)}
           onPress={castVote('up')}
           active={didIVoteThis('up', selectedTrack)}
           icon={
@@ -302,6 +298,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <Action
           title="Down vote song"
           inverted
+          disabled={didIVoteThis('down', selectedTrack)}
           active={didIVoteThis('down', selectedTrack)}
           onPress={castVote('down')}
           icon={

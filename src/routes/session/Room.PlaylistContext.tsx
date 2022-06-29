@@ -42,12 +42,14 @@ interface RoomPlaylistContextState {
   votes: {[key: string]: Vote};
   activeTrack?: ActiveTrack;
   setPin: (pin: string) => void;
+  leaveRoom: () => void;
 }
 
 const initialState: RoomPlaylistContextState = {
   tracks: [],
   votes: {},
   setPin: () => {},
+  leaveRoom: () => {},
 };
 
 const RoomPlaylistContext =
@@ -76,6 +78,14 @@ const PlaylistContextProvider: FC = ({children}) => {
     },
     [room?.playlistId, spotify],
   );
+
+  const leaveRoom = useCallback(() => {
+    setVotes({});
+    setTracks([]);
+    setRoom(undefined);
+    setActiveTrack(undefined);
+    setPin('');
+  }, []);
 
   useEffect(() => {
     if (!room?.playlistId) {
@@ -122,6 +132,7 @@ const PlaylistContextProvider: FC = ({children}) => {
     if (!pin) {
       return;
     }
+
     const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
       port: 9001,
       protocol: 'mqtt',
@@ -135,7 +146,7 @@ const PlaylistContextProvider: FC = ({children}) => {
       const topics = [
         `fissa/room/${pin}`,
         `fissa/room/${pin}/votes`,
-        `fissa/room/${pin}/tracks/added`,
+        `fissa/room/${pin}/tracks/reordered`,
         `fissa/room/${pin}/tracks/active`,
       ];
       mqttClient.subscribe(topics);
@@ -151,15 +162,17 @@ const PlaylistContextProvider: FC = ({children}) => {
         case `fissa/room/${pin}/tracks/active`:
           setActiveTrack(payload as ActiveTrack);
           break;
-        case `fissa/room/${pin}`:
-          break;
         case `fissa/room/${pin}/tracks/reordered`:
           console.log('tracks reordered');
-          fetchTracks([]);
+          setTimeout(() => {
+            fetchTracks([]);
+          }, 5_000); // Give spotify some time to update the playlist
           break;
         case `fissa/room/${pin}/votes`:
           setVotes(payload as {[key: string]: Vote});
           fetchTracks([]); // We refetch because playlist might be updated
+          break;
+        case `fissa/room/${pin}`:
           break;
         default:
           console.log(topic, payload);
@@ -191,6 +204,7 @@ const PlaylistContextProvider: FC = ({children}) => {
         room,
         votes,
         setPin,
+        leaveRoom,
       }}>
       {children}
     </RoomPlaylistContext.Provider>
@@ -220,6 +234,7 @@ export const useRoomPlaylist = (pin?: string) => {
     room: context.room,
     activeTrack: context.activeTrack,
     votes: context.votes,
+    leaveRoom: context.leaveRoom,
   };
 };
 

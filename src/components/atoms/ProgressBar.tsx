@@ -44,7 +44,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
     };
   }, [duration_ms, progress, isPlaying]);
 
-  if (!progress) {
+  if (progress === undefined) {
     return null;
   }
 

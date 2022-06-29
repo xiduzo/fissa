@@ -21,7 +21,11 @@ const Track: FC<TrackProps> = ({track, progressMs, isPlaying, ...props}) => {
       subtitle={track.artists.map((x: any) => x.name).join(', ')}
       extra={
         <ProgressBar
-          progress={progressMs ? progressMs / track.duration_ms : undefined}
+          progress={
+            progressMs !== undefined
+              ? progressMs / track.duration_ms
+              : undefined
+          }
           track={track}
           isPlaying={isPlaying}
           style={{marginTop: 16}}
