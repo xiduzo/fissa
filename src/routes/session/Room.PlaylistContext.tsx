@@ -165,7 +165,7 @@ const PlaylistContextProvider: FC = ({children}) => {
           console.log('tracks reordered');
           setTimeout(() => {
             fetchTracks([]);
-          }, 5_000); // Give spotify some time to update the playlist
+          }, 5000); // Give spotify some time to update the playlist
           break;
         case `fissa/room/${pin}/votes`:
           setVotes(payload as {[key: string]: Vote});

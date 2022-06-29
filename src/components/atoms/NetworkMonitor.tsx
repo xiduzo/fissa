@@ -16,7 +16,7 @@ const NetworkMonitor: FC = () => {
     Notification.show({
       type: 'warning',
       message: 'You seem to be disconnected from the internet!',
-      duration: 10_000,
+      duration: 10000,
     });
   }, [isConnected, isInternetReachable, type]);
 

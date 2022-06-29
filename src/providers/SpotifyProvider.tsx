@@ -95,7 +95,7 @@ const SpotifyProvider: FC = ({children}) => {
             refreshToken,
             access_token: result.accessToken,
           });
-        }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60_000));
+        }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60000));
       } catch (e) {
         console.log(e);
         await spotifyAuth();
