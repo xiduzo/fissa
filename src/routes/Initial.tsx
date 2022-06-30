@@ -32,7 +32,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
 
     Animated.timing(colorAnimation.current, {
       toValue: 1,
-      duration: 2_500,
+      duration: 2500,
       useNativeDriver: false,
     }).start();
   }, [navigation]);
