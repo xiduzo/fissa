@@ -1,9 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useMemo, useRef, useState} from 'react';
+import React, {FC, useCallback, useMemo, useRef} from 'react';
 import {
-  Alert,
   Animated,
-  Linking,
   ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -12,35 +10,32 @@ import {
   VirtualizedList,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Action from '../../components/atoms/Action';
 import Button from '../../components/atoms/Button';
-import Fab from '../../components/atoms/Fab';
-import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
-import MoreIcon from '../../components/atoms/icons/MoreIcon';
-import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
-import Popover from '../../components/molecules/Popover';
-import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
+import RoomAddTracksFab from './Room.AddTracksFab';
+import RoomDetails from './Room.Details';
 import {useRoomPlaylist} from './Room.PlaylistContext';
+import RoomTrack from './Room.Track';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
 
+const SCROLL_TOP_OFFSET = -100;
+
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
-
-  const backToTopOffset = useRef(new Animated.Value(-100));
-  const [addingTracks, setAddingTracks] = useState(false);
-  const [showRoomDetails, setShowRoomDetails] = useState(false);
   const {tracks, room, votes, activeTrack, leaveRoom} = useRoomPlaylist(pin);
-
-  const mySpotifyId = useRef('');
   const {spotify} = useSpotify();
+
+  const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
+  const mySpotifyId = useRef('');
+  const scrollRef =
+    useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
 
   useMemo(async () => {
     const me = await spotify.getMe();
@@ -56,17 +51,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     return tracks.slice(activeTrackIndex + 1, tracks.length);
   }, [tracks, activeTrackIndex]);
 
-  const [selectedTrack, setSelectedTrack] =
-    useState<SpotifyApi.TrackObjectFull>();
-
-  const scrollRef =
-    useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
-
   const animateBackToTop = (
     config?: Partial<Animated.SpringAnimationConfig>,
   ) => {
     Animated.spring(backToTopOffset.current, {
-      toValue: -100,
+      toValue: SCROLL_TOP_OFFSET,
       useNativeDriver: false,
       ...(config ?? {}),
     }).start();
@@ -76,17 +65,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     animateBackToTop({
       toValue: 32,
     });
-
-  const startAddingTracks = () => setAddingTracks(true);
-  const stopAddingTracks = () => setAddingTracks(false);
-  const selectTrack = (track: SpotifyApi.TrackObjectFull) => () =>
-    setSelectedTrack(track);
-
-  const openSpotify = () => Linking.openURL('https://open.spotify.com');
-  const addFromPlaylist = () => {
-    navigation.navigate('AddTracks');
-    stopAddingTracks();
-  };
 
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollHeight = event.nativeEvent.contentOffset.y;
@@ -105,48 +83,25 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     });
   };
 
-  const renderItem = (
-    render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
-  ) => {
-    const track = render.item.track as SpotifyApi.TrackObjectFull;
+  const renderTrack = useCallback(
+    (render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>) => {
+      const track = render.item.track as SpotifyApi.TrackObjectFull;
+      const trackVotes = votes[track.uri];
+      const myVote = trackVotes?.votes?.find(
+        vote => vote.createdBy === mySpotifyId.current,
+      );
 
-    return (
-      <Track
-        track={track}
-        onPress={selectTrack(track)}
-        onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        end={<MoreIcon style={{tintColor: Color.light + '80'}} />}
-      />
-    );
-  };
-
-  const didIVoteThis = (
-    check: 'up' | 'down',
-    track?: SpotifyApi.TrackObjectFull,
-  ) => {
-    if (!track) {
-      return false;
-    }
-
-    const trackVotes = votes[track.uri];
-    const byMe = trackVotes?.votes.find(
-      _track => _track.createdBy === mySpotifyId.current,
-    );
-
-    if (!byMe) {
-      return false;
-    }
-    return byMe.state === check;
-  };
-
-  const castVote = (state: 'up' | 'down') => () => {
-    request('POST', '/room/vote', {
-      state,
-      accessToken: spotify.getAccessToken(),
-      pin,
-      trackUri: selectedTrack?.uri,
-    }).finally(() => setSelectedTrack(undefined));
-  };
+      return (
+        <RoomTrack
+          track={track}
+          pin={pin}
+          totalVotes={trackVotes?.total}
+          myVote={myVote?.state}
+        />
+      );
+    },
+    [votes, pin],
+  );
 
   if (!room?.pin) {
     return null;
@@ -162,23 +117,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           <>
             <View style={styles.header}>
               <Typography variant="h2">Now Playing</Typography>
-              <LinearGradient
-                {...Color.gradient}
-                style={{
-                  borderRadius: 6,
-                }}>
-                <Typography
-                  variant="bodyM"
-                  style={{
-                    color: Color.dark,
-                    fontWeight: 'bold',
-                    paddingHorizontal: 4,
-                    paddingVertical: 2,
-                  }}
-                  onPress={() => setShowRoomDetails(true)}>
-                  {pin}
-                </Typography>
-              </LinearGradient>
+              <RoomDetails
+                pin={pin}
+                navigation={navigation}
+                leaveRoom={leaveRoom}
+              />
             </View>
             {activeTrackIndex < 0 && <Typography>Loading....</Typography>}
             <Track
@@ -201,125 +144,16 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         initialNumToRender={5}
         scrollEventThrottle={300}
         onScroll={scroll}
-        renderItem={renderItem}
+        renderItem={renderTrack}
         getItemCount={() => queue.length}
         getItem={(data, index) => data[index]}
         keyExtractor={(item, index) => item.track.id + index}
       />
-      <Popover
-        visible={!!showRoomDetails}
-        onRequestClose={() => setShowRoomDetails(false)}>
-        <Typography variant="h2" style={styles.popoverText}>
-          {pin}
-        </Typography>
-        <Action
-          title="Leave session"
-          subtitle="No worries, you can always come back"
-          inverted
-          onPress={() => {
-            leaveRoom();
-            setShowRoomDetails(false);
-            navigation.replace('Home');
-          }}
-          icon={
-            <ArrowUpIcon
-              style={{
-                tintColor: Color.main,
-              }}
-            />
-          }
-        />
-      </Popover>
-      <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
-        <Typography variant="h2" style={styles.popoverText}>
-          Add songs
-        </Typography>
-        <Typography variant="h6" style={styles.popoverText}>
-          Copy A Spotify song link or browse in your Spotify playlists
-        </Typography>
-        <View style={styles.popoverButtons}>
-          <View style={{marginBottom: 16}}>
-            <Button
-              onPress={addFromPlaylist}
-              inverted
-              title="Browse my Spotify playlists"
-            />
-          </View>
-          <Button
-            onPress={openSpotify}
-            inverted
-            title="Copy song link in Spotify"
-          />
-        </View>
-      </Popover>
-      <Popover
-        title={
-          <View
-            style={{
-              opacity: 0.6,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <ArrowUpIcon
-              style={{tintColor: Color.dark, transform: [{scale: 0.6}]}}
-            />
-            <Typography style={{color: Color.dark}} variant="bodyM">
-              {votes[selectedTrack?.uri ?? '']?.total ?? 0}
-            </Typography>
-          </View>
-        }
-        visible={!!selectedTrack}
-        onRequestClose={() => setSelectedTrack(undefined)}>
-        <Track track={selectedTrack} inverted hasBorder />
-        <View
-          style={{
-            borderBottomWidth: 2,
-            borderBottomColor: Color.dark + '10',
-            marginVertical: 16,
-          }}
-        />
-        <Action
-          title="Up vote song"
-          inverted
-          disabled={didIVoteThis('up', selectedTrack)}
-          onPress={castVote('up')}
-          active={didIVoteThis('up', selectedTrack)}
-          icon={
-            <ArrowUpIcon
-              style={{
-                tintColor: didIVoteThis('up', selectedTrack)
-                  ? Color.main
-                  : Color.dark + '40',
-              }}
-            />
-          }
-          subtitle="And it will move up in the queue"
-        />
-        <Action
-          title="Down vote song"
-          inverted
-          disabled={didIVoteThis('down', selectedTrack)}
-          active={didIVoteThis('down', selectedTrack)}
-          onPress={castVote('down')}
-          icon={
-            <ArrowDownIcon
-              style={{
-                tintColor: didIVoteThis('down', selectedTrack)
-                  ? Color.main
-                  : Color.dark + '40',
-              }}
-            />
-          }
-          subtitle="And it will move down in the queue"
-        />
-      </Popover>
       <LinearGradient
         colors={[Color.dark + '00', Color.dark]}
         style={styles.gradient}
       />
-      <Fab title="Add songs" onPress={startAddingTracks}>
-        <PlusIcons style={{tintColor: Color.dark}} />
-      </Fab>
+      <RoomAddTracksFab navigation={navigation} />
       <Animated.View
         style={[
           styles.backToTop,
@@ -373,12 +207,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-  },
-  popoverText: {
-    color: Color.dark,
-    textAlign: 'center',
-  },
-  popoverButtons: {
-    marginTop: 32,
   },
 });

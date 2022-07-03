@@ -27,12 +27,12 @@ interface Room {
   currentIndex: number;
 }
 
-interface Vote {
+export interface Vote {
   trackId: string;
   total: number;
   votes: {
     createdBy: string;
-    state: string;
+    state: 'up' | 'down';
   }[];
 }
 
