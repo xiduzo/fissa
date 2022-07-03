@@ -123,7 +123,12 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
                 leaveRoom={leaveRoom}
               />
             </View>
-            {activeTrackIndex < 0 && <Typography>Loading....</Typography>}
+            {activeTrackIndex < 0 && (
+              <Typography variant="bodyL">
+                It seems like the owner of this room is not playing this
+                playlist anymore
+              </Typography>
+            )}
             <Track
               imageStyle={{width: 125, height: 125}}
               track={
