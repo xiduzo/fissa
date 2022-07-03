@@ -10,19 +10,21 @@ import {RootStackParamList} from './Routes';
 interface InitialProps
   extends NativeStackScreenProps<RootStackParamList, 'Initial'> {}
 
+const CURRENT_ONBOARDING_VERSION = '1.0.0';
+
 const Initial: FC<InitialProps> = ({navigation}) => {
   const colorAnimation = useRef(new Animated.Value(0));
 
   useMemo(async () => {
     const onboardingVersion = await EncryptedStorage.getItem('onboarding');
-    await EncryptedStorage.setItem('onboarding', '1');
+    await EncryptedStorage.setItem('onboarding', CURRENT_ONBOARDING_VERSION);
 
     colorAnimation.current.addListener(response => {
       if (response.value < 1) {
         return;
       }
 
-      if (onboardingVersion !== '1') {
+      if (onboardingVersion !== CURRENT_ONBOARDING_VERSION) {
         navigation.replace('Onboarding');
         return;
       }

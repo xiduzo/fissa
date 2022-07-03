@@ -85,7 +85,5 @@ const limey: Theme = {
 const colors = [sunny, limey, blueey, pinkey, orangy, greeny];
 
 const {floor, random} = Math;
-console.log(colors, floor, random);
 
-export const Color = pinkey;
-// export const Color: Theme = colors[floor(random() * colors.length)];
+export const Color: Theme = colors[floor(random() * colors.length)];
