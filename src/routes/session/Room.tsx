@@ -123,10 +123,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
                 leaveRoom={leaveRoom}
               />
             </View>
-            {activeTrackIndex < 0 && (
+            {!activeTrack?.is_in_playlist && (
               <Typography variant="bodyL">
-                It seems like the owner of this room is not playing this
-                playlist anymore
+                This playlist is not being played anymore
+              </Typography>
+            )}
+            {activeTrackIndex < -1 && (
+              <Typography variant="bodyL">
+                Nothing seems to be playing
               </Typography>
             )}
             <Track

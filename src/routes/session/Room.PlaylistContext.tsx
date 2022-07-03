@@ -17,6 +17,7 @@ interface ActiveTrack {
   is_playing: boolean;
   progress_ms: number;
   currentIndex: number;
+  is_in_playlist: boolean;
   // Id of playlist
   id: string;
 }
