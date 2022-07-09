@@ -35,21 +35,21 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
           Add songs
         </Typography>
         <Typography variant="h6" style={styles.popoverText}>
-          Copy A Spotify song link or browse in your Spotify playlists
+          And keep this fissa going!
         </Typography>
         <View style={styles.popoverButtons}>
           <View style={{marginBottom: 16}}>
             <Button
               onPress={addFromPlaylist}
               inverted
-              title="Browse my Spotify playlists"
+              title="From my Spotify playlists"
             />
           </View>
-          <Button
+          {/* <Button
             onPress={openSpotify}
             inverted
             title="Copy song link in Spotify"
-          />
+          /> */}
         </View>
       </Popover>
     </View>

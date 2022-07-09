@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useCallback, useMemo, useRef} from 'react';
+import React, {FC, useCallback, useEffect, useMemo, useRef} from 'react';
 import {
   Animated,
   ListRenderItemInfo,
@@ -16,6 +16,7 @@ import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
+import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';
@@ -31,6 +32,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
   const {tracks, room, votes, activeTrack, leaveRoom} = useRoomPlaylist(pin);
   const {spotify} = useSpotify();
+  console.log(room);
 
   const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
   const mySpotifyId = useRef('');
@@ -103,6 +105,17 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     [votes, pin],
   );
 
+  useEffect(() => {
+    if (!activeTrack?.is_in_playlist) {
+      return;
+    }
+
+    Notification.show({
+      message: 'This fissa is over. Poke your host to start from the top.',
+      icon: '🔝',
+    });
+  }, [activeTrack?.is_in_playlist]);
+
   if (!room?.pin) {
     return null;
   }
@@ -112,26 +125,38 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       <VirtualizedList<SpotifyApi.PlaylistTrackObject>
         style={styles.container}
         ref={scrollRef}
-        ListFooterComponent={<View style={{paddingBottom: 200}} />}
+        ListFooterComponent={
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 150,
+            }}>
+            {tracks.length <= 0 && (
+              <Typography>
+                Add some of your favorite songs to start this fissa!
+              </Typography>
+            )}
+          </View>
+        }
         ListHeaderComponent={
           <>
             <View style={styles.header}>
               <Typography variant="h2">Now Playing</Typography>
               <RoomDetails
                 pin={pin}
+                playlistId={room.playlistId}
                 navigation={navigation}
                 leaveRoom={leaveRoom}
               />
             </View>
             {!activeTrack?.is_in_playlist && (
-              <Typography variant="bodyL">
-                This playlist is not being played anymore
+              <Typography>
+                This fissa is over. Poke your host to start from the top.
               </Typography>
             )}
             {activeTrackIndex < -1 && (
-              <Typography variant="bodyL">
-                Nothing seems to be playing
-              </Typography>
+              <Typography>Nothing seems to be playing</Typography>
             )}
             <Track
               imageStyle={{width: 125, height: 125}}

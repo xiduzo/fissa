@@ -121,7 +121,7 @@ const PlaylistContextProvider: FC = ({children}) => {
 
       Notification.show({
         icon: '🪩',
-        message: `You've joined ${pin}, add some of your favorite tracks to keep the party going!`,
+        message: `You've joined ${pin}, add some of your favorite songs to keep the party going!`,
       });
 
       setRoom(newRoom);

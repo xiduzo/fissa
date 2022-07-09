@@ -1,6 +1,6 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {FC, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Linking, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -11,11 +11,17 @@ import {RootStackParamList} from '../Routes';
 
 interface RoomDetailsProps {
   pin: string;
+  playlistId: string;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Room', undefined>;
   leaveRoom: () => void;
 }
 
-const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation, leaveRoom}) => {
+const RoomDetails: FC<RoomDetailsProps> = ({
+  pin,
+  playlistId,
+  navigation,
+  leaveRoom,
+}) => {
   const [showRoomDetails, setShowRoomDetails] = useState(false);
 
   return (
@@ -51,6 +57,21 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation, leaveRoom}) => {
             leaveRoom();
             setShowRoomDetails(false);
             navigation.replace('Home');
+          }}
+          icon={
+            <ArrowUpIcon
+              style={{
+                tintColor: Color.dark + '40',
+              }}
+            />
+          }
+        />
+        <Action
+          title="Open in Spotify"
+          subtitle="Check the complete playlist"
+          inverted
+          onPress={() => {
+            Linking.openURL('https://open.spotify.com/playlist/' + playlistId);
           }}
           icon={
             <ArrowUpIcon
