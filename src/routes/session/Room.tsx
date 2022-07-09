@@ -93,12 +93,15 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         vote => vote.createdBy === mySpotifyId.current,
       );
 
+      console.log(render.index, track.name);
+
       return (
         <RoomTrack
           track={track}
           pin={pin}
           totalVotes={trackVotes?.total}
           myVote={myVote?.state}
+          isUpcomingTrack={render.index === 0}
         />
       );
     },
@@ -106,7 +109,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   );
 
   useEffect(() => {
-    if (!activeTrack?.is_in_playlist) {
+    if (activeTrack?.is_in_playlist) {
       return;
     }
 

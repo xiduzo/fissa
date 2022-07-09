@@ -38,7 +38,10 @@ const Action: FC<ActionProps> = ({
           ]}>
           {icon}
         </View>
-        <View>
+        <View
+          style={{
+            opacity: props.disabled ? 0.3 : 1,
+          }}>
           <Typography
             variant="h4"
             style={{

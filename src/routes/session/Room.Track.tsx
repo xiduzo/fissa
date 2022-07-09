@@ -10,18 +10,21 @@ import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
+import Notification from '../../utils/Notification';
 
 interface RoomTrackProps {
   track: SpotifyApi.TrackObjectFull;
   totalVotes?: number;
   myVote?: 'up' | 'down';
   pin: string;
+  isUpcomingTrack?: boolean;
 }
 
 const RoomTrack: FC<RoomTrackProps> = ({
   track,
   myVote,
   pin,
+  isUpcomingTrack,
   totalVotes = 0,
 }) => {
   const [selected, setSelected] = useState(false);
@@ -35,7 +38,13 @@ const RoomTrack: FC<RoomTrackProps> = ({
       accessToken: spotify.getAccessToken(),
       pin,
       trackUri: track.uri,
-    }).finally(() => setSelected(false));
+    }).finally(() => {
+      setSelected(false);
+      Notification.show({
+        icon: state === 'up' ? '⬆️' : '⬇️',
+        message: 'Your vote has been cast!',
+      });
+    });
   };
 
   return (
@@ -75,7 +84,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Up vote song"
           inverted
-          disabled={myVote === 'up'}
+          disabled={myVote === 'up' || isUpcomingTrack}
           onPress={castVote('up')}
           active={myVote === 'up'}
           icon={
@@ -90,7 +99,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Down vote song"
           inverted
-          disabled={myVote === 'down'}
+          disabled={myVote === 'down' || isUpcomingTrack}
           active={myVote === 'down'}
           onPress={castVote('down')}
           icon={
