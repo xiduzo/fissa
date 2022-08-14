@@ -75,7 +75,7 @@ const AddContextProvider: FC = ({children}) => {
     Notification.show({
       message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
     });
-    request('POST', '/room/tracks', {
+    request('POST', '/room/track', {
       trackUris: selectedTracks,
       pin: room.pin,
       accessToken: spotify.getAccessToken(),

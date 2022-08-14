@@ -99,7 +99,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     keys.forEach(key => key.current?.blur());
 
     const joinedPin = pin.join('');
-    request('POST', '/room/join', {pin: joinedPin}).then(async response => {
+    request('GET', '/room', {pin: joinedPin}).then(async response => {
       if (response.status === 404) {
         reset();
         return Notification.show({

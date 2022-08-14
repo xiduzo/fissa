@@ -99,7 +99,7 @@ const PlaylistContextProvider: FC = ({children}) => {
       return;
     }
 
-    request('POST', '/room/join', {pin}).then(async response => {
+    request('GET', '/room', {pin}).then(async response => {
       if (response.status === 404) {
         Notification.show({
           type: 'warning',

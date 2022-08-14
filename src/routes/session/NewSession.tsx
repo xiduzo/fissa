@@ -16,7 +16,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const [waitForResponse, setWaitForResponse] = useState(false);
   const startFromBlank = () => {
     setWaitForResponse(true);
-    request('POST', '/room/create', {
+    request('POST', '/room', {
       accessToken: spotify.getAccessToken(),
     })
       .then(async response => {

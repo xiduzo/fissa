@@ -35,7 +35,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       return;
     }
     setWaitForResponse(true);
-    request('POST', '/room/create', {
+    request('POST', '/room', {
       accessToken: spotify.getAccessToken(),
       playlistId: selectedPlaylist.id,
     })

@@ -41,7 +41,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
     }).finally(() => {
       setSelected(false);
       Notification.show({
-        icon: state === 'up' ? '⬆️' : '⬇️',
+        icon: state === 'up' ? '🫴' : '🫳',
         message: 'Your vote has been cast!',
       });
     });

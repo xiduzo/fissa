@@ -108,17 +108,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     [votes, pin],
   );
 
-  useEffect(() => {
-    if (activeTrack?.is_in_playlist) {
-      return;
-    }
-
-    Notification.show({
-      message: 'This fissa is over. Poke your host to start from the top.',
-      icon: '🔝',
-    });
-  }, [activeTrack?.is_in_playlist]);
-
   if (!room?.pin) {
     return null;
   }
