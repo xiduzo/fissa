@@ -20,9 +20,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
     await EncryptedStorage.setItem('onboarding', CURRENT_ONBOARDING_VERSION);
 
     colorAnimation.current.addListener(response => {
-      if (response.value < 1) {
-        return;
-      }
+      if (response.value < 1) return;
 
       if (onboardingVersion !== CURRENT_ONBOARDING_VERSION) {
         navigation.replace('Onboarding');

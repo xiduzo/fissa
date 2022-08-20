@@ -1,6 +1,15 @@
+import Notification from '../../utils/Notification';
+
 type Method = 'GET' | 'POST';
 
-export const request = async (method: Method, route: string, body?: any) => {
+export const request = async <T>(
+  method: Method,
+  route: string,
+  body?: any,
+): Promise<{
+  content: T;
+  status: number;
+}> => {
   const options: RequestInit = {
     method,
     headers: {
@@ -12,5 +21,21 @@ export const request = async (method: Method, route: string, body?: any) => {
     options.body = JSON.stringify(body);
   }
 
-  return fetch('https://server-xiduzo.vercel.app/api' + route, options);
+  const response = await fetch(
+    'https://server-xiduzo.vercel.app/api' + route,
+    options,
+  );
+
+  if (response.status !== 200) {
+    Notification.show({
+      type: 'warning',
+      message: 'Oops... something went wrong',
+    });
+    return Promise.reject(response.status);
+  }
+
+  return Promise.resolve({
+    content: response.json() as unknown as T,
+    status: response.status,
+  });
 };

@@ -7,6 +7,7 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
+import {Room} from './Room.PlaylistContext';
 
 interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
@@ -14,27 +15,22 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
-  const startFromBlank = () => {
+  const startFromBlank = async () => {
     setWaitForResponse(true);
-    request('POST', '/room', {
-      accessToken: spotify.getAccessToken(),
-    })
-      .then(async response => {
-        if (response.status !== 200) {
-          return;
-        }
-
-        const room = await response.json();
-        navigation.popToTop();
-        navigation.replace('Room', {pin: room.pin});
-        Notification.show({
-          message: 'Aye, have a funky night sailor!',
-          icon: '🚢',
-        });
-      })
-      .catch(() => {
-        setWaitForResponse(false);
+    try {
+      const response = await request<Room>('POST', '/room', {
+        accessToken: spotify.getAccessToken(),
       });
+
+      navigation.popToTop();
+      navigation.replace('Room', {pin: response.content.pin});
+      Notification.show({
+        message: 'Aye, have a funky night sailor!',
+        icon: '🚢',
+      });
+    } catch (error) {
+      setWaitForResponse(false);
+    }
   };
 
   return (

@@ -6,12 +6,8 @@ const NetworkMonitor: FC = () => {
   const {isConnected, isInternetReachable, type} = useNetInfo();
 
   useEffect(() => {
-    if (type) {
-      return;
-    }
-    if (!!isConnected && !!isInternetReachable) {
-      return;
-    }
+    if (type) return;
+    if (!!isConnected && !!isInternetReachable) return;
 
     Notification.show({
       type: 'warning',

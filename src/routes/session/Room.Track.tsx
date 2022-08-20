@@ -32,18 +32,18 @@ const RoomTrack: FC<RoomTrackProps> = ({
 
   const selectTrack = () => setSelected(true);
 
-  const castVote = (state: 'up' | 'down') => () => {
-    request('POST', '/room/vote', {
+  const castVote = (state: 'up' | 'down') => async () => {
+    await request<any>('POST', '/room/vote', {
       state,
       accessToken: spotify.getAccessToken(),
       pin,
       trackUri: track.uri,
-    }).finally(() => {
-      setSelected(false);
-      Notification.show({
-        icon: state === 'up' ? '🫴' : '🫳',
-        message: 'Your vote has been cast!',
-      });
+    });
+
+    setSelected(false);
+    Notification.show({
+      icon: state === 'up' ? '🫴' : '🫳',
+      message: 'Your vote has been cast!',
     });
   };
 

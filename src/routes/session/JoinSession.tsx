@@ -21,6 +21,7 @@ import {request} from '../../lib/utils/api';
 import {Color} from '../../types/Color';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
+import {Room} from './Room.PlaylistContext';
 
 interface JoinSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'JoinSession'> {}
@@ -46,9 +47,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       newCode[index] = input;
       setPin(newCode);
 
-      if (index >= pin.length) {
-        return;
-      }
+      if (index >= pin.length) return;
 
       const next = keys[index + 1];
       next?.current?.focus();
@@ -56,18 +55,14 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
 
   const selectInput = (index: number) => () => {
     const newCode = [...pin].map((code, codeIndex) => {
-      if (codeIndex >= index) {
-        return '';
-      }
+      if (codeIndex >= index) return '';
       return code;
     });
 
     setPin(newCode);
 
     const emptyIndex = pin.findIndex(code => code === '');
-    if (emptyIndex === -1) {
-      return;
-    }
+    if (emptyIndex === -1) return;
 
     keys[emptyIndex].current?.focus();
   };
@@ -75,12 +70,8 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   const checkForBackSpace =
     (index: number) =>
     (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-      if (index === 0) {
-        return;
-      }
-      if (event.nativeEvent.key !== 'Backspace') {
-        return;
-      }
+      if (index === 0) return;
+      if (event.nativeEvent.key !== 'Backspace') return;
       keys[index - 1].current?.focus();
     };
 
@@ -91,40 +82,33 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     }, 0);
   }, [keys]);
 
+  const joinRoom = useCallback(
+    async (code: string) => {
+      try {
+        const response = await request<Room>('GET', `/room/${code}`);
+        navigation.popToTop();
+        navigation.replace('Room', {pin: response.content.pin});
+      } catch (error) {
+        reset();
+        if (error === 404) {
+          Notification.show({
+            type: 'info',
+            icon: '🕵️',
+            message: `Oops! We can not find a fissa with the code ${code}. Try another code.`,
+          });
+        }
+      }
+    },
+    [reset, navigation],
+  );
+
   useEffect(() => {
-    if (pin.includes('')) {
-      return;
-    }
+    if (pin.includes('')) return;
 
     keys.forEach(key => key.current?.blur());
 
-    const joinedPin = pin.join('');
-    request('GET', `/room/${joinedPin}`).then(async response => {
-      console.log(response);
-      if (response.status === 404) {
-        reset();
-        return Notification.show({
-          type: 'info',
-          icon: '🕵️',
-          message: `Oops! We can not find a fissa with the code ${joinedPin}. Try another code.`,
-        });
-      }
-
-      if (response.status !== 200) {
-        console.warn(response);
-        reset();
-        return Notification.show({
-          type: 'warning',
-          message: 'Oops... something went wrong',
-        });
-      }
-
-      const room = await response.json();
-
-      navigation.popToTop();
-      navigation.replace('Room', {pin: room.pin});
-    });
-  }, [pin, reset, keys, navigation]);
+    joinRoom(pin.join(''));
+  }, [reset, keys, joinRoom, pin]);
 
   useEffect(() => {
     keys[0].current?.focus();

@@ -22,7 +22,7 @@ interface ActiveTrack {
   id: string;
 }
 
-interface Room {
+export interface Room {
   playlistId: string;
   pin: string;
   currentIndex: number;
@@ -65,14 +65,11 @@ const PlaylistContextProvider: FC = ({children}) => {
   const {spotify} = useSpotify();
 
   const fetchTracks = useCallback(
-    async (newTracks: SpotifyApi.PlaylistTrackObject[], offset = 0) => {
-      if (!room?.playlistId) {
-        return;
-      }
+    async (newTracks: SpotifyApi.PlaylistTrackObject[] = [], offset = 0) => {
+      if (!room?.playlistId) return;
       console.log('fetching tracks for room', room.playlistId);
       spotify.getPlaylistTracks(room?.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
-        console.log(newTracks);
         if (!result.next) {
           return setTracks(newTracks);
         }
@@ -90,49 +87,37 @@ const PlaylistContextProvider: FC = ({children}) => {
     setPin('');
   }, []);
 
-  useEffect(() => {
-    fetchTracks([]);
-  }, [fetchTracks, room?.playlistId]);
+  const joinRoom = useCallback(async () => {
+    if (!pin) return;
 
-  useEffect(() => {
-    if (!pin) {
-      return;
-    }
-
-    request('GET', `/room/${pin}`).then(async response => {
-      console.log(response);
-      if (response.status === 404) {
-        Notification.show({
-          type: 'warning',
-          message: 'The sessions you are trying to join does not exist',
-        });
-        return;
-      }
-
-      if (response.status !== 200) {
-        console.warn(response);
-        Notification.show({
-          type: 'warning',
-          message: 'Oops... something went wrong',
-        });
-        return;
-      }
-
-      const newRoom = await response.json();
-
+    try {
+      const response = await request<Room>('GET', `/room/${pin}`);
       Notification.show({
         icon: '🪩',
         message: `You've joined ${pin}, add some of your favorite songs to keep the party going!`,
       });
 
-      setRoom(newRoom);
-    });
-  }, [pin, room?.playlistId]);
+      setRoom(response.content);
+    } catch (error) {
+      if (error === 404) {
+        Notification.show({
+          type: 'warning',
+          message: 'The sessions you are trying to join does not exist',
+        });
+      }
+    }
+  }, [pin]);
 
   useEffect(() => {
-    if (!pin) {
-      return;
-    }
+    fetchTracks();
+  }, [fetchTracks, room?.playlistId]);
+
+  useEffect(() => {
+    if (!pin) return;
+
+    joinRoom();
+
+    // TODO: rewrite MQTT stuff to hook
 
     const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
       port: 9001,
@@ -165,13 +150,10 @@ const PlaylistContextProvider: FC = ({children}) => {
           break;
         case `fissa/room/${pin}/tracks/reordered`:
           console.log('tracks reordered');
-          setTimeout(() => {
-            fetchTracks([]);
-          }, 5000); // Give spotify some time to update the playlist
+          fetchTracks();
           break;
         case `fissa/room/${pin}/votes`:
           setVotes(payload as {[key: string]: Vote});
-          fetchTracks([]); // We refetch because playlist might be updated
           break;
         case `fissa/room/${pin}`:
           break;
@@ -184,14 +166,12 @@ const PlaylistContextProvider: FC = ({children}) => {
     return () => {
       mqttClient.end(true);
     };
-  }, [pin, fetchTracks]);
+  }, [pin, fetchTracks, joinRoom]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', () => {
-      if (AppState.currentState !== 'active') {
-        return;
-      }
-      fetchTracks([]);
+      if (AppState.currentState !== 'active') return;
+      fetchTracks();
     });
 
     return subscription.remove;

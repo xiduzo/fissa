@@ -55,17 +55,13 @@ const AddContextProvider: FC = ({children}) => {
   }, []);
 
   const goToRoom = useCallback(() => {
-    if (!canGoBack()) {
-      return;
-    }
+    if (!canGoBack()) return;
     goBack();
     goToRoom();
   }, [canGoBack, goBack]);
 
-  const addToQueue = useCallback(() => {
-    if (!room?.pin) {
-      return;
-    }
+  const addToQueue = useCallback(async () => {
+    if (!room?.pin) return;
 
     console.log('adding tracks for room', room.pin);
 
@@ -75,19 +71,16 @@ const AddContextProvider: FC = ({children}) => {
     Notification.show({
       message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
     });
-    request('POST', '/room/track', {
-      trackUris: selectedTracks,
-      pin: room.pin,
-      accessToken: spotify.getAccessToken(),
-    }).then(response => {
-      if (response.status !== 200) {
-        Notification.show({
-          type: 'warning',
-          message: 'Oops... something went wrong',
-        });
-        return;
-      }
-    });
+
+    try {
+      await request<any>('POST', '/room/track', {
+        trackUris: selectedTracks,
+        pin: room.pin,
+        accessToken: spotify.getAccessToken(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }, [room?.pin, spotify, selectedTracks, goToRoom]);
 
   const cancel = useCallback(() => {

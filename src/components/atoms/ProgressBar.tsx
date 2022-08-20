@@ -20,16 +20,12 @@ const ProgressBar: FC<ProgressBarProps> = ({
   const duration_ms = useMemo(() => track.duration_ms, [track]);
 
   useEffect(() => {
-    if (!progress) {
-      return;
-    }
+    if (!progress) return;
     setLocalProgress(progress);
   }, [progress]);
 
   useEffect(() => {
-    if (!isPlaying || !progress) {
-      return;
-    }
+    if (!isPlaying || !progress) return;
 
     const updateFrequency = 750;
     const interval = setInterval(() => {

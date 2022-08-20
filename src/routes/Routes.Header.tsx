@@ -17,9 +17,7 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   const canGoBack = navigation.canGoBack();
 
   const goBack = () => {
-    if (!canGoBack) {
-      return;
-    }
+    if (!canGoBack) return;
     navigation.goBack();
   };
 

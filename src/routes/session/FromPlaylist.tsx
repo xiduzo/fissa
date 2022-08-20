@@ -10,6 +10,7 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
+import {Room} from './Room.PlaylistContext';
 
 interface FromPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'FromPlaylist'> {}
@@ -30,28 +31,23 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
     };
   const closePopOver = () => setSelectedPlaylist(undefined);
 
-  const startFromPlaylist = () => {
-    if (!selectedPlaylist) {
-      return;
-    }
-    setWaitForResponse(true);
-    request('POST', '/room', {
-      accessToken: spotify.getAccessToken(),
-      playlistId: selectedPlaylist.id,
-    })
-      .then(async response => {
-        if (response.status !== 200) {
-          return;
-        }
+  const startFromPlaylist = async () => {
+    if (!selectedPlaylist) return;
 
-        closePopOver();
-        const room = await response.json();
-        navigation.popToTop();
-        navigation.replace('Room', {pin: room.pin});
-      })
-      .catch(() => {
-        setWaitForResponse(false);
+    setWaitForResponse(true);
+
+    try {
+      const response = await request<Room>('POST', '/room', {
+        accessToken: spotify.getAccessToken(),
+        playlistId: selectedPlaylist.id,
       });
+
+      closePopOver();
+      navigation.popToTop();
+      navigation.replace('Room', {pin: response.content.pin});
+    } catch (error) {
+      setWaitForResponse(false);
+    }
   };
 
   useEffect(() => {
