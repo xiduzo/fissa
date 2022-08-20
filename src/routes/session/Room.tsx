@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {FC, useCallback, useMemo, useRef} from 'react';
 import {
   Animated,
   ListRenderItemInfo,
@@ -11,12 +11,12 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Button from '../../components/atoms/Button';
+import EmptyState from '../../components/atoms/EmptyState';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
-import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';
@@ -32,7 +32,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
   const {tracks, room, votes, activeTrack, leaveRoom} = useRoomPlaylist(pin);
   const {spotify} = useSpotify();
-  console.log(room);
 
   const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
   const mySpotifyId = useRef('');
@@ -45,13 +44,15 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     mySpotifyId.current = me?.id ?? '';
   }, [spotify]);
 
-  const activeTrackIndex = useMemo(() => {
-    return activeTrack?.currentIndex ?? room?.currentIndex ?? -1;
-  }, [activeTrack, room]);
+  const activeTrackIndex = useMemo(
+    () => activeTrack?.currentIndex ?? room?.currentIndex ?? -1,
+    [activeTrack, room],
+  );
 
-  const queue = useMemo(() => {
-    return tracks.slice(activeTrackIndex + 1, tracks.length);
-  }, [tracks, activeTrackIndex]);
+  const queue = useMemo(
+    () => tracks.slice(activeTrackIndex + 1, tracks.length),
+    [tracks, activeTrackIndex],
+  );
 
   const animateBackToTop = (
     config?: Partial<Animated.SpringAnimationConfig>,
@@ -112,6 +113,30 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     return null;
   }
 
+  console.log(room, activeTrack);
+
+  if (activeTrackIndex === -1) {
+    return (
+      <View style={{flex: 1, marginTop: 24}}>
+        <View style={[styles.header, {padding: 24}]}>
+          <Typography variant="h2">Now playing</Typography>
+          <RoomDetails
+            pin={pin}
+            playlistId={room.playlistId}
+            navigation={navigation}
+            leaveRoom={leaveRoom}
+          />
+        </View>
+        <EmptyState
+          icon="🦦"
+          title="This fissa finished"
+          subtitle="Poke your host to re-start the playlist"
+        />
+        <RoomAddTracksFab navigation={navigation} />
+      </View>
+    );
+  }
+
   return (
     <View style={{flex: 1}}>
       <VirtualizedList<SpotifyApi.PlaylistTrackObject>
@@ -123,13 +148,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
               justifyContent: 'center',
               alignItems: 'center',
               paddingVertical: 150,
-            }}>
-            {tracks.length <= 0 && (
-              <Typography>
-                Add some of your favorite songs to start this fissa!
-              </Typography>
-            )}
-          </View>
+            }}
+          />
         }
         ListHeaderComponent={
           <>
@@ -146,9 +166,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
               <Typography>
                 This fissa is over. Poke your host to start from the top.
               </Typography>
-            )}
-            {activeTrackIndex < -1 && (
-              <Typography>Nothing seems to be playing</Typography>
             )}
             <Track
               imageStyle={{width: 125, height: 125}}
