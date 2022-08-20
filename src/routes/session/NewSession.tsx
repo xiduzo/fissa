@@ -18,12 +18,14 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const startFromBlank = async () => {
     setWaitForResponse(true);
     try {
-      const response = await request<Room>('POST', '/room', {
+      const {
+        content: {pin},
+      } = await request<Room>('POST', '/room', {
         accessToken: spotify.getAccessToken(),
       });
 
       navigation.popToTop();
-      navigation.replace('Room', {pin: response.content.pin});
+      navigation.replace('Room', {pin});
       Notification.show({
         message: 'Aye, have a funky night sailor!',
         icon: '🚢',

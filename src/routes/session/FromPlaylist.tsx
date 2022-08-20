@@ -37,14 +37,16 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
     setWaitForResponse(true);
 
     try {
-      const response = await request<Room>('POST', '/room', {
+      const {
+        content: {pin},
+      } = await request<Room>('POST', '/room', {
         accessToken: spotify.getAccessToken(),
         playlistId: selectedPlaylist.id,
       });
 
       closePopOver();
       navigation.popToTop();
-      navigation.replace('Room', {pin: response.content.pin});
+      navigation.replace('Room', {pin});
     } catch (error) {
       setWaitForResponse(false);
     }

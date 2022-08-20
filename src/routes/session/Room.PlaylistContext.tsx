@@ -91,13 +91,13 @@ const PlaylistContextProvider: FC = ({children}) => {
     if (!pin) return;
 
     try {
-      const response = await request<Room>('GET', `/room/${pin}`);
+      const {content} = await request<Room>('GET', `/room/${pin}`);
       Notification.show({
         icon: '🪩',
-        message: `You've joined ${pin}, add some of your favorite songs to keep the party going!`,
+        message: `You've joined ${content.pin}, add some of your favorite songs to keep the party going!`,
       });
 
-      setRoom(response.content);
+      setRoom(content);
     } catch (error) {
       if (error === 404) {
         Notification.show({

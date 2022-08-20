@@ -34,9 +34,7 @@ const ToastContainer: FC = () => {
     info: props => <Toaster {...props} />,
   };
 
-  if (Platform.OS === 'android') {
-    return null;
-  }
+  if (Platform.OS === 'android') return null;
   return <Toast config={toastConfig} />;
 };
 

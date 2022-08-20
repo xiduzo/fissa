@@ -85,9 +85,10 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   const joinRoom = useCallback(
     async (code: string) => {
       try {
-        const response = await request<Room>('GET', `/room/${code}`);
+        const {content} = await request<Room>('GET', `/room/${code}`);
+        console.log(content);
         navigation.popToTop();
-        navigation.replace('Room', {pin: response.content.pin});
+        navigation.replace('Room', {pin: content.pin});
       } catch (error) {
         reset();
         if (error === 404) {

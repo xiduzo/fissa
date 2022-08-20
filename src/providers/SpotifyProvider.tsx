@@ -23,9 +23,7 @@ interface SpotifyProviderState {
 
 const initialState: SpotifyProviderState = {
   spotify: new SpotifyWebApi(),
-  auth: async () => {
-    return false;
-  },
+  auth: async () => false,
 };
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);

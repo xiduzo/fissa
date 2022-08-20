@@ -10,9 +10,7 @@ interface TrackProps extends Partial<ListItemProps> {
 }
 
 const Track: FC<TrackProps> = ({track, progressMs, isPlaying, ...props}) => {
-  if (!track) {
-    return null;
-  }
+  if (!track) return null;
 
   return (
     <ListItem

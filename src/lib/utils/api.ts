@@ -35,7 +35,7 @@ export const request = async <T>(
   }
 
   return Promise.resolve({
-    content: response.json() as unknown as T,
+    content: (await response.json()) as T,
     status: response.status,
   });
 };
