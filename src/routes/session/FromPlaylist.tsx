@@ -54,6 +54,8 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
 
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
+    console.log(spotify.getAccessToken());
+    spotify.getMySavedTracks({}).then(console.log);
   }, [spotify]);
 
   return (

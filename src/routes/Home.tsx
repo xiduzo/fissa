@@ -14,10 +14,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
 
   const [hasToken, setHasToken] = useState(!!spotify.getAccessToken());
 
-  const signIn = async () => {
-    const state = await auth();
-    setHasToken(state);
-  };
+  const signIn = async () => setHasToken(await auth());
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,7 +28,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
             : 'Hi there stranger, sign in to spotify to continue.'}
         </Typography>
       </View>
-      {!hasToken && (
+      {hasToken && (
         <View>
           <Button title="Sign in to spotify" onPress={signIn} />
         </View>

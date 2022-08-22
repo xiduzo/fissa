@@ -109,7 +109,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     [votes, pin],
   );
 
-  console.log(room, activeTrack, pin);
+  console.log({room, activeTrack, pin});
   if (!room?.pin) return null;
 
   if (activeTrackIndex === -1) {

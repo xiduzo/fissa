@@ -51,9 +51,16 @@ const RoomTrack: FC<RoomTrackProps> = ({
     <View>
       <Track
         track={track}
+        disabled={isUpcomingTrack}
         onPress={selectTrack}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        end={<MoreIcon style={{tintColor: Color.light + '80'}} />}
+        end={
+          isUpcomingTrack ? (
+            <Typography variant="body1">🔒</Typography>
+          ) : (
+            <MoreIcon style={{tintColor: Color.light + '80'}} />
+          )
+        }
       />
       <Popover
         title={
