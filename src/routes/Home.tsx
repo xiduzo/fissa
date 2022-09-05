@@ -28,7 +28,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
             : 'Hi there stranger, sign in to spotify to continue.'}
         </Typography>
       </View>
-      {hasToken && (
+      {!hasToken && (
         <View>
           <Button title="Sign in to spotify" onPress={signIn} />
         </View>
