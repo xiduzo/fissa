@@ -1,16 +1,33 @@
-import React, {FC} from 'react';
-import {ButtonProps, StyleSheet, TouchableHighlight} from 'react-native';
+import React, {FC, useRef} from 'react';
+import {
+  Animated,
+  ButtonProps,
+  StyleSheet,
+  TouchableHighlight,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Color} from '../../types/Color';
 
-interface FabProps extends ButtonProps {}
+interface FabProps extends ButtonProps {
+  scale?: number;
+}
 
-const Fab: FC<FabProps> = ({children, ...props}) => {
+const Fab: FC<FabProps> = ({children, scale = 1, ...props}) => {
+  const scaleAnimation = useRef(new Animated.Value(scale));
+
+  Animated.spring(scaleAnimation.current, {
+    toValue: scale,
+    bounciness: 4,
+    useNativeDriver: true,
+  }).start();
+
   return (
     <TouchableHighlight style={styles.container} {...props}>
-      <LinearGradient {...Color.gradient} style={styles.gradient}>
-        {children}
-      </LinearGradient>
+      <Animated.View style={{transform: [{scale: scaleAnimation.current}]}}>
+        <LinearGradient {...Color.gradient} style={styles.gradient}>
+          {children}
+        </LinearGradient>
+      </Animated.View>
     </TouchableHighlight>
   );
 };

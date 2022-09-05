@@ -32,7 +32,10 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
 
   return (
     <View>
-      <Fab title="Add tracks" onPress={startAddingTracks}>
+      <Fab
+        title="Add tracks"
+        onPress={startAddingTracks}
+        scale={addingTracks ? 0 : 1}>
         <PlusIcons style={{tintColor: Color.dark}} />
       </Fab>
       <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
