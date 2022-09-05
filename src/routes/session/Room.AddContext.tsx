@@ -69,7 +69,7 @@ const AddContextProvider: FC = ({children}) => {
     goToRoom();
 
     Notification.show({
-      message: `You've added ${selectedTracks.length} songs to the queue. Kick it!`,
+      message: `You've added ${selectedTracks.length} tracks to the queue. Kick it!`,
     });
 
     try {
@@ -117,7 +117,7 @@ export const AddContextBottomDrawer: FC = () => {
       <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
         <BottomDrawer close={reset}>
           <Typography style={styles.text} variant="h6">
-            {selectedTracks.length} songs selected
+            {selectedTracks.length} tracks selected
           </Typography>
           <Button
             inverted

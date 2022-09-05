@@ -12,7 +12,7 @@ const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle}) => {
   return (
     <View style={styles.container}>
       <Typography
-        style={{textAlign: 'center', fontSize: 90, lineHeight: 90}}
+        style={{textAlign: 'center', fontSize: 90, lineHeight: 110}}
         variant="h1">
         {icon}
       </Typography>

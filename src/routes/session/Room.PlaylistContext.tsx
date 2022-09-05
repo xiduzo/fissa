@@ -92,10 +92,6 @@ const PlaylistContextProvider: FC = ({children}) => {
 
     try {
       const {content} = await request<Room>('GET', `/room/${pin}`);
-      Notification.show({
-        icon: '🪩',
-        message: `You've joined ${content.pin}, add some of your favorite songs to keep the party going!`,
-      });
 
       setRoom(content);
     } catch (error) {
@@ -118,6 +114,10 @@ const PlaylistContextProvider: FC = ({children}) => {
     joinRoom();
 
     // TODO: rewrite MQTT stuff to hook
+    if (!Config.MQTT_USER || !Config.MQTT_PASSWORD) {
+      console.error("No MQTT credentials provided, can't connect to MQTT");
+      return;
+    }
 
     const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
       port: 9001,
@@ -138,7 +138,9 @@ const PlaylistContextProvider: FC = ({children}) => {
       mqttClient.subscribe(topics);
     });
 
-    mqttClient.on('error', console.error);
+    mqttClient.on('error', error => {
+      console.log('MQTT error', error);
+    });
 
     mqttClient.on('message', (topic, message) => {
       // TODO: validate message to expected format?

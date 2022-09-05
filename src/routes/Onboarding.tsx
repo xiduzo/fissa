@@ -88,7 +88,7 @@ const Onboarding: FC<OnboardingProps> = ({navigation}) => {
             image: <OnboardingSlideThree />,
             title: (
               <Typography variant="h2" style={{marginBottom: 16}}>
-                Up vote songs you like
+                Up vote tracks you like
               </Typography>
             ),
             subtitle: (

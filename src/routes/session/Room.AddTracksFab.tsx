@@ -32,14 +32,14 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
 
   return (
     <View>
-      <Fab title="Add songs" onPress={startAddingTracks}>
+      <Fab title="Add tracks" onPress={startAddingTracks}>
         <PlusIcons style={{tintColor: Color.dark}} />
       </Fab>
       <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
         {!copyFromSpotify && (
           <>
             <Typography variant="h2" style={styles.popoverText}>
-              Add songs
+              Add tracks
             </Typography>
             <Typography variant="h6" style={styles.popoverText}>
               And keep this fissa going!

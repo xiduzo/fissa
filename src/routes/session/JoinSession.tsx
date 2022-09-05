@@ -89,6 +89,10 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
         console.log(content);
         navigation.popToTop();
         navigation.replace('Room', {pin: content.pin});
+        Notification.show({
+          icon: '🪩',
+          message: `You've joined ${content.pin}, add some of your favorite tracks to keep the party going!`,
+        });
       } catch (error) {
         reset();
         if (error === 404) {
@@ -118,7 +122,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Typography style={styles.title} variant="h5">
-        Enter session code of the fissa you want to join
+        Enter the session code of the fissa you want to join
       </Typography>
       <View style={styles.code}>
         {pin.map((item, index) => (

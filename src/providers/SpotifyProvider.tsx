@@ -106,7 +106,7 @@ const SpotifyProvider: FC = ({children}) => {
         });
       }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60000));
     } catch (error) {
-      console.error(error);
+      console.error('refresh error', error);
     }
   }, []);
 
@@ -138,7 +138,7 @@ const SpotifyProvider: FC = ({children}) => {
           });
         }
       } catch (error) {
-        console.error(error);
+        console.error('auth error', error);
       }
     };
 

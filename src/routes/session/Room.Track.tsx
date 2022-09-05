@@ -1,9 +1,10 @@
 import React, {FC, useState} from 'react';
-import {Alert, View} from 'react-native';
+import {Alert, Linking, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
+import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
@@ -51,16 +52,9 @@ const RoomTrack: FC<RoomTrackProps> = ({
     <View>
       <Track
         track={track}
-        disabled={isUpcomingTrack}
         onPress={selectTrack}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        end={
-          isUpcomingTrack ? (
-            <Typography variant="body1">🔒</Typography>
-          ) : (
-            <MoreIcon style={{tintColor: Color.light + '80'}} />
-          )
-        }
+        end={<MoreIcon style={{tintColor: Color.light + '80'}} />}
       />
       <Popover
         title={
@@ -117,6 +111,20 @@ const RoomTrack: FC<RoomTrackProps> = ({
             />
           }
           subtitle="And it will move down in the queue"
+        />
+        <Action
+          title="Open in Spotify"
+          inverted
+          onPress={() => {
+            Linking.openURL('https://open.spotify.com/track/' + track.id);
+          }}
+          icon={
+            <SpotifyIcon
+              style={{
+                tintColor: Color.dark + '40',
+              }}
+            />
+          }
         />
       </Popover>
     </View>

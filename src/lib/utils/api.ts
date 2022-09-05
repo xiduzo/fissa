@@ -23,6 +23,7 @@ export const request = async <T>(
 
   const response = await fetch(
     'https://server-xiduzo.vercel.app/api' + route,
+    // 'http://localhost:3000/api' + route,
     options,
   );
 

@@ -94,8 +94,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         vote => vote.createdBy === mySpotifyId.current,
       );
 
-      console.log(render.index, track.name);
-
       return (
         <RoomTrack
           track={track}
@@ -109,14 +107,30 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     [votes, pin],
   );
 
-  console.log({room, activeTrack, pin});
-  if (!room?.pin) return null;
+  if (!room?.pin)
+    return (
+      <View style={{flex: 1, marginTop: 24}}>
+        <View style={[styles.header, {padding: 24}]}>
+          <Typography variant="h2">&nbsp;</Typography>
+          <RoomDetails
+            pin={pin}
+            navigation={navigation}
+            leaveRoom={leaveRoom}
+          />
+        </View>
+        <EmptyState
+          icon="🐕"
+          title="Fetching room details"
+          subtitle="Good boy"
+        />
+      </View>
+    );
 
   if (activeTrackIndex === -1) {
     return (
       <View style={{flex: 1, marginTop: 24}}>
         <View style={[styles.header, {padding: 24}]}>
-          <Typography variant="h2">Now playing</Typography>
+          <Typography variant="h2">&nbsp;</Typography>
           <RoomDetails
             pin={pin}
             playlistId={room.playlistId}
@@ -125,9 +139,9 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           />
         </View>
         <EmptyState
-          icon="🦦"
-          title="This fissa finished"
-          subtitle="Poke your host to re-start the playlist"
+          icon="🦥"
+          title="This fissa is over"
+          subtitle="Poke your host to re-start this fissa"
         />
         <RoomAddTracksFab navigation={navigation} />
       </View>
@@ -144,9 +158,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              paddingVertical: 150,
-            }}
-          />
+              paddingVertical: 100,
+              marginBottom: 150,
+            }}>
+            <Typography variant="h3" style={{marginBottom: 8}}>
+              🦦
+            </Typography>
+            <Typography variant="bodyM">Nothing to see here</Typography>
+          </View>
         }
         ListHeaderComponent={
           <>
@@ -159,11 +178,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
                 leaveRoom={leaveRoom}
               />
             </View>
-            {!activeTrack?.is_in_playlist && (
-              <Typography>
-                This fissa is over. Poke your host to start from the top.
-              </Typography>
-            )}
             <Track
               imageStyle={{width: 125, height: 125}}
               track={
@@ -175,7 +189,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
               <Typography variant="bodyM" style={{opacity: 0.6}}>
-                {Math.max(0, queue.length)} songs
+                {Math.max(0, queue.length)} tracks
               </Typography>
             </View>
           </>
