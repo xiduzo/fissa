@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useCallback, useMemo, useRef} from 'react';
+import {FC, useCallback, useMemo, useRef} from 'react';
 import {
   Animated,
   ListRenderItemInfo,

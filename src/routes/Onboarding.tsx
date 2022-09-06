@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useState} from 'react';
+import {FC, useState} from 'react';
 import {StyleSheet, TouchableHighlight, View} from 'react-native';
 import OnboardingSwiper from 'react-native-onboarding-swiper';
 import Button from '../components/atoms/Button';

@@ -1,5 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {FC, useState} from 'react';
+import {FC, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Button from '../../components/atoms/Button';
 import Fab from '../../components/atoms/Fab';

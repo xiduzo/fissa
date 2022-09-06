@@ -1,12 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import {FC, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,

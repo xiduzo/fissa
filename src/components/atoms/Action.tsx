@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {ButtonProps, StyleSheet, TouchableHighlight, View} from 'react-native';
 import {Color} from '../../types/Color';
 import Typography from './Typography';

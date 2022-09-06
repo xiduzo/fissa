@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useMemo, useRef} from 'react';
+import {FC, useMemo, useRef} from 'react';
 import {Animated, StyleSheet} from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Animation from '../components/atoms/animations/Animation';

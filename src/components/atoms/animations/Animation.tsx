@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import LottieView, {AnimatedLottieViewProps} from 'lottie-react-native';
 import {Color} from '../../../types/Color';
 

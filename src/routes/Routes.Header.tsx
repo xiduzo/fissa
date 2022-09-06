@@ -1,6 +1,6 @@
 import {NativeStackHeaderProps} from '@react-navigation/native-stack';
 import {StackHeaderProps} from '@react-navigation/stack';
-import React, {FC, useEffect, useRef} from 'react';
+import {FC, useEffect, useRef} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 import IconButton from '../components/atoms/IconButton';
 import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';

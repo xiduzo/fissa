@@ -1,11 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {
-  createContext,
-  FC,
-  useCallback,
-  useContext,
-  useState,
-} from 'react';
+import {createContext, FC, useCallback, useContext, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {SharedElement} from 'react-navigation-shared-element';
 import BottomDrawer from '../../components/atoms/BottomDrawer';

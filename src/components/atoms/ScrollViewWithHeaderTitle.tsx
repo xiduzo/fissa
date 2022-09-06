@@ -1,6 +1,6 @@
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,

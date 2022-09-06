@@ -1,5 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {FC, useState} from 'react';
+import {FC, useState} from 'react';
 import {Linking, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';

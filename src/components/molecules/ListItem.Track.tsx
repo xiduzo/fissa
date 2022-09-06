@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import ProgressBar from '../atoms/ProgressBar';
 import ListItem, {ListItemProps} from './ListItem';

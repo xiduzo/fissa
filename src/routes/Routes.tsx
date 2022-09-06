@@ -1,5 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {Alert} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import IconButton from '../components/atoms/IconButton';

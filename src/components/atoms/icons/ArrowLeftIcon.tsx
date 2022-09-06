@@ -1,5 +1,5 @@
 import VectorImage, {VectorImageProps} from 'react-native-vector-image';
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {Color} from '../../../types/Color';
 
 interface ArrowIconProps extends Omit<VectorImageProps, 'source'> {}
