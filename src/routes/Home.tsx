@@ -24,7 +24,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
         </Typography>
         <Typography variant="h5" style={styles.text}>
           {hasToken
-            ? 'Would you like to create or join a group session?'
+            ? 'Would you like to create or join a fissa session?'
             : 'Hi there stranger, sign in to spotify to continue.'}
         </Typography>
       </View>
@@ -37,12 +37,12 @@ const Home: FC<HomeProps> = ({navigation}) => {
         <View>
           <View style={{marginBottom: 24}}>
             <Button
-              title="Create group session"
+              title="Create a session"
               onPress={() => navigation.navigate('NewSession')}
             />
           </View>
           <Button
-            title="Join group session"
+            title="Join a session"
             onPress={() => navigation.navigate('JoinSession')}
           />
         </View>

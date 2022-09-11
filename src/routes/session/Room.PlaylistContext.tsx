@@ -98,7 +98,7 @@ const PlaylistContextProvider: FC = ({children}) => {
       if (error === 404) {
         Notification.show({
           type: 'warning',
-          message: 'The sessions you are trying to join does not exist',
+          message: `Session ${pin} you are trying to join does not exist`,
         });
       }
     }
@@ -145,16 +145,16 @@ const PlaylistContextProvider: FC = ({children}) => {
     mqttClient.on('message', (topic, message) => {
       // TODO: validate message to expected format?
       const payload = JSON.parse(message.toString());
-      console.log('message', topic, payload);
       switch (topic) {
         case `fissa/room/${pin}/tracks/active`:
           setActiveTrack(payload as ActiveTrack);
           break;
         case `fissa/room/${pin}/tracks/reordered`:
           console.log('tracks reordered');
-          fetchTracks();
+          //fetchTracks();
           break;
         case `fissa/room/${pin}/votes`:
+          console.log('votes updated', payload);
           setVotes(payload as {[key: string]: Vote});
           break;
         case `fissa/room/${pin}`:

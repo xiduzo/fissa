@@ -39,16 +39,16 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View>
         <Typography variant="h1" style={{...styles.text, marginBottom: 16}}>
-          Create group session
+          Create a session
         </Typography>
         <Typography variant="h5" style={{...styles.text, marginBottom: 24}}>
-          How would you like to start?
+          How would you like to start this session?
         </Typography>
       </View>
       <View>
         <View style={{marginBottom: 24}}>
           <Button
-            title="Select a spotify playlist"
+            title="Based on a playlist"
             onPress={() => navigation.navigate('FromPlaylist')}
             disabled={waitForResponse}
           />

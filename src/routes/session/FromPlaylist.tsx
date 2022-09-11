@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useEffect, useState} from 'react';
+import {FC, useEffect, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import Button from '../../components/atoms/Button';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
@@ -22,6 +22,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
   const [playlists, setPlaylists] = useState<
     SpotifyApi.PlaylistObjectSimplified[]
   >([]);
+  const title = useRef('Select a playlist');
 
   const [waitForResponse, setWaitForResponse] = useState(false);
 
@@ -54,18 +55,17 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
 
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
-    console.log(spotify.getAccessToken());
     spotify.getMySavedTracks({}).then(console.log);
   }, [spotify]);
 
   return (
     <ScrollViewWithHeaderTitle
-      title="Your playlists"
+      title={title.current}
       style={styles.scrollView}
       navigation={navigation}
       scrollEventThrottle={30}>
       <Typography variant="h1" style={{marginBottom: 24}}>
-        Select Playlist
+        {title.current}
       </Typography>
       {playlists.map(playlist => (
         <Playlist
