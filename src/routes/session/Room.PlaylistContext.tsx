@@ -26,6 +26,7 @@ export interface Room {
   playlistId: string;
   pin: string;
   currentIndex: number;
+  createdBy: string;
 }
 
 export interface Vote {
@@ -134,6 +135,7 @@ const PlaylistContextProvider: FC = ({children}) => {
         `fissa/room/${pin}/votes`,
         `fissa/room/${pin}/tracks/reordered`,
         `fissa/room/${pin}/tracks/active`,
+        `fissa/room/${pin}/tracks/added`,
       ];
       mqttClient.subscribe(topics);
     });
@@ -146,6 +148,9 @@ const PlaylistContextProvider: FC = ({children}) => {
       // TODO: validate message to expected format?
       const payload = JSON.parse(message.toString());
       switch (topic) {
+        case `fissa/room/${pin}/tracks/added`:
+          fetchTracks();
+          break;
         case `fissa/room/${pin}/tracks/active`:
           setActiveTrack(payload as ActiveTrack);
           break;

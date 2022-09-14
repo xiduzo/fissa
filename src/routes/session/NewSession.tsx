@@ -18,9 +18,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const startFromBlank = async () => {
     setWaitForResponse(true);
     try {
-      const {
-        content: {pin},
-      } = await request<Room>('POST', '/room', {
+      const {content: pin} = await request<string>('POST', '/room', {
         accessToken: spotify.getAccessToken(),
       });
 

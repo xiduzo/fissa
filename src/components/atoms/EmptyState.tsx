@@ -5,7 +5,7 @@ import Typography from './Typography';
 interface EmptyStateProps {
   icon: string;
   title: string;
-  subtitle?: string;
+  subtitle?: string | JSX.Element;
 }
 
 const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle}) => {
@@ -19,10 +19,13 @@ const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle}) => {
       <Typography style={{textAlign: 'center', paddingTop: 16}} variant="h2">
         {title}
       </Typography>
-      {subtitle && (
+      {typeof subtitle === 'string' && (
         <Typography style={{textAlign: 'center', paddingTop: 16}}>
           {subtitle}
         </Typography>
+      )}
+      {typeof subtitle !== 'string' && (
+        <View style={styles.subtitleView}>{subtitle}</View>
       )}
     </View>
   );
@@ -35,5 +38,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: 'center',
+  },
+  subtitleView: {
+    marginVertical: 32,
   },
 });

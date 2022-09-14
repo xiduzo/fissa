@@ -22,6 +22,7 @@ import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';
 import {useRoomPlaylist} from './Room.PlaylistContext';
 import RoomTrack from './Room.Track';
+import {request} from '../../lib/utils/api';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -107,6 +108,10 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     [votes, pin],
   );
 
+  const restartPlaylist = async () => {
+    await request('POST', '/room/play', {pin});
+  };
+
   if (!room?.pin)
     return (
       <View style={{flex: 1, marginTop: 24}}>
@@ -120,9 +125,29 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         </View>
         <EmptyState
           icon="🐕"
-          title="Fetching room details"
+          title="Fetching fissa details"
           subtitle="Good boy"
         />
+      </View>
+    );
+
+  if (!tracks.length)
+    return (
+      <View style={{flex: 1, marginTop: 24}}>
+        <View style={[styles.header, {padding: 24}]}>
+          <Typography variant="h2">&nbsp;</Typography>
+          <RoomDetails
+            pin={pin}
+            navigation={navigation}
+            leaveRoom={leaveRoom}
+          />
+        </View>
+        <EmptyState
+          icon="🦨"
+          title="This fissa stinks"
+          subtitle="Add tracks to get the fissa started"
+        />
+        <RoomAddTracksFab navigation={navigation} />
       </View>
     );
 
@@ -141,9 +166,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <EmptyState
           icon="🦥"
           title="This fissa is over"
-          subtitle="Poke your host to re-start this fissa"
+          subtitle={
+            room?.createdBy !== mySpotifyId.current ? (
+              'Poke your host to re-start this fissa'
+            ) : (
+              <Button title="restart fissa" onPress={restartPlaylist} />
+            )
+          }
         />
-        <RoomAddTracksFab navigation={navigation} />
       </View>
     );
   }
