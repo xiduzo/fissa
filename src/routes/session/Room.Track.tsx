@@ -95,7 +95,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
           </View>
         )}
         <Action
-          title="Up vote song"
+          title="Up vote track"
           inverted
           disabled={myVote === 'up'}
           hidden={isUpcomingTrack}
@@ -111,7 +111,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
           subtitle="And it will move up in the queue"
         />
         <Action
-          title="Down vote song"
+          title="Down vote track"
           inverted
           disabled={myVote === 'down'}
           hidden={isUpcomingTrack}

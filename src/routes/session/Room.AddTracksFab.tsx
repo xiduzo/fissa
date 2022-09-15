@@ -58,7 +58,7 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
               <Button
                 onPress={openSpotify}
                 inverted
-                title="Copy song link in Spotify"
+                title="Copy track link in Spotify"
               />
             </View>
           </>
@@ -66,16 +66,16 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
         {copyFromSpotify && (
           <>
             <Typography variant="h2" style={styles.popoverText}>
-              Add song
+              Add track
             </Typography>
             <Typography variant="h6" style={styles.popoverText}>
-              Copy a Spotify song link and come back.
+              Copy a Spotify track link and come back.
             </Typography>
             <View>
-              <Track inverted hasBorder title="No song link found" />
+              <Track inverted hasBorder title="No track link found" />
             </View>
             <Button
-              title="Copy song link in Spotify"
+              title="Copy track link in Spotify"
               onPress={openSpotify}
               inverted
             />
