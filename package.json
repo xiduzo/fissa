@@ -31,7 +31,7 @@
     "lottie-ios": "3.4.3",
     "lottie-react-native": "5.1.4",
     "react": "18.2.0",
-    "react-native": "0.70.0",
+    "react-native": "0.70.1",
     "react-native-app-auth": "6.4.3",
     "react-native-config": "1.4.6",
     "react-native-encrypted-storage": "4.0.2",
