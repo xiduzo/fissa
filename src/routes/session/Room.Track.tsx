@@ -1,10 +1,10 @@
 import {FC, useState} from 'react';
-import {Alert, Linking, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
+import LockIcon from '../../components/atoms/icons/LockIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
-import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
@@ -48,13 +48,15 @@ const RoomTrack: FC<RoomTrackProps> = ({
     });
   };
 
+  const EndIcon = isUpcomingTrack ? LockIcon : MoreIcon;
+
   return (
     <View>
       <Track
         track={track}
         onPress={selectTrack}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        end={<MoreIcon style={{tintColor: Color.light + '80'}} />}
+        end={<EndIcon style={{tintColor: Color.light + '80'}} />}
       />
       <Popover
         title={
@@ -82,10 +84,21 @@ const RoomTrack: FC<RoomTrackProps> = ({
             marginVertical: 16,
           }}
         />
+        {isUpcomingTrack && (
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <LockIcon style={{tintColor: Color.dark, marginRight: 4}} />
+            <Typography
+              style={{color: Color.dark, flexShrink: 1}}
+              variant="bodyL">
+              Oops! Tacks up next in the queue can not be voted for anymore.
+            </Typography>
+          </View>
+        )}
         <Action
           title="Up vote song"
           inverted
-          disabled={myVote === 'up' || isUpcomingTrack}
+          disabled={myVote === 'up'}
+          hidden={isUpcomingTrack}
           onPress={castVote('up')}
           active={myVote === 'up'}
           icon={
@@ -100,7 +113,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Down vote song"
           inverted
-          disabled={myVote === 'down' || isUpcomingTrack}
+          disabled={myVote === 'down'}
+          hidden={isUpcomingTrack}
           active={myVote === 'down'}
           onPress={castVote('down')}
           icon={
@@ -111,20 +125,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
             />
           }
           subtitle="And it will move down in the queue"
-        />
-        <Action
-          title="Open in Spotify"
-          inverted
-          onPress={() => {
-            Linking.openURL('https://open.spotify.com/track/' + track.id);
-          }}
-          icon={
-            <SpotifyIcon
-              style={{
-                tintColor: Color.dark + '40',
-              }}
-            />
-          }
         />
       </Popover>
     </View>

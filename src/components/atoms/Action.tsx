@@ -8,6 +8,7 @@ interface ActionProps extends ButtonProps {
   subtitle?: string;
   active?: boolean;
   inverted?: boolean;
+  hidden?: boolean;
 }
 
 const Action: FC<ActionProps> = ({
@@ -16,8 +17,11 @@ const Action: FC<ActionProps> = ({
   subtitle,
   active,
   inverted,
+  hidden,
   ...props
 }) => {
+  if (hidden) return null;
+
   return (
     <TouchableHighlight
       {...props}
