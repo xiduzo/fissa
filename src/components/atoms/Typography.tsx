@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, useMemo} from 'react';
 import {
   Animated,
   RegisteredStyle,
@@ -24,20 +24,39 @@ interface TypographyProps extends Omit<TextProps, 'style'> {
     | false
     | RegisteredStyle<TextStyle>
     | Animated.Value
-    | Animated.AnimatedInterpolation
+    | Animated.AnimatedInterpolation<string>
     | Animated.WithAnimatedObject<TextStyle>
     | null
     | undefined;
+  gutterBottom?: boolean | number;
 }
 
 const Typography: FC<TypographyProps> = ({
   variant = 'bodyM',
   children,
   style,
+  gutterBottom = false,
   ...props
 }) => {
+  const marginBottom = useMemo(() => {
+    if (!gutterBottom) return 0;
+
+    if (typeof gutterBottom === 'number') return gutterBottom;
+
+    return gutterBottom ? 16 : 0;
+  }, [gutterBottom]);
+
   return (
-    <Animated.Text style={[styles.all, styles[variant], style]} {...props}>
+    <Animated.Text
+      style={[
+        styles.all,
+        styles[variant],
+        {
+          marginBottom: marginBottom,
+        },
+        style,
+      ]}
+      {...props}>
       {children}
     </Animated.Text>
   );

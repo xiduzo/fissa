@@ -48,7 +48,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
         navigation={navigation}
         style={styles.container}
         scrollEventThrottle={30}>
-        <Typography style={styles.title} variant="h1">
+        <Typography variant="h1" gutterBottom={32}>
           Your playlists
         </Typography>
         {playlists.map(playlist => (
@@ -67,9 +67,6 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
 export default AddFromPlaylist;
 
 const styles = StyleSheet.create({
-  title: {
-    marginBottom: 32,
-  },
   container: {
     paddingHorizontal: 24,
     paddingBottom: '100%',

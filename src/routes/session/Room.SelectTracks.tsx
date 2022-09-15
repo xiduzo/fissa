@@ -28,7 +28,7 @@ const ListHeader: FC<ListHeaderProps> = ({name, imageUri}) => {
           uri: imageUri ?? DEFAULT_IMAGE,
         }}
       />
-      <Typography variant="h1" style={{marginVertical: 24}}>
+      <Typography variant="h1" gutterBottom={24}>
         {name}
       </Typography>
     </>
@@ -54,6 +54,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   useEffect(() => {
     const fetchTracks = async (offset: number) => {
       spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
+        // TODO: filter tracks to be unique, no need for double tracks
         setTracks(prev => [...prev, ...result.items]);
         if (!result.next) return;
         fetchTracks(offset + result.items.length);
@@ -113,9 +114,8 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
         initialNumToRender={4}
         scrollEventThrottle={30}
         renderItem={renderItem}
-        getItemCount={() => tracks.length}
+        getItemCount={data => data.length}
         getItem={(data, index) => data[index]}
-        // TODO: filter tracks to be unique, no need for double tracks
         keyExtractor={item => item.track.id + item.added_at}
       />
       <AddContextBottomDrawer />
@@ -135,5 +135,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: 175,
     height: 175,
+    marginBottom: 24,
   },
 });

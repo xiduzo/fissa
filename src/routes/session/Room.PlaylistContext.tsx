@@ -68,7 +68,6 @@ const PlaylistContextProvider: FC = ({children}) => {
   const fetchTracks = useCallback(
     async (newTracks: SpotifyApi.PlaylistTrackObject[] = [], offset = 0) => {
       if (!room?.playlistId) return;
-      console.log('fetching tracks for room', room.playlistId);
       spotify.getPlaylistTracks(room?.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
         if (!result.next) {
@@ -132,7 +131,7 @@ const PlaylistContextProvider: FC = ({children}) => {
     mqttClient.on('connect', () => {
       const topics = [
         `fissa/room/${pin}`,
-        `fissa/room/${pin}/votes`,
+        `fissa/room/${pin}/votes/added`,
         `fissa/room/${pin}/tracks/reordered`,
         `fissa/room/${pin}/tracks/active`,
         `fissa/room/${pin}/tracks/added`,
@@ -158,11 +157,12 @@ const PlaylistContextProvider: FC = ({children}) => {
           console.log('tracks reordered');
           //fetchTracks();
           break;
-        case `fissa/room/${pin}/votes`:
+        case `fissa/room/${pin}/votes/added`:
           console.log('votes updated', payload);
           setVotes(payload as {[key: string]: Vote});
           break;
         case `fissa/room/${pin}`:
+          console.log('room updated', payload);
           break;
         default:
           console.log(topic, payload);

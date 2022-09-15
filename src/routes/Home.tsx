@@ -23,7 +23,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Typography variant="h1" style={{...styles.text, marginBottom: 16}}>
+        <Typography variant="h1" gutterBottom style={styles.text}>
           Ewa...
         </Typography>
         <Typography variant="h5" style={styles.text}>

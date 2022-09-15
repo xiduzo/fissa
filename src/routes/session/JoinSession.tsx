@@ -79,7 +79,6 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     async (code: string) => {
       try {
         const {content} = await request<Room>('GET', `/room/${code}`);
-        console.log(content);
         navigation.popToTop();
         navigation.replace('Room', {pin: content.pin});
         Notification.show({

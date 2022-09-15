@@ -45,15 +45,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     mySpotifyId.current = me?.id ?? '';
   }, [spotify]);
 
-  const activeTrackIndex = useMemo(
-    () => activeTrack?.currentIndex ?? room?.currentIndex ?? -1,
-    [activeTrack, room],
-  );
-
-  const queue = useMemo(
-    () => tracks.slice(activeTrackIndex + 1, tracks.length),
-    [tracks, activeTrackIndex],
-  );
+  const activeTrackIndex = room?.currentIndex ?? -1;
+  const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
 
   const animateBackToTop = (
     config?: Partial<Animated.SpringAnimationConfig>,
@@ -188,10 +181,10 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              paddingVertical: 100,
+              paddingVertical: 150,
               marginBottom: 150,
             }}>
-            <Typography variant="h1" style={{marginBottom: 8}}>
+            <Typography variant="h1" gutterBottom>
               🦦
             </Typography>
             <Typography variant="bodyM">Nothing to see here</Typography>

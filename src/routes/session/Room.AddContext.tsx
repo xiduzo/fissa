@@ -50,16 +50,14 @@ const AddContextProvider: FC = ({children}) => {
 
   const goToRoom = useCallback(() => {
     if (!canGoBack()) return;
+    setSelectedTracks([]);
     goBack();
-    goToRoom();
+    goToRoom(); // We can be two levels deep, so we need to go back twice
   }, [canGoBack, goBack]);
 
   const addToQueue = useCallback(async () => {
     if (!room?.pin) return;
 
-    console.log('adding tracks for room', room.pin);
-
-    setSelectedTracks([]);
     goToRoom();
 
     Notification.show({
@@ -77,10 +75,7 @@ const AddContextProvider: FC = ({children}) => {
     }
   }, [room?.pin, spotify, selectedTracks, goToRoom]);
 
-  const cancel = useCallback(() => {
-    goToRoom();
-    setSelectedTracks([]);
-  }, [goToRoom]);
+  const cancel = useCallback(goToRoom, [goToRoom]);
 
   const reset = useCallback(() => {
     setSelectedTracks([]);
@@ -108,9 +103,9 @@ export const AddContextBottomDrawer: FC = () => {
 
   return (
     <SharedElement id="tracks-to-add-drawer">
-      <View style={{position: 'absolute', bottom: 0, width: '100%'}}>
+      <View style={styles.view}>
         <BottomDrawer close={reset}>
-          <Typography style={styles.text} variant="h6">
+          <Typography style={styles.text} variant="h6" gutterBottom={24}>
             {selectedTracks.length} tracks selected
           </Typography>
           <Button
@@ -128,10 +123,13 @@ export const AddContextBottomDrawer: FC = () => {
 export default AddContextProvider;
 
 const styles = StyleSheet.create({
+  view: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+  },
   text: {
     color: Color.dark,
     textAlign: 'center',
-    margin: 24,
-    marginTop: 0,
   },
 });

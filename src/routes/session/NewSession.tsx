@@ -36,10 +36,10 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Typography variant="h1" style={{...styles.text, marginBottom: 16}}>
+        <Typography variant="h1" gutterBottom style={styles.text}>
           Create a session
         </Typography>
-        <Typography variant="h5" style={{...styles.text, marginBottom: 24}}>
+        <Typography variant="h5" gutterBottom={24} style={styles.text}>
           How would you like to start this session?
         </Typography>
       </View>

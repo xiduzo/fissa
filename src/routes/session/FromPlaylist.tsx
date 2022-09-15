@@ -10,7 +10,6 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
-import {Room} from './Room.PlaylistContext';
 
 interface FromPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'FromPlaylist'> {}
@@ -62,7 +61,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       style={styles.scrollView}
       navigation={navigation}
       scrollEventThrottle={30}>
-      <Typography variant="h1" style={{marginBottom: 24}}>
+      <Typography variant="h1" gutterBottom={24}>
         {title.current}
       </Typography>
       {playlists.map(playlist => (
