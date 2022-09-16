@@ -30,18 +30,15 @@ export interface Room {
 }
 
 export interface Vote {
-  trackId: string;
-  total: number;
-  votes: {
-    createdBy: string;
-    state: 'up' | 'down';
-  }[];
+  createdBy: string;
+  state: 'up' | 'down';
+  trackUri: string;
 }
 
 interface RoomPlaylistContextState {
   tracks: SpotifyApi.PlaylistTrackObject[];
   room?: Room;
-  votes: {[key: string]: Vote};
+  votes: {[key: string]: Vote[]};
   activeTrack?: ActiveTrack;
   setPin: (pin: string) => void;
   leaveRoom: () => void;
@@ -131,7 +128,7 @@ const PlaylistContextProvider: FC = ({children}) => {
     mqttClient.on('connect', () => {
       const topics = [
         `fissa/room/${pin}`,
-        `fissa/room/${pin}/votes/added`,
+        `fissa/room/${pin}/votes`,
         `fissa/room/${pin}/tracks/reordered`,
         `fissa/room/${pin}/tracks/active`,
         `fissa/room/${pin}/tracks/added`,
@@ -148,6 +145,7 @@ const PlaylistContextProvider: FC = ({children}) => {
       const payload = JSON.parse(message.toString());
       switch (topic) {
         case `fissa/room/${pin}/tracks/added`:
+          console.log('tracks added');
           fetchTracks();
           break;
         case `fissa/room/${pin}/tracks/active`:
@@ -157,9 +155,19 @@ const PlaylistContextProvider: FC = ({children}) => {
           console.log('tracks reordered');
           //fetchTracks();
           break;
-        case `fissa/room/${pin}/votes/added`:
+        case `fissa/room/${pin}/votes`:
           console.log('votes updated', payload);
-          setVotes(payload as {[key: string]: Vote});
+          const votes = payload.reduce(
+            (acc: {[key: string]: Vote[]}, vote: Vote) => {
+              acc[vote.trackUri] = acc[vote.trackUri] || [];
+              acc[vote.trackUri].push(vote);
+              return acc;
+            },
+            {},
+          );
+          console.log(votes);
+
+          setVotes(votes);
           break;
         case `fissa/room/${pin}`:
           console.log('room updated', payload);
