@@ -32,18 +32,11 @@ const SCROLL_TOP_OFFSET = -100;
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
   const {tracks, room, votes, activeTrack} = useRoomPlaylist(pin);
-  const {spotify} = useSpotify();
+  const {currentUser} = useSpotify();
 
   const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
-  const mySpotifyId = useRef('');
   const scrollRef =
     useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
-
-  useMemo(async () => {
-    const me = await spotify.getMe();
-
-    mySpotifyId.current = me?.id ?? '';
-  }, [spotify]);
 
   const activeTrackIndex = room?.currentIndex ?? -1;
   const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
@@ -85,7 +78,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       const track = render.item.track as SpotifyApi.TrackObjectFull;
       const trackVotes = votes[track.uri];
       const myVote = trackVotes?.votes?.find(
-        vote => vote.createdBy === mySpotifyId.current,
+        vote => vote.createdBy === currentUser?.id,
       );
 
       return (
@@ -151,7 +144,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           icon="🦥"
           title="This fissa is over"
           subtitle={
-            room?.createdBy !== mySpotifyId.current ? (
+            room?.createdBy !== currentUser?.id ? (
               'Poke your host to re-start this fissa'
             ) : (
               <Button title="restart fissa" onPress={restartPlaylist} />

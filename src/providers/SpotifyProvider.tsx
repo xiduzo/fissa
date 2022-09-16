@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
 } from 'react';
 import {AppState, NativeEventSubscription} from 'react-native';
@@ -19,6 +20,7 @@ import SpotifyWebApi from 'spotify-web-api-js';
 interface SpotifyProviderState {
   spotify: SpotifyWebApi.SpotifyWebApiJs;
   auth: () => Promise<boolean>;
+  currentUser?: SpotifyApi.CurrentUsersProfileResponse;
 }
 
 const initialState: SpotifyProviderState = {
@@ -59,6 +61,7 @@ type Tokens = {
 
 const SpotifyProvider: FC = ({children}) => {
   const spotifyApi = useRef(initialState.spotify);
+  const currentUser = useRef<SpotifyApi.CurrentUsersProfileResponse>();
 
   const spotifyAuth = useCallback(async () => {
     try {
@@ -123,6 +126,7 @@ const SpotifyProvider: FC = ({children}) => {
           // Current token is still valid, lets use it while it lasts
           if (new Date() < new Date(accessTokenExpirationDate)) {
             spotifyApi.current.setAccessToken(accessToken);
+            currentUser.current = await spotifyApi.current.getMe();
           }
 
           const tokens = {
@@ -154,6 +158,7 @@ const SpotifyProvider: FC = ({children}) => {
       value={{
         spotify: spotifyApi.current,
         auth: spotifyAuth,
+        currentUser: currentUser.current,
       }}>
       {children}
     </SpotifyContext.Provider>
