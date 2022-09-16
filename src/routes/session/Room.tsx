@@ -31,7 +31,7 @@ const SCROLL_TOP_OFFSET = -100;
 
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
-  const {tracks, room, votes, activeTrack, leaveRoom} = useRoomPlaylist(pin);
+  const {tracks, room, votes, activeTrack} = useRoomPlaylist(pin);
   const {spotify} = useSpotify();
 
   const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
@@ -110,11 +110,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       <View style={{flex: 1, marginTop: 24}}>
         <View style={[styles.header, {padding: 24}]}>
           <Typography variant="h2">&nbsp;</Typography>
-          <RoomDetails
-            pin={pin}
-            navigation={navigation}
-            leaveRoom={leaveRoom}
-          />
+          <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
           icon="🐕"
@@ -129,11 +125,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       <View style={{flex: 1, marginTop: 24}}>
         <View style={[styles.header, {padding: 24}]}>
           <Typography variant="h2">&nbsp;</Typography>
-          <RoomDetails
-            pin={pin}
-            navigation={navigation}
-            leaveRoom={leaveRoom}
-          />
+          <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
           icon="🦨"
@@ -153,7 +145,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             pin={pin}
             playlistId={room.playlistId}
             navigation={navigation}
-            leaveRoom={leaveRoom}
           />
         </View>
         <EmptyState
@@ -198,7 +189,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
                 pin={pin}
                 playlistId={room.playlistId}
                 navigation={navigation}
-                leaveRoom={leaveRoom}
               />
             </View>
             <Track

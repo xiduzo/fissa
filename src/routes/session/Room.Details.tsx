@@ -1,52 +1,48 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
 import {Linking, StyleSheet, View} from 'react-native';
+import {TouchableHighlight} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
+import InfoIcon from '../../components/atoms/icons/InfoIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
 import {Color} from '../../types/Color';
 import {RootStackParamList} from '../Routes';
+import {useRoomPlaylist} from './Room.PlaylistContext';
 
 interface RoomDetailsProps {
   pin: string;
   playlistId?: string;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Room', undefined>;
-  leaveRoom: () => void;
 }
 
-const RoomDetails: FC<RoomDetailsProps> = ({
-  pin,
-  playlistId,
-  navigation,
-  leaveRoom,
-}) => {
+const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
+  const {leaveRoom} = useRoomPlaylist(pin);
+
   const [showRoomDetails, setShowRoomDetails] = useState(false);
+
+  const toggleRoomDetails = () => setShowRoomDetails(!showRoomDetails);
 
   return (
     <View>
-      <LinearGradient
-        {...Color.gradient}
-        style={{
-          borderRadius: 6,
-        }}>
-        <Typography
-          variant="bodyM"
-          style={{
-            color: Color.dark,
-            fontWeight: 'bold',
-            paddingHorizontal: 4,
-            paddingVertical: 2,
-          }}
-          onPress={() => setShowRoomDetails(true)}>
-          {pin}
-        </Typography>
-      </LinearGradient>
-      <Popover
-        visible={!!showRoomDetails}
-        onRequestClose={() => setShowRoomDetails(false)}>
+      <TouchableHighlight onPress={toggleRoomDetails}>
+        <View
+          style={{opacity: 0.6, flexDirection: 'row', alignItems: 'center'}}>
+          <Typography
+            variant="bodyM"
+            style={{
+              paddingHorizontal: 4,
+              paddingVertical: 2,
+            }}>
+            {pin}
+          </Typography>
+          <InfoIcon />
+        </View>
+      </TouchableHighlight>
+      <Popover visible={!!showRoomDetails} onRequestClose={toggleRoomDetails}>
         <Typography variant="h2" style={styles.popoverText}>
           {pin}
         </Typography>
@@ -56,7 +52,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({
           inverted
           onPress={() => {
             leaveRoom();
-            setShowRoomDetails(false);
+            toggleRoomDetails();
             navigation.replace('Home');
           }}
           icon={
