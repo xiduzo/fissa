@@ -98,7 +98,7 @@ const PlaylistContextProvider: FC = ({children}) => {
       if (error === 404) {
         Notification.show({
           type: 'warning',
-          message: `Session ${pin} you are trying to join does not exist`,
+          message: `Fissa ${pin} you are trying to join does not exist`,
         });
       }
     }

@@ -10,9 +10,9 @@ interface HomeProps
   extends NativeStackScreenProps<RootStackParamList, 'Home'> {}
 
 const Home: FC<HomeProps> = ({navigation}) => {
-  const {spotify, auth} = useSpotify();
+  const {currentUser, auth} = useSpotify();
 
-  const [hasToken, setHasToken] = useState(!!spotify.getAccessToken());
+  const [hasToken, setHasToken] = useState(!!currentUser);
   const [signingIn, setSigningIn] = useState(false);
 
   const signIn = async () => {
@@ -24,12 +24,12 @@ const Home: FC<HomeProps> = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View>
         <Typography variant="h1" gutterBottom style={styles.text}>
-          Ewa...
+          Hi there {currentUser?.display_name ?? 'stranger'},
         </Typography>
         <Typography variant="h5" style={styles.text}>
           {hasToken
-            ? 'Would you like to create or join a fissa session?'
-            : 'Hi there stranger, sign in to spotify to continue.'}
+            ? 'Would you like to create or join a fissa?'
+            : 'please sign in to spotify to continue.'}
         </Typography>
       </View>
       {!hasToken && (
@@ -45,12 +45,12 @@ const Home: FC<HomeProps> = ({navigation}) => {
         <View>
           <View style={{marginBottom: 24}}>
             <Button
-              title="Create a session"
+              title="Create a fissa"
               onPress={() => navigation.navigate('NewSession')}
             />
           </View>
           <Button
-            title="Join a session"
+            title="Join a fissa"
             onPress={() => navigation.navigate('JoinSession')}
           />
         </View>

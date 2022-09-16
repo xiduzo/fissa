@@ -73,7 +73,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       ))}
       <Popover visible={!!selectedPlaylist} onRequestClose={closePopOver}>
         <Typography variant="h2" style={styles.text}>
-          Your group session will start based on
+          Your fissa will start based on
         </Typography>
 
         <Playlist playlist={selectedPlaylist} inverted hasBorder />

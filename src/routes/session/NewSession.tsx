@@ -37,10 +37,10 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View>
         <Typography variant="h1" gutterBottom style={styles.text}>
-          Create a session
+          Create a fissa
         </Typography>
         <Typography variant="h5" gutterBottom={24} style={styles.text}>
-          How would you like to start this session?
+          How would you like to start this fissa?
         </Typography>
       </View>
       <View>

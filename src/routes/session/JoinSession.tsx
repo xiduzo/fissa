@@ -114,7 +114,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Typography style={styles.title} variant="h5">
-        Enter the session code of the fissa you want to join
+        Enter the code of the fissa you would like to join
       </Typography>
       <View style={styles.code}>
         {pin.map((item, index) => (
