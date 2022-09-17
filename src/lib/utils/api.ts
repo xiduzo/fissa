@@ -1,4 +1,5 @@
 import Notification from '../../utils/Notification';
+import {API_ENDPOINT} from '../constants/Endpoint';
 
 type Method = 'GET' | 'POST';
 
@@ -21,11 +22,7 @@ export const request = async <T>(
     options.body = JSON.stringify(body);
   }
 
-  const response = await fetch(
-    // 'https://server-xiduzo.vercel.app/api' + route,
-    'http://localhost:3000/api' + route,
-    options,
-  );
+  const response = await fetch(API_ENDPOINT + route, options);
 
   if (response.status !== 200) {
     Notification.show({

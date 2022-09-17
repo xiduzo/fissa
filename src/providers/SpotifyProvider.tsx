@@ -17,6 +17,7 @@ import {
 } from 'react-native-app-auth';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import SpotifyWebApi from 'spotify-web-api-js';
+import {TOKEN_ENDPOINT} from '../lib/constants/Endpoint';
 
 interface SpotifyProviderState {
   spotify: SpotifyWebApi.SpotifyWebApiJs;
@@ -31,7 +32,6 @@ const initialState: SpotifyProviderState = {
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);
 
-const BASE_TOKEN_ENDPOINT = 'https://server-xiduzo.vercel.app/api/token/';
 const authConfig: AuthConfiguration = {
   usePKCE: false,
   clientId: 'a2a88c4618324942859ce3e1f888b938',
@@ -51,7 +51,7 @@ const authConfig: AuthConfiguration = {
   ],
   serviceConfiguration: {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-    tokenEndpoint: BASE_TOKEN_ENDPOINT,
+    tokenEndpoint: TOKEN_ENDPOINT,
   },
 };
 
@@ -84,7 +84,7 @@ const SpotifyProvider: FC = ({children}) => {
           ...authConfig,
           serviceConfiguration: {
             ...authConfig.serviceConfiguration,
-            tokenEndpoint: BASE_TOKEN_ENDPOINT + 'refresh',
+            tokenEndpoint: TOKEN_ENDPOINT + '/refresh',
           },
           additionalParameters: {
             access_token,
