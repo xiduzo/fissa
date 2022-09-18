@@ -92,8 +92,10 @@ const PlaylistContextProvider: FC = ({children}) => {
   }, [pin]);
 
   useEffect(() => {
+    if (!room?.playlistId) return;
+
     fetchTracks();
-  }, [fetchTracks, room?.playlistId]);
+  }, [room?.playlistId, fetchTracks]);
 
   useEffect(() => {
     if (!pin) return;
@@ -173,11 +175,12 @@ const PlaylistContextProvider: FC = ({children}) => {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', () => {
       if (AppState.currentState !== 'active') return;
+      joinRoom();
       fetchTracks();
     });
 
     return subscription.remove;
-  }, [fetchTracks]);
+  }, [joinRoom]);
 
   return (
     <RoomPlaylistContext.Provider
