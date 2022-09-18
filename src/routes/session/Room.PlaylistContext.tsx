@@ -78,8 +78,8 @@ const PlaylistContextProvider: FC = ({children}) => {
   }, []);
 
   const fetchVotes = useCallback(async () => {
-    const votes = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
-    sortAndSetVotes(votes.content);
+    const {content} = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
+    sortAndSetVotes(content);
   }, [room?.pin]);
 
   const leaveRoom = useCallback(() => {

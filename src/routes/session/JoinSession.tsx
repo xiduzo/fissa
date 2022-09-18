@@ -78,12 +78,14 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   const joinRoom = useCallback(
     async (code: string) => {
       try {
-        const {content} = await request<Room>('GET', `/room/${code}`);
+        const {
+          content: {pin},
+        } = await request<Room>('GET', `/room/${code}`);
         navigation.popToTop();
-        navigation.replace('Room', {pin: content.pin});
+        navigation.replace('Room', {pin});
         Notification.show({
           icon: '🪩',
-          message: `You've joined ${content.pin}, add some of your favorite tracks to keep the party going!`,
+          message: `You've joined ${pin}, add some of your favorite tracks to keep the party going!`,
         });
       } catch (error) {
         reset();
