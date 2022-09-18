@@ -67,6 +67,23 @@ const PlaylistContextProvider: FC = ({children}) => {
     [room?.playlistId, spotify],
   );
 
+  const sortAndSetVotes = useCallback((votes: Vote[]) => {
+    const sorted = votes.reduce((acc: {[key: string]: Vote[]}, vote: Vote) => {
+      acc[vote.trackUri] = acc[vote.trackUri] || [];
+      acc[vote.trackUri].push(vote);
+      return acc;
+    }, {});
+
+    console.log(sorted);
+
+    setVotes(sorted);
+  }, []);
+
+  const fetchVotes = useCallback(async () => {
+    const votes = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
+    sortAndSetVotes(votes.content);
+  }, [room?.pin]);
+
   const leaveRoom = useCallback(() => {
     setVotes({});
     setTracks([]);
@@ -74,7 +91,7 @@ const PlaylistContextProvider: FC = ({children}) => {
     setPin('');
   }, []);
 
-  const joinRoom = useCallback(async () => {
+  const fetchRoom = useCallback(async () => {
     if (!pin) return;
 
     try {
@@ -95,12 +112,13 @@ const PlaylistContextProvider: FC = ({children}) => {
     if (!room?.playlistId) return;
 
     fetchTracks();
-  }, [room?.playlistId, fetchTracks]);
+    fetchVotes();
+  }, [room?.playlistId, fetchTracks, fetchVotes]);
 
   useEffect(() => {
     if (!pin) return;
 
-    joinRoom();
+    fetchRoom();
 
     // TODO: rewrite MQTT stuff to hook
     if (!Config.MQTT_USER || !Config.MQTT_PASSWORD) {
@@ -128,7 +146,7 @@ const PlaylistContextProvider: FC = ({children}) => {
     });
 
     mqttClient.on('error', error => {
-      console.log('MQTT error', error);
+      console.warn('MQTT error', error);
     });
 
     mqttClient.on('message', (topic, message) => {
@@ -136,7 +154,6 @@ const PlaylistContextProvider: FC = ({children}) => {
       const payload = JSON.parse(message.toString());
       switch (topic) {
         case `fissa/room/${pin}/tracks/added`:
-          console.log('tracks added');
           fetchTracks();
           break;
         case `fissa/room/${pin}/tracks/reordered`:
@@ -144,21 +161,9 @@ const PlaylistContextProvider: FC = ({children}) => {
           //fetchTracks();
           break;
         case `fissa/room/${pin}/votes`:
-          console.log('votes updated', payload);
-          const votes = payload.reduce(
-            (acc: {[key: string]: Vote[]}, vote: Vote) => {
-              acc[vote.trackUri] = acc[vote.trackUri] || [];
-              acc[vote.trackUri].push(vote);
-              return acc;
-            },
-            {},
-          );
-          console.log(votes);
-
-          setVotes(votes);
+          sortAndSetVotes(payload);
           break;
         case `fissa/room/${pin}`:
-          console.log('room updated', payload);
           setRoom(payload);
           break;
         default:
@@ -170,17 +175,19 @@ const PlaylistContextProvider: FC = ({children}) => {
     return () => {
       mqttClient.end(true);
     };
-  }, [pin, fetchTracks, joinRoom]);
+  }, [pin, fetchTracks, fetchRoom, sortAndSetVotes]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', () => {
       if (AppState.currentState !== 'active') return;
-      joinRoom();
+
+      fetchRoom();
       fetchTracks();
+      fetchVotes();
     });
 
     return subscription.remove;
-  }, [joinRoom]);
+  }, [fetchRoom, fetchTracks, fetchVotes]);
 
   return (
     <RoomPlaylistContext.Provider

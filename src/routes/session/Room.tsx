@@ -71,22 +71,28 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const renderTrack = useCallback(
     (render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>) => {
       const track = render.item.track as SpotifyApi.TrackObjectFull;
-      // const trackVotes = votes[track.uri];
-      // const myVote = trackVotes?.votes?.find(
-      //   vote => vote.createdBy === currentUser?.id,
-      // );
+      const trackVotes = votes[track.uri];
+
+      const myVote = trackVotes?.find(
+        vote => vote.createdBy === currentUser?.id,
+      );
+
+      const total = trackVotes?.reduce(
+        (acc, vote) => acc + (vote.state === 'up' ? 1 : -1),
+        0,
+      );
 
       return (
         <RoomTrack
           track={track}
           pin={pin}
-          // totalVotes={trackVotes?.total}
-          // myVote={myVote?.state}
+          totalVotes={total}
+          myVote={myVote?.state}
           isUpcomingTrack={render.index === 0}
         />
       );
     },
-    [votes, pin],
+    [votes, pin, currentUser],
   );
 
   const restartPlaylist = async () => {

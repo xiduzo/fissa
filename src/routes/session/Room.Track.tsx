@@ -50,6 +50,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
 
   const EndIcon = isUpcomingTrack ? LockIcon : MoreIcon;
 
+  const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
+
   return (
     <View>
       <Track
@@ -66,7 +68,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <ArrowUpIcon
+            <VotesIcon
               style={{tintColor: Color.dark, transform: [{scale: 0.6}]}}
             />
             <Typography style={{color: Color.dark}} variant="bodyM">
