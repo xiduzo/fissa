@@ -56,7 +56,7 @@ const PlaylistContextProvider: FC = ({children}) => {
   const fetchTracks = useCallback(
     async (newTracks: SpotifyApi.PlaylistTrackObject[] = [], offset = 0) => {
       if (!room?.playlistId) return;
-      spotify.getPlaylistTracks(room?.playlistId, {offset}).then(result => {
+      spotify.getPlaylistTracks(room.playlistId, {offset}).then(result => {
         newTracks = newTracks.concat(result.items);
         if (!result.next) {
           return setTracks(newTracks);
@@ -67,18 +67,26 @@ const PlaylistContextProvider: FC = ({children}) => {
     [room?.playlistId, spotify],
   );
 
-  const sortAndSetVotes = useCallback((votes: Vote[]) => {
-    const sorted = votes.reduce((acc: {[key: string]: Vote[]}, vote: Vote) => {
-      acc[vote.trackUri] = acc[vote.trackUri] || [];
-      acc[vote.trackUri].push(vote);
-      return acc;
-    }, {});
+  const sortAndSetVotes = useCallback((newVotes: Vote[]) => {
+    const sorted = newVotes?.reduce(
+      (acc: {[key: string]: Vote[]}, vote: Vote) => {
+        acc[vote.trackUri] = acc[vote.trackUri] || [];
+        acc[vote.trackUri].push(vote);
+        return acc;
+      },
+      {},
+    );
 
     setVotes(sorted);
   }, []);
 
   const fetchVotes = useCallback(async () => {
-    const {content} = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
+    if (!room?.pin) return;
+
+    const {content} = await request<Vote[]>(
+      'GET',
+      `/room/vote?pin=${room.pin}`,
+    );
     sortAndSetVotes(content);
   }, [room?.pin]);
 

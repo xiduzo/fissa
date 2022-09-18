@@ -139,6 +139,7 @@ const SpotifyProvider: FC = ({children}) => {
 
           refresh(tokens);
 
+          // TODO: set background progress to refresh the token each ~20 minutes
           refreshTokenSubscription = AppState.addEventListener('change', () => {
             if (AppState.currentState !== 'active') return;
             refresh(tokens);

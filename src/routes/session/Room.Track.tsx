@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useMemo, useState} from 'react';
 import {Alert, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
@@ -48,7 +48,15 @@ const RoomTrack: FC<RoomTrackProps> = ({
     });
   };
 
-  const EndIcon = isUpcomingTrack ? LockIcon : MoreIcon;
+  const EndIcon = useMemo(() => {
+    if (isUpcomingTrack) return LockIcon;
+
+    if (myVote) {
+      return myVote === 'up' ? ArrowUpIcon : ArrowDownIcon;
+    }
+
+    return MoreIcon;
+  }, [isUpcomingTrack, myVote]);
 
   const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
 
@@ -58,7 +66,14 @@ const RoomTrack: FC<RoomTrackProps> = ({
         track={track}
         onPress={selectTrack}
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
-        end={<EndIcon style={{tintColor: Color.light + '80'}} />}
+        end={
+          <EndIcon
+            style={{
+              tintColor:
+                myVote && !isUpcomingTrack ? Color.main : Color.light + '80',
+            }}
+          />
+        }
       />
       <Popover
         title={
