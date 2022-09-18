@@ -6,15 +6,9 @@ import {Color} from '../../types/Color';
 interface ProgressBarProps extends ViewProps {
   progress?: number;
   track: SpotifyApi.TrackObjectFull;
-  isPlaying?: boolean;
 }
 
-const ProgressBar: FC<ProgressBarProps> = ({
-  progress,
-  track,
-  isPlaying,
-  style,
-}) => {
+const ProgressBar: FC<ProgressBarProps> = ({progress, track, style}) => {
   const [localProgress, setLocalProgress] = useState(0);
 
   const duration_ms = useMemo(() => track.duration_ms, [track]);
@@ -25,9 +19,9 @@ const ProgressBar: FC<ProgressBarProps> = ({
   }, [progress]);
 
   useEffect(() => {
-    if (!isPlaying || !progress) return;
+    if (!progress) return;
 
-    const updateFrequency = 750;
+    const updateFrequency = 250;
     const interval = setInterval(() => {
       setLocalProgress(prev => {
         const next = prev + updateFrequency / duration_ms;
@@ -38,7 +32,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
     return () => {
       clearInterval(interval);
     };
-  }, [duration_ms, progress, isPlaying]);
+  }, [duration_ms, progress]);
 
   if (progress === undefined) return null;
 
@@ -50,7 +44,6 @@ const ProgressBar: FC<ProgressBarProps> = ({
           backgroundColor: Color.light + '20',
           borderRadius: 4,
           overflow: 'hidden',
-          opacity: isPlaying ? 1 : 0.3,
         },
         style,
       ]}>

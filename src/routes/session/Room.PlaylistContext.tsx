@@ -13,20 +13,13 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 
-interface ActiveTrack {
-  is_playing: boolean;
-  progress_ms: number;
-  currentIndex: number;
-  is_in_playlist: boolean;
-  // Id of playlist
-  id: string;
-}
-
 export interface Room {
+  id?: string;
   playlistId: string;
   pin: string;
-  currentIndex: number;
   createdBy: string;
+  currentIndex: number;
+  expectedEndTime?: string;
 }
 
 export interface Vote {
@@ -39,7 +32,6 @@ interface RoomPlaylistContextState {
   tracks: SpotifyApi.PlaylistTrackObject[];
   room?: Room;
   votes: {[key: string]: Vote[]};
-  activeTrack?: ActiveTrack;
   setPin: (pin: string) => void;
   leaveRoom: () => void;
 }
@@ -58,7 +50,6 @@ const PlaylistContextProvider: FC = ({children}) => {
   const [tracks, setTracks] = useState(initialState.tracks);
   const [votes, setVotes] = useState(initialState.votes);
   const [room, setRoom] = useState(initialState.room);
-  const [activeTrack, setActiveTrack] = useState<ActiveTrack>();
   const [pin, setPin] = useState('');
   const {spotify} = useSpotify();
 
@@ -80,7 +71,6 @@ const PlaylistContextProvider: FC = ({children}) => {
     setVotes({});
     setTracks([]);
     setRoom(undefined);
-    setActiveTrack(undefined);
     setPin('');
   }, []);
 
@@ -130,7 +120,6 @@ const PlaylistContextProvider: FC = ({children}) => {
         `fissa/room/${pin}`,
         `fissa/room/${pin}/votes`,
         `fissa/room/${pin}/tracks/reordered`,
-        `fissa/room/${pin}/tracks/active`,
         `fissa/room/${pin}/tracks/added`,
       ];
       mqttClient.subscribe(topics);
@@ -147,9 +136,6 @@ const PlaylistContextProvider: FC = ({children}) => {
         case `fissa/room/${pin}/tracks/added`:
           console.log('tracks added');
           fetchTracks();
-          break;
-        case `fissa/room/${pin}/tracks/active`:
-          setActiveTrack(payload as ActiveTrack);
           break;
         case `fissa/room/${pin}/tracks/reordered`:
           console.log('tracks reordered');
@@ -171,6 +157,7 @@ const PlaylistContextProvider: FC = ({children}) => {
           break;
         case `fissa/room/${pin}`:
           console.log('room updated', payload);
+          setRoom(payload);
           break;
         default:
           console.log(topic, payload);
@@ -196,7 +183,6 @@ const PlaylistContextProvider: FC = ({children}) => {
     <RoomPlaylistContext.Provider
       value={{
         tracks,
-        activeTrack,
         room,
         votes,
         setPin,
@@ -228,7 +214,6 @@ export const useRoomPlaylist = (pin?: string) => {
   return {
     tracks: context.tracks,
     room: context.room,
-    activeTrack: context.activeTrack,
     votes: context.votes,
     leaveRoom: context.leaveRoom,
   };

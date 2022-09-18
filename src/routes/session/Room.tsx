@@ -31,7 +31,7 @@ const SCROLL_TOP_OFFSET = -100;
 
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
-  const {tracks, room, votes, activeTrack} = useRoomPlaylist(pin);
+  const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
 
   const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
@@ -40,6 +40,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   const activeTrackIndex = room?.currentIndex ?? -1;
   const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
+  const activeTrack = tracks[activeTrackIndex];
 
   const animateBackToTop = (
     config?: Partial<Animated.SpringAnimationConfig>,
@@ -76,17 +77,17 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const renderTrack = useCallback(
     (render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>) => {
       const track = render.item.track as SpotifyApi.TrackObjectFull;
-      const trackVotes = votes[track.uri];
-      const myVote = trackVotes?.votes?.find(
-        vote => vote.createdBy === currentUser?.id,
-      );
+      // const trackVotes = votes[track.uri];
+      // const myVote = trackVotes?.votes?.find(
+      //   vote => vote.createdBy === currentUser?.id,
+      // );
 
       return (
         <RoomTrack
           track={track}
           pin={pin}
-          totalVotes={trackVotes?.total}
-          myVote={myVote?.state}
+          // totalVotes={trackVotes?.total}
+          // myVote={myVote?.state}
           isUpcomingTrack={render.index === 0}
         />
       );
@@ -189,8 +190,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
               track={
                 tracks[activeTrackIndex]?.track as SpotifyApi.TrackObjectFull
               }
-              isPlaying={activeTrack?.is_playing}
-              progressMs={activeTrack?.progress_ms ?? 0}
+              expectedEndTime={room?.expectedEndTime}
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
