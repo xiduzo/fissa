@@ -52,7 +52,7 @@ const Typography: FC<TypographyProps> = ({
         styles.all,
         styles[variant],
         {
-          marginBottom: marginBottom,
+          marginBottom,
         },
         style,
       ]}

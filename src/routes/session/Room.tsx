@@ -40,7 +40,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   const activeTrackIndex = room?.currentIndex ?? -1;
   const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
-  const activeTrack = tracks[activeTrackIndex];
 
   const animateBackToTop = (
     config?: Partial<Animated.SpringAnimationConfig>,
@@ -52,19 +51,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     }).start();
   };
 
-  const animateIn = () =>
-    animateBackToTop({
-      toValue: 32,
-    });
-
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollHeight = event.nativeEvent.contentOffset.y;
 
-    if (scrollHeight < 500) {
-      return animateBackToTop();
-    }
+    if (scrollHeight < 500) return animateBackToTop();
 
-    animateIn();
+    animateBackToTop({
+      toValue: 32,
+    });
   };
 
   const scrollToTop = () => {
@@ -146,7 +140,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           title="This fissa is over"
           subtitle={
             room?.createdBy !== currentUser?.id ? (
-              'Poke your host to re-start this fissa'
+              'Poke your host to restart this fissa'
             ) : (
               <Button title="restart fissa" onPress={restartPlaylist} />
             )

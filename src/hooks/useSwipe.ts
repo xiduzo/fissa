@@ -2,10 +2,10 @@ import {useRef} from 'react';
 import {GestureResponderEvent} from 'react-native';
 
 interface SwipeProps {
-  onSwipeLeft?: () => void;
-  onSwipeRight?: () => void;
-  onSwipeUp?: () => void;
-  onSwipeDown?: () => void;
+  onSwipeLeft?: (event: GestureResponderEvent) => void;
+  onSwipeRight?: (event: GestureResponderEvent) => void;
+  onSwipeUp?: (event: GestureResponderEvent) => void;
+  onSwipeDown?: (event: GestureResponderEvent) => void;
 }
 
 export const useSwipe = (
@@ -30,19 +30,19 @@ export const useSwipe = (
     } = event;
 
     if (pageX + triggerAmount < xRef.current) {
-      onSwipeLeft && onSwipeLeft();
+      onSwipeLeft && onSwipeLeft(event);
     }
 
     if (pageX - triggerAmount > xRef.current) {
-      onSwipeRight && onSwipeRight();
+      onSwipeRight && onSwipeRight(event);
     }
 
     if (pageY + triggerAmount < yRef.current) {
-      onSwipeUp && onSwipeUp();
+      onSwipeUp && onSwipeUp(event);
     }
 
     if (pageY - triggerAmount > yRef.current) {
-      onSwipeDown && onSwipeDown();
+      onSwipeDown && onSwipeDown(event);
     }
   };
 

@@ -15,11 +15,8 @@ const ProgressBar: FC<ProgressBarProps> = ({progress, track, style}) => {
 
   useEffect(() => {
     if (!progress) return;
-    setLocalProgress(progress);
-  }, [progress]);
 
-  useEffect(() => {
-    if (!progress) return;
+    setLocalProgress(progress);
 
     const updateFrequency = 250;
     const interval = setInterval(() => {

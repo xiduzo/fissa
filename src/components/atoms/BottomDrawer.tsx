@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {GestureResponderEvent, StyleSheet, View} from 'react-native';
 import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
@@ -9,7 +9,7 @@ import CLoseIcon from './icons/CloseIcon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
   title?: JSX.Element;
-  close?: () => void;
+  close?: (event: GestureResponderEvent) => void;
 }
 
 const BottomDrawer: FC<BottomDrawerProps> = ({
@@ -25,7 +25,6 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
           styles.actions,
           {
             justifyContent: title ? 'space-between' : 'flex-end',
-            alignItems: 'center',
           },
         ]}>
         {title}
@@ -56,5 +55,6 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
 });

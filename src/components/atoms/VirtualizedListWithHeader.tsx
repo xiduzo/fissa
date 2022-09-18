@@ -22,9 +22,7 @@ function VirtualizedListWithHeader<T>({
   ...props
 }: VirtualizedListWithHeaderProps<T>): JSX.Element {
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (onScroll) {
-      onScroll(event);
-    }
+    if (onScroll) onScroll(event);
 
     const scrollHeight = event.nativeEvent.contentOffset.y;
 

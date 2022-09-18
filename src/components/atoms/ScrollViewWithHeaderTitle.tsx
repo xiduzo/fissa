@@ -23,9 +23,7 @@ const ScrollViewWithHeaderTitle: FC<ScrollViewWithHeaderTitleProps> = ({
   ...props
 }) => {
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (onScroll) {
-      onScroll(event);
-    }
+    if (onScroll) onScroll(event);
 
     const scrollHeight = event.nativeEvent.contentOffset.y;
 

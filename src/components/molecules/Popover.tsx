@@ -3,6 +3,7 @@ import {
   Animated,
   Modal,
   ModalProps,
+  NativeSyntheticEvent,
   SafeAreaView,
   StyleSheet,
   View,
@@ -37,9 +38,9 @@ const Popover: FC<PopOverProps> = ({
     [],
   );
 
-  const close = () => {
+  const close = (event: NativeSyntheticEvent<any>) => {
     animate();
-    onRequestClose && onRequestClose();
+    onRequestClose && onRequestClose(event);
   };
 
   const {touchStart, touchEnd} = useSwipe({onSwipeDown: close});
