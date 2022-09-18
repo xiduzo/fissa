@@ -64,15 +64,11 @@ const AddContextProvider: FC = ({children}) => {
       message: `You've added ${selectedTracks.length} tracks to the queue. Kick it!`,
     });
 
-    try {
-      await request<any>('POST', '/room/track', {
-        trackUris: selectedTracks,
-        pin: room.pin,
-        accessToken: spotify.getAccessToken(),
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    await request<any>('POST', '/room/track', {
+      trackUris: selectedTracks,
+      pin: room.pin,
+      accessToken: spotify.getAccessToken(),
+    });
   }, [room?.pin, spotify, selectedTracks, goToRoom]);
 
   const cancel = useCallback(goToRoom, [goToRoom]);

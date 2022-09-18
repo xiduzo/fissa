@@ -74,8 +74,6 @@ const PlaylistContextProvider: FC = ({children}) => {
       return acc;
     }, {});
 
-    console.log(sorted);
-
     setVotes(sorted);
   }, []);
 
@@ -167,7 +165,7 @@ const PlaylistContextProvider: FC = ({children}) => {
           setRoom(payload);
           break;
         default:
-          console.log(topic, payload);
+          console.info(topic, payload);
           break;
       }
     });
