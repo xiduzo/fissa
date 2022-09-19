@@ -33,7 +33,7 @@ const Popover: FC<PopOverProps> = ({
       Animated.timing(fadeAnimation, {
         toValue: 0,
         duration: 0,
-        useNativeDriver: true,
+        useNativeDriver: false,
         ...(config ?? {}),
       }).start();
     },

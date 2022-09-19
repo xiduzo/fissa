@@ -27,7 +27,7 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
         toValue: 0,
         duration: 0,
         delay: 0,
-        useNativeDriver: true,
+        useNativeDriver: false,
         ...(config ?? {}),
       }).start();
     };

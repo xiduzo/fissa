@@ -43,7 +43,7 @@ const ListItem: FC<ListItemProps> = ({
       Animated.spring(selectedAnimation, {
         toValue: 0,
         bounciness: 0,
-        useNativeDriver: true,
+        useNativeDriver: false,
         ...(config ?? {}),
       }).start();
     };
