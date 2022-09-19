@@ -49,8 +49,7 @@ const styles = StyleSheet.create({
   card: {
     padding: 12,
     paddingBottom: 40,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderRadius: 24,
   },
   content: {
     paddingHorizontal: 12,

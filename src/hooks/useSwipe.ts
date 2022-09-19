@@ -1,5 +1,5 @@
 import {useRef} from 'react';
-import {GestureResponderEvent} from 'react-native';
+import {GestureResponderEvent, PanResponder} from 'react-native';
 
 interface SwipeProps {
   onSwipeLeft?: (event: GestureResponderEvent) => void;

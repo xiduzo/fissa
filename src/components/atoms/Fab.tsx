@@ -17,7 +17,7 @@ const Fab: FC<FabProps> = ({children, scale = 1, ...props}) => {
 
   Animated.spring(scaleAnimation.current, {
     toValue: scale,
-    bounciness: 4,
+    bounciness: 8,
     useNativeDriver: true,
   }).start();
 

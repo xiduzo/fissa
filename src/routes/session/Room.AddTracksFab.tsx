@@ -83,6 +83,7 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
               hasBorder
               style={{marginBottom: 24}}
             />
+            {/* TODO add spotify track when in clipboard */}
             {/* <Track inverted hasBorder  /> */}
             <Button
               title="Copy song link in Spotify"

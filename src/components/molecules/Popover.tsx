@@ -1,9 +1,10 @@
-import {FC, useCallback, useEffect, useRef} from 'react';
+import React, {FC, useCallback, useEffect, useRef} from 'react';
 import {
   Animated,
   Modal,
   ModalProps,
   NativeSyntheticEvent,
+  PanResponder,
   SafeAreaView,
   StyleSheet,
   View,
@@ -12,6 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useSwipe} from '../../hooks/useSwipe';
 import {Color} from '../../types/Color';
 import BottomDrawer from '../atoms/BottomDrawer';
+import DraggableView from '../atoms/DraggableView';
 
 interface PopOverProps extends ModalProps {
   title?: JSX.Element;
@@ -43,7 +45,9 @@ const Popover: FC<PopOverProps> = ({
     onRequestClose && onRequestClose(event);
   };
 
-  const {touchStart, touchEnd} = useSwipe({onSwipeDown: close});
+  const {touchStart, touchEnd} = useSwipe({
+    onSwipeDown: close,
+  });
 
   useEffect(() => {
     props.visible
@@ -62,13 +66,11 @@ const Popover: FC<PopOverProps> = ({
         onRequestClose={close}
         style={style}>
         <View style={styles.view}>
-          {
-            <View onTouchStart={touchStart} onTouchEnd={touchEnd}>
-              <BottomDrawer title={title} action={close}>
-                {children}
-              </BottomDrawer>
-            </View>
-          }
+          <DraggableView onTouchStart={touchStart} onTouchEnd={touchEnd}>
+            <BottomDrawer title={title} action={close}>
+              {children}
+            </BottomDrawer>
+          </DraggableView>
           {fadeAnim.current && (
             <Animated.View
               style={[
@@ -104,17 +106,5 @@ const styles = StyleSheet.create({
   view: {
     height: '100%',
     justifyContent: 'flex-end',
-  },
-  card: {
-    padding: 12,
-    paddingBottom: 72,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-  },
-  content: {
-    paddingHorizontal: 12,
-  },
-  actions: {
-    flexDirection: 'row',
   },
 });
