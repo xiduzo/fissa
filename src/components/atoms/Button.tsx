@@ -3,6 +3,7 @@ import {
   ButtonProps as NativeButtonProps,
   StyleSheet,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {Color} from '../../types/Color';
@@ -28,29 +29,44 @@ const Button: FC<ButtonProps> = ({
 }) => {
   if (variant === 'text') {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         {...props}
+        disabled={disabled}
         style={{padding: size === 'small' ? 16 : 24}}>
-        <Typography
-          variant={size === 'small' ? 'bodyL' : 'h4'}
-          style={{
-            textAlign: 'center',
-            color: inverted ? Color.dark : Color.light,
-          }}>
-          {title}
-        </Typography>
-      </TouchableHighlight>
+        <View
+          style={[
+            styles.view,
+            {
+              opacity: disabled ? 0.5 : 1,
+            },
+          ]}>
+          {start && <View style={styles.start}>{start}</View>}
+          <Typography
+            variant={size === 'small' ? 'bodyL' : 'h4'}
+            style={{
+              textAlign: 'center',
+              color: inverted ? Color.dark : Color.light,
+            }}>
+            {title.toLowerCase()}
+          </Typography>
+          {end && <View style={styles.end}>{end}</View>}
+        </View>
+      </TouchableOpacity>
     );
   }
 
   return (
-    <TouchableHighlight {...props} style={{borderRadius: 12}}>
+    <TouchableHighlight
+      {...props}
+      disabled={disabled}
+      style={{borderRadius: 12}}>
       <View
         style={[
           styles.view,
           {
             borderColor: variant === 'outlined' ? Color.main : 'transparent',
             backgroundColor: inverted ? Color.dark : Color.main,
+            borderWidth: 2,
 
             paddingHorizontal: size === 'small' ? 16 : 24,
             paddingRight: end ? 10 : 24,
@@ -64,7 +80,7 @@ const Button: FC<ButtonProps> = ({
           style={{
             color: inverted ? Color.light : Color.dark,
           }}>
-          {title}
+          {title.toLowerCase()}
         </Typography>
         {end && <View style={styles.end}>{end}</View>}
       </View>
@@ -76,7 +92,6 @@ export default Button;
 
 const styles = StyleSheet.create({
   view: {
-    borderWidth: 2,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',

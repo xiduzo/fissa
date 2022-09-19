@@ -1,8 +1,6 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
-import {Linking, StyleSheet, View} from 'react-native';
-import {TouchableHighlight} from 'react-native-gesture-handler';
-import LinearGradient from 'react-native-linear-gradient';
+import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import InfoIcon from '../../components/atoms/icons/InfoIcon';
@@ -28,7 +26,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
 
   return (
     <View>
-      <TouchableHighlight onPress={toggleRoomDetails}>
+      <TouchableOpacity onPress={toggleRoomDetails}>
         <View
           style={{opacity: 0.6, flexDirection: 'row', alignItems: 'center'}}>
           <Typography
@@ -41,7 +39,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
           </Typography>
           <InfoIcon />
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
       <Popover visible={!!showRoomDetails} onRequestClose={toggleRoomDetails}>
         <Typography variant="h2" style={styles.popoverText}>
           {pin}

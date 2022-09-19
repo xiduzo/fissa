@@ -5,6 +5,7 @@ import Button from '../../components/atoms/Button';
 import Fab from '../../components/atoms/Fab';
 import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
+import ListItem from '../../components/molecules/ListItem';
 import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
 import {Color} from '../../types/Color';
@@ -19,7 +20,10 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
   const [copyFromSpotify, setCopyFromSpotify] = useState(false);
 
   const startAddingTracks = () => setAddingTracks(true);
-  const stopAddingTracks = () => setAddingTracks(false);
+  const stopAddingTracks = () => {
+    setCopyFromSpotify(false);
+    setAddingTracks(false);
+  };
   const openSpotify = () => {
     // Linking.openURL('https://open.spotify.com');
     setCopyFromSpotify(true);
@@ -44,11 +48,11 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
             <Typography variant="h2" style={styles.popoverText}>
               Add tracks
             </Typography>
-            <Typography variant="h6" style={styles.popoverText}>
+            <Typography variant="bodyL" style={styles.popoverText}>
               And keep this fissa going!
             </Typography>
             <View style={styles.popoverButtons}>
-              <View style={{marginBottom: 16}}>
+              <View style={{marginBottom: 32}}>
                 <Button
                   onPress={addFromPlaylist}
                   inverted
@@ -57,8 +61,9 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
               </View>
               <Button
                 onPress={openSpotify}
+                variant="text"
                 inverted
-                title="Copy track link in Spotify"
+                title="Copy song link in Spotify"
               />
             </View>
           </>
@@ -66,16 +71,21 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
         {copyFromSpotify && (
           <>
             <Typography variant="h2" style={styles.popoverText}>
-              Add track
+              Add tracks
             </Typography>
-            <Typography variant="h6" style={styles.popoverText}>
-              Copy a Spotify track link and come back.
+            <Typography variant="bodyL" gutterBottom style={styles.popoverText}>
+              Copy a Spotify song link and come back.
             </Typography>
-            <View>
-              <Track inverted hasBorder title="No track link found" />
-            </View>
+            <ListItem
+              title="No link found"
+              subtitle="Goto spotify to copy song link"
+              inverted
+              hasBorder
+              style={{marginBottom: 24}}
+            />
+            {/* <Track inverted hasBorder  /> */}
             <Button
-              title="Copy track link in Spotify"
+              title="Copy song link in Spotify"
               onPress={openSpotify}
               inverted
             />

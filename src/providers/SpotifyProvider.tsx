@@ -130,6 +130,7 @@ const SpotifyProvider: FC = ({children}) => {
           // Current token is still valid, lets use it while it lasts
           if (new Date() < new Date(accessTokenExpirationDate)) {
             spotifyApi.current.setAccessToken(accessToken);
+            setCurrentUser(await spotifyApi.current.getMe());
           }
 
           const tokens = {

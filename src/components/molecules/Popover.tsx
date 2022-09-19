@@ -64,7 +64,7 @@ const Popover: FC<PopOverProps> = ({
         <View style={styles.view}>
           {
             <View onTouchStart={touchStart} onTouchEnd={touchEnd}>
-              <BottomDrawer title={title} close={close}>
+              <BottomDrawer title={title} action={close}>
                 {children}
               </BottomDrawer>
             </View>

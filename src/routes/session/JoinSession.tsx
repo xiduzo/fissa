@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
+import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
 import {request} from '../../lib/utils/api';
 import {Color} from '../../types/Color';
@@ -144,17 +145,12 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
           </View>
         ))}
       </View>
-      <TouchableHighlight>
-        <Typography
-          variant="bodyM"
-          style={{
-            textAlign: 'center',
-            opacity: pin.filter(Boolean).length ? 1 : 0.5,
-          }}
-          onPress={reset}>
-          reset
-        </Typography>
-      </TouchableHighlight>
+      <Button
+        variant="text"
+        onPress={reset}
+        disabled={!pin.includes('')}
+        title="reset"
+      />
     </View>
   );
 };

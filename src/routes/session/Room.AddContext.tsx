@@ -4,6 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import {SharedElement} from 'react-navigation-shared-element';
 import BottomDrawer from '../../components/atoms/BottomDrawer';
 import Button from '../../components/atoms/Button';
+import DeleteIcon from '../../components/atoms/icons/DeleteIcon';
 import Typography from '../../components/atoms/Typography';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
@@ -100,7 +101,7 @@ export const AddContextBottomDrawer: FC = () => {
   return (
     <SharedElement id="tracks-to-add-drawer">
       <View style={styles.view}>
-        <BottomDrawer close={reset}>
+        <BottomDrawer action={reset} actionIcon={DeleteIcon}>
           <Typography style={styles.text} variant="h6" gutterBottom={24}>
             {selectedTracks.length} tracks selected
           </Typography>

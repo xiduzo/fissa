@@ -46,13 +46,13 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
       <View style={{flex: 1, justifyContent: 'space-between'}}>
         <View style={{marginBottom: 24}}>
           <Button
-            title="Based on my playlist"
+            title="based on my playlist"
             onPress={() => navigation.navigate('FromPlaylist')}
             disabled={waitForResponse}
           />
         </View>
         <Button
-          title="Start from blank"
+          title="start from blank"
           variant="text"
           onPress={startFromBlank}
           disabled={waitForResponse}

@@ -79,7 +79,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
         <Playlist playlist={selectedPlaylist} inverted hasBorder />
 
         <Button
-          title="Let's kick it!"
+          title="let's kick it!"
           inverted
           onPress={startFromPlaylist}
           disabled={waitForResponse}

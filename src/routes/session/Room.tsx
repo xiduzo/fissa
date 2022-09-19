@@ -101,8 +101,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (!room?.pin)
     return (
-      <View style={{flex: 1, marginTop: 24}}>
-        <View style={[styles.header, {padding: 24}]}>
+      <View style={{flex: 1}}>
+        <View style={[styles.header, styles.headerEmpty]}>
           <Typography variant="h2">&nbsp;</Typography>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
@@ -116,9 +116,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (!tracks.length)
     return (
-      <View style={{flex: 1, marginTop: 24}}>
-        <View style={[styles.header, {padding: 24}]}>
-          <Typography variant="h2">&nbsp;</Typography>
+      <View style={{flex: 1}}>
+        <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
@@ -130,11 +129,10 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       </View>
     );
 
-  if (activeTrackIndex === -1) {
+  if (activeTrackIndex === -1)
     return (
-      <View style={{flex: 1, marginTop: 24}}>
-        <View style={[styles.header, {padding: 24}]}>
-          <Typography variant="h2">&nbsp;</Typography>
+      <View style={{flex: 1}}>
+        <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails
             pin={pin}
             playlistId={room.playlistId}
@@ -154,7 +152,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         />
       </View>
     );
-  }
 
   return (
     <View style={{flex: 1}}>
@@ -246,6 +243,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  headerEmpty: {
+    padding: 24,
+    marginTop: 44,
+    justifyContent: 'flex-end',
   },
   queue: {
     marginBottom: 12,

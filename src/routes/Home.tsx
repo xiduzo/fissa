@@ -2,6 +2,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Button from '../components/atoms/Button';
+import PlusIcons from '../components/atoms/icons/PlusIcon';
 import Typography from '../components/atoms/Typography';
 import {useSpotify} from '../providers/SpotifyProvider';
 import {Color} from '../types/Color';
@@ -13,12 +14,11 @@ interface HomeProps
 const Home: FC<HomeProps> = ({navigation}) => {
   const {currentUser, auth} = useSpotify();
 
-  const [hasToken, setHasToken] = useState(!!currentUser);
   const [signingIn, setSigningIn] = useState(false);
 
   const signIn = async () => {
     setSigningIn(true);
-    setHasToken(await auth());
+    await auth();
   };
 
   return (
@@ -28,12 +28,12 @@ const Home: FC<HomeProps> = ({navigation}) => {
           Hi there {currentUser?.display_name?.split(' ')[0] ?? 'stranger'},
         </Typography>
         <Typography variant="h5" style={styles.text}>
-          {hasToken
+          {currentUser
             ? 'Would you like to create or join a fissa?'
             : 'please sign in to spotify to continue.'}
         </Typography>
       </View>
-      {!hasToken && (
+      {!currentUser && (
         <View style={{flex: 1, justifyContent: 'space-between'}}>
           <Button
             title="Sign in to spotify"
@@ -42,7 +42,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
           />
         </View>
       )}
-      {hasToken && (
+      {currentUser && (
         <View style={{flex: 1, justifyContent: 'space-between'}}>
           <View style={{marginBottom: 36}}>
             <Button
@@ -54,6 +54,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
             variant="text"
             title="create a fissa"
             onPress={() => navigation.navigate('NewSession')}
+            start={<PlusIcons style={{transform: [{scale: 0.75}]}} />}
           />
         </View>
       )}

@@ -3,21 +3,25 @@ import {GestureResponderEvent, StyleSheet, View} from 'react-native';
 import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
+import {VectorImageProps} from 'react-native-vector-image';
 import {Color} from '../../types/Color';
 import IconButton from './IconButton';
 import CLoseIcon from './icons/CloseIcon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
   title?: JSX.Element;
-  close?: (event: GestureResponderEvent) => void;
+  action?: (event: GestureResponderEvent) => void;
+  actionIcon?: FC<any>;
 }
 
 const BottomDrawer: FC<BottomDrawerProps> = ({
   title,
-  close,
+  action,
   children,
   style,
+  actionIcon,
 }) => {
+  const Icon = actionIcon || CLoseIcon;
   return (
     <LinearGradient {...Color.gradient} style={[styles.card, style]}>
       <View
@@ -28,11 +32,9 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
           },
         ]}>
         {title}
-        {close && (
-          <IconButton title="close" onPress={close} variant="contained">
-            <CLoseIcon
-              style={{tintColor: Color.dark, transform: [{scale: 0.6}]}}
-            />
+        {action && (
+          <IconButton title="close" onPress={action} variant="contained">
+            <Icon style={{tintColor: Color.dark, transform: [{scale: 0.6}]}} />
           </IconButton>
         )}
       </View>
