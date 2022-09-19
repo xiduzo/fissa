@@ -5,11 +5,11 @@ import {DotProps} from 'react-native-onboarding-swiper';
 import {Color} from '../types/Color';
 
 const DotComponent: FC<DotProps> = ({selected, ...props}) => {
-  const widthAnimation = useRef(new Animated.Value(8));
+  const widthAnimation = useRef(new Animated.Value(8)).current;
 
   useEffect(() => {
     const animate = (config?: Partial<Animated.TimingAnimationConfig>) => {
-      Animated.timing(widthAnimation.current, {
+      Animated.timing(widthAnimation, {
         toValue: 8,
         duration: 150,
         useNativeDriver: false,
@@ -27,7 +27,7 @@ const DotComponent: FC<DotProps> = ({selected, ...props}) => {
       style={[styles.dot]}>
       <Animated.View
         style={{
-          width: widthAnimation.current,
+          width: widthAnimation,
         }}
       />
     </LinearGradient>

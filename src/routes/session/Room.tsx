@@ -34,7 +34,9 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
 
-  const backToTopOffset = useRef(new Animated.Value(SCROLL_TOP_OFFSET));
+  const backTopTopAnimation = useRef(
+    new Animated.Value(SCROLL_TOP_OFFSET),
+  ).current;
   const scrollRef =
     useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
 
@@ -44,7 +46,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const animateBackToTop = (
     config?: Partial<Animated.SpringAnimationConfig>,
   ) => {
-    Animated.spring(backToTopOffset.current, {
+    Animated.spring(backTopTopAnimation, {
       toValue: SCROLL_TOP_OFFSET,
       useNativeDriver: false,
       ...(config ?? {}),
@@ -215,7 +217,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         style={[
           styles.backToTop,
           {
-            bottom: backToTopOffset.current,
+            bottom: backTopTopAnimation,
           },
         ]}>
         <Button

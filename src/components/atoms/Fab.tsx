@@ -13,9 +13,9 @@ interface FabProps extends ButtonProps {
 }
 
 const Fab: FC<FabProps> = ({children, scale = 1, ...props}) => {
-  const scaleAnimation = useRef(new Animated.Value(scale));
+  const scaleAnimation = useRef(new Animated.Value(scale)).current;
 
-  Animated.spring(scaleAnimation.current, {
+  Animated.spring(scaleAnimation, {
     toValue: scale,
     bounciness: 8,
     useNativeDriver: true,
@@ -23,7 +23,7 @@ const Fab: FC<FabProps> = ({children, scale = 1, ...props}) => {
 
   return (
     <TouchableHighlight style={styles.container} {...props}>
-      <Animated.View style={{transform: [{scale: scaleAnimation.current}]}}>
+      <Animated.View style={{transform: [{scale: scaleAnimation}]}}>
         <LinearGradient {...Color.gradient} style={styles.gradient}>
           {children}
         </LinearGradient>

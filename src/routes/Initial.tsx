@@ -13,13 +13,13 @@ interface InitialProps
 const CURRENT_ONBOARDING_VERSION = '1.0.0';
 
 const Initial: FC<InitialProps> = ({navigation}) => {
-  const colorAnimation = useRef(new Animated.Value(0));
+  const colorAnimation = useRef(new Animated.Value(0)).current;
 
   useMemo(async () => {
     const onboardingVersion = await EncryptedStorage.getItem('onboarding');
     await EncryptedStorage.setItem('onboarding', CURRENT_ONBOARDING_VERSION);
 
-    colorAnimation.current.addListener(response => {
+    colorAnimation.addListener(response => {
       if (response.value < 1) return;
 
       if (onboardingVersion !== CURRENT_ONBOARDING_VERSION) {
@@ -30,19 +30,19 @@ const Initial: FC<InitialProps> = ({navigation}) => {
       navigation.replace('Home');
     });
 
-    Animated.timing(colorAnimation.current, {
+    Animated.timing(colorAnimation, {
       toValue: 1,
       duration: 2500,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }, [navigation]);
 
-  const backgroundColorInterpolation = colorAnimation.current.interpolate({
+  const backgroundColorInterpolation = colorAnimation.interpolate({
     inputRange: [0, 0.4, 0.6, 1],
     outputRange: ['#000000', '#000000', Color.dark, Color.dark],
   });
 
-  const colorInterpolation = colorAnimation.current.interpolate({
+  const colorInterpolation = colorAnimation.interpolate({
     inputRange: [0, 1],
     outputRange: ['#FFFFFF90', Color.light],
   });
@@ -55,7 +55,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
       ]}>
       <Animation
         style={{transform: [{scale: 1.75}]}}
-        progress={colorAnimation.current}
+        progress={colorAnimation}
       />
 
       <Typography variant="bodyM" style={{color: colorInterpolation}}>

@@ -37,13 +37,13 @@ const ListItem: FC<ListItemProps> = ({
   selected = false,
   ...props
 }) => {
-  const selectedAnimation = useRef(new Animated.Value(0));
+  const selectedAnimation = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const animate = (config?: Partial<Animated.SpringAnimationConfig>) => {
-      Animated.spring(selectedAnimation.current, {
+      Animated.spring(selectedAnimation, {
         toValue: 0,
         bounciness: 0,
-        useNativeDriver: false,
+        useNativeDriver: true,
         ...(config ?? {}),
       }).start();
     };
@@ -51,18 +51,18 @@ const ListItem: FC<ListItemProps> = ({
     selected ? animate({toValue: 1, bounciness: 12}) : animate();
   }, [selected]);
 
-  const textOpacityInterpolation = selectedAnimation.current.interpolate({
+  const textOpacityInterpolation = selectedAnimation.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 0.4],
   });
 
-  const backgroundOpacityInterpolation = selectedAnimation.current.interpolate({
+  const backgroundOpacityInterpolation = selectedAnimation.interpolate({
     inputRange: [0, 1],
 
     outputRange: [Color.dark + '00', Color.dark + '80'],
   });
 
-  const iconScaleInterpolation = selectedAnimation.current.interpolate({
+  const iconScaleInterpolation = selectedAnimation.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
   });

@@ -26,14 +26,14 @@ const Popover: FC<PopOverProps> = ({
   title,
   ...props
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0));
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   const animate = useCallback(
     (config?: Partial<Animated.TimingAnimationConfig>) => {
-      Animated.timing(fadeAnim.current, {
+      Animated.timing(fadeAnimation, {
         toValue: 0,
         duration: 0,
-        useNativeDriver: false,
+        useNativeDriver: true,
         ...(config ?? {}),
       }).start();
     },
@@ -71,12 +71,12 @@ const Popover: FC<PopOverProps> = ({
               {children}
             </BottomDrawer>
           </DraggableView>
-          {fadeAnim.current && (
+          {fadeAnimation && (
             <Animated.View
               style={[
                 styles.backdrop,
                 {
-                  opacity: fadeAnim.current,
+                  opacity: fadeAnimation,
                 },
               ]}>
               <LinearGradient

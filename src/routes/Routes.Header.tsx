@@ -11,9 +11,9 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   options,
   navigation,
 }) => {
-  const backAnimation = useRef(new Animated.Value(0));
-  const animateTitle = useRef(new Animated.Value(-80));
-  const prefHeaderTitle = useRef(options.headerTitle);
+  const backAnimation = useRef(new Animated.Value(0)).current;
+  const titleAnimation = useRef(new Animated.Value(-80)).current;
+  const previousHeaderTitle = useRef(options.headerTitle);
   const canGoBack = navigation.canGoBack();
 
   const goBack = () => {
@@ -23,11 +23,11 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
 
   useEffect(() => {
     const animate = (config?: Partial<Animated.TimingAnimationConfig>) => {
-      Animated.timing(backAnimation.current, {
+      Animated.timing(backAnimation, {
         toValue: 0,
         duration: 0,
         delay: 0,
-        useNativeDriver: false,
+        useNativeDriver: true,
         ...(config ?? {}),
       }).start();
     };
@@ -39,14 +39,14 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
 
   useEffect(() => {
     const animate = (config?: Partial<Animated.TimingAnimationConfig>) => {
-      Animated.timing(animateTitle.current, {
+      Animated.timing(titleAnimation, {
         toValue: -80,
         duration: 100,
         delay: 0,
         useNativeDriver: false,
         ...(config ?? {}),
       }).start(() => {
-        prefHeaderTitle.current = options.headerTitle;
+        previousHeaderTitle.current = options.headerTitle;
       });
     };
 
@@ -65,17 +65,17 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
             : Color.dark,
         },
       ]}>
-      <Animated.View style={{opacity: backAnimation.current}}>
+      <Animated.View style={{opacity: backAnimation}}>
         <IconButton onPress={goBack} title={options.title ?? ''}>
           <ArrowLeftIcon />
         </IconButton>
       </Animated.View>
       <Animated.View
         style={{
-          marginBottom: animateTitle.current,
+          marginBottom: titleAnimation,
         }}>
         <Typography variant="h4">
-          {options.headerTitle ?? prefHeaderTitle.current}
+          {options.headerTitle ?? previousHeaderTitle.current}
         </Typography>
       </Animated.View>
       {options.headerRight ? (

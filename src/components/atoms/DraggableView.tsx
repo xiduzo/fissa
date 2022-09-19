@@ -9,12 +9,18 @@ import {
 
 interface DraggableViewProps extends ViewProps {}
 
+const touchThreshold = 20;
 const DraggableView: FC<DraggableViewProps> = ({children, ...viewProps}) => {
   const pan = useRef(new Animated.ValueXY()).current;
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true, // https://stackoverflow.com/a/44671267/4655177
+    // https://stackoverflow.com/a/44671267/4655177
+    onMoveShouldSetPanResponder: (e, gestureState) => {
+      const {dx, dy} = gestureState;
+
+      return Math.abs(dx) > touchThreshold || Math.abs(dy) > touchThreshold;
+    },
     onPanResponderMove: Animated.event(
       [
         null,
