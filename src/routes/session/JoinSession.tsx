@@ -88,12 +88,13 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
           message: `You've joined ${pin}, add some of your favorite tracks to keep the party going!`,
         });
       } catch (error) {
+        console.log(error);
         reset();
         if (error === 404) {
           Notification.show({
             type: 'info',
             icon: '🕵️',
-            message: `Oops! We can not find a fissa with the code ${code}. Try another code.`,
+            message: `Oops! We could not find a fissa with the code ${code}. Try another code.`,
           });
         }
       }

@@ -35,7 +35,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      <View style={{flex: 1, justifyContent: 'center'}}>
         <Typography variant="h1" gutterBottom style={styles.text}>
           Create a fissa
         </Typography>
@@ -43,16 +43,17 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           How would you like to start this fissa?
         </Typography>
       </View>
-      <View>
+      <View style={{flex: 1, justifyContent: 'space-between'}}>
         <View style={{marginBottom: 24}}>
           <Button
-            title="Based on a playlist"
+            title="Based on my playlist"
             onPress={() => navigation.navigate('FromPlaylist')}
             disabled={waitForResponse}
           />
         </View>
         <Button
           title="Start from blank"
+          variant="text"
           onPress={startFromBlank}
           disabled={waitForResponse}
         />

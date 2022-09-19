@@ -10,9 +10,10 @@ import Typography from './Typography';
 
 export interface ButtonProps extends NativeButtonProps {
   inverted?: boolean;
-  variant?: 'outlined';
+  variant?: 'outlined' | 'text';
   size?: 'small';
   end?: JSX.Element;
+  start?: JSX.Element;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -21,9 +22,27 @@ const Button: FC<ButtonProps> = ({
   variant,
   size,
   end,
+  start,
   disabled,
   ...props
 }) => {
+  if (variant === 'text') {
+    return (
+      <TouchableHighlight
+        {...props}
+        style={{padding: size === 'small' ? 16 : 24}}>
+        <Typography
+          variant={size === 'small' ? 'bodyL' : 'h4'}
+          style={{
+            textAlign: 'center',
+            color: inverted ? Color.dark : Color.light,
+          }}>
+          {title}
+        </Typography>
+      </TouchableHighlight>
+    );
+  }
+
   return (
     <TouchableHighlight {...props} style={{borderRadius: 12}}>
       <View
@@ -39,6 +58,7 @@ const Button: FC<ButtonProps> = ({
             paddingVertical: size === 'small' ? (end ? 8 : 11.5) : 20,
           },
         ]}>
+        {start && <View style={styles.start}>{start}</View>}
         <Typography
           variant={size === 'small' ? 'h6' : 'h3'}
           style={{
@@ -64,5 +84,8 @@ const styles = StyleSheet.create({
   },
   end: {
     marginLeft: 4,
+  },
+  start: {
+    marginRight: 4,
   },
 });

@@ -79,7 +79,14 @@ const Routes: FC = () => {
         name="JoinSession"
         options={{
           headerRight: () => (
-            <IconButton title="hi" onPress={() => Alert.alert('hi there')}>
+            <IconButton
+              title="hi"
+              onPress={() =>
+                Alert.alert(
+                  'Scan function will come here',
+                  'be patient my young pawadan',
+                )
+              }>
               <QuestionMarkIcon />
             </IconButton>
           ),
