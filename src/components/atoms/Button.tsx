@@ -1,10 +1,12 @@
 import {FC} from 'react';
 import {
   ButtonProps as NativeButtonProps,
+  StyleProp,
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {Color} from '../../types/Color';
 import Typography from './Typography';
@@ -15,6 +17,7 @@ export interface ButtonProps extends NativeButtonProps {
   size?: 'small';
   end?: JSX.Element;
   start?: JSX.Element;
+  style?: StyleProp<ViewStyle>;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -25,6 +28,7 @@ const Button: FC<ButtonProps> = ({
   end,
   start,
   disabled,
+  style,
   ...props
 }) => {
   if (variant === 'text') {
@@ -32,13 +36,14 @@ const Button: FC<ButtonProps> = ({
       <TouchableOpacity
         {...props}
         disabled={disabled}
-        style={{padding: size === 'small' ? 16 : 24}}>
+        style={[{padding: size === 'small' ? 16 : 24}, style]}>
         <View
           style={[
             styles.view,
             {
               opacity: disabled ? 0.5 : 1,
             },
+            style,
           ]}>
           {start && <View style={styles.start}>{start}</View>}
           <Typography
@@ -73,6 +78,7 @@ const Button: FC<ButtonProps> = ({
             opacity: disabled ? 0.5 : 1,
             paddingVertical: size === 'small' ? (end ? 8 : 11.5) : 20,
           },
+          style,
         ]}>
         {start && <View style={styles.start}>{start}</View>}
         <Typography

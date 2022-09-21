@@ -51,7 +51,7 @@ const Popover: FC<PopOverProps> = ({
 
   useEffect(() => {
     props.visible
-      ? animate({toValue: 1, duration: 300, delay: 300})
+      ? animate({toValue: 1, duration: 300, delay: 250})
       : animate();
 
     return animate;

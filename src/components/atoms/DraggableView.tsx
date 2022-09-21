@@ -7,10 +7,20 @@ import {
   ViewProps,
 } from 'react-native';
 
-interface DraggableViewProps extends ViewProps {}
+interface DraggableViewProps extends ViewProps {
+  /**
+   * After how many pixels of dragging should the view drag along
+   *
+   * default: `0`
+   */
+  touchThreshold?: number;
+}
 
-const touchThreshold = 20;
-const DraggableView: FC<DraggableViewProps> = ({children, ...viewProps}) => {
+const DraggableView: FC<DraggableViewProps> = ({
+  children,
+  touchThreshold = 0,
+  ...viewProps
+}) => {
   const pan = useRef(new Animated.ValueXY()).current;
 
   const panResponder = PanResponder.create({
@@ -19,7 +29,7 @@ const DraggableView: FC<DraggableViewProps> = ({children, ...viewProps}) => {
     onMoveShouldSetPanResponder: (e, gestureState) => {
       const {dx, dy} = gestureState;
 
-      return Math.abs(dx) > touchThreshold || Math.abs(dy) > touchThreshold;
+      return Math.max(Math.abs(dx), Math.abs(dy)) > touchThreshold;
     },
     onPanResponderMove: Animated.event(
       [

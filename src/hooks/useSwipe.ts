@@ -10,7 +10,7 @@ interface SwipeProps {
 
 export const useSwipe = (
   {onSwipeDown, onSwipeLeft, onSwipeRight, onSwipeUp}: SwipeProps,
-  triggerAmount = 50,
+  triggerAmount = 100,
 ) => {
   const xRef = useRef(0);
   const yRef = useRef(0);

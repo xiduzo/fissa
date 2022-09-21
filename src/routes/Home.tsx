@@ -2,10 +2,8 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Button from '../components/atoms/Button';
-import PlusIcons from '../components/atoms/icons/PlusIcon';
 import Typography from '../components/atoms/Typography';
 import {useSpotify} from '../providers/SpotifyProvider';
-import {Color} from '../types/Color';
 import {RootStackParamList} from './Routes';
 
 interface HomeProps
@@ -54,7 +52,6 @@ const Home: FC<HomeProps> = ({navigation}) => {
             variant="text"
             title="create a fissa"
             onPress={() => navigation.navigate('NewSession')}
-            start={<PlusIcons style={{transform: [{scale: 0.75}]}} />}
           />
         </View>
       )}
