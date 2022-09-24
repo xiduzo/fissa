@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedbackProps,
   View,
 } from 'react-native';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {Color} from '../../types/Color';
 import Image from '../atoms/Image';
 import Typography from '../atoms/Typography';
@@ -86,12 +85,11 @@ const ListItem: FC<ListItemProps> = ({
               {
                 borderTopRightRadius: hasBorder ? 0 : 12,
                 borderBottomRightRadius: hasBorder ? 0 : 12,
-                backgroundColor: Color.dark + (!imageUri ? 10 : 100),
               },
               imageStyle,
             ]}
             source={{
-              uri: !!imageUri ? imageUri : DEFAULT_IMAGE,
+              uri: imageUri,
             }}
           />
           <Animated.View

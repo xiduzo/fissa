@@ -1,5 +1,4 @@
 import {FC} from 'react';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import ListItem, {ListItemProps} from './ListItem';
 
 interface PlaylistProps extends Partial<ListItemProps> {
@@ -13,13 +12,11 @@ interface PlaylistProps extends Partial<ListItemProps> {
 }
 
 const Playlist: FC<PlaylistProps> = ({playlist, ...props}) => {
-  if (!playlist) {
-    return null;
-  }
+  if (!playlist) return null;
 
   return (
     <ListItem
-      imageUri={playlist.images[0]?.url ?? DEFAULT_IMAGE}
+      imageUri={playlist.images[0]?.url}
       title={playlist.name}
       subtitle={playlist.owner.display_name ?? playlist.description ?? ''}
       {...props}

@@ -7,7 +7,6 @@ import Image from '../../components/atoms/Image';
 import Typography from '../../components/atoms/Typography';
 import VirtualizedListWithHeader from '../../components/atoms/VirtualizedListWithHeader';
 import Track from '../../components/molecules/ListItem.Track';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
@@ -25,7 +24,7 @@ const ListHeader: FC<ListHeaderProps> = ({name, imageUri}) => {
       <Image
         style={styles.image}
         source={{
-          uri: imageUri ?? DEFAULT_IMAGE,
+          uri: imageUri,
         }}
       />
       <Typography variant="h1" gutterBottom={24}>

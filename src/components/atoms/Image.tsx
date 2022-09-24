@@ -11,6 +11,6 @@ export default LocalImage;
 const styles = StyleSheet.create({
   image: {
     borderRadius: 12,
-    backgroundColor: Color.light,
+    backgroundColor: Color.light + 40,
   },
 });

@@ -1,6 +1,5 @@
 import {DateTime} from 'luxon';
 import {FC, useMemo} from 'react';
-import {DEFAULT_IMAGE} from '../../lib/constants/Image';
 import ProgressBar from '../atoms/ProgressBar';
 import ListItem, {ListItemProps} from './ListItem';
 
@@ -34,7 +33,7 @@ const Track: FC<TrackProps> = ({
 
   return (
     <ListItem
-      imageUri={track.album.images[0]?.url ?? DEFAULT_IMAGE}
+      imageUri={track.album.images[0]?.url}
       title={track.name}
       subtitle={track.artists.map((x: any) => x.name).join(', ')}
       extra={
