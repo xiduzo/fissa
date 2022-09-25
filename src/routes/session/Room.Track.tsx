@@ -18,7 +18,6 @@ interface RoomTrackProps {
   totalVotes?: number;
   myVote?: 'up' | 'down';
   pin: string;
-  isUpcomingTrack?: boolean;
 }
 
 const RoomTrack: FC<RoomTrackProps> = ({

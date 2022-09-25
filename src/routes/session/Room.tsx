@@ -90,7 +90,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           pin={pin}
           totalVotes={total}
           myVote={myVote?.state}
-          isUpcomingTrack={render.index === 0}
         />
       );
     },
