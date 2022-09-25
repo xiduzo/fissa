@@ -2,7 +2,7 @@ import {FC, useEffect, useRef} from 'react';
 import {Animated, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {DotProps} from 'react-native-onboarding-swiper';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 
 const DotComponent: FC<DotProps> = ({selected, ...props}) => {
   const widthAnimation = useRef(new Animated.Value(8)).current;

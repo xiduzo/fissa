@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import {Image, ImageProps, StyleSheet} from 'react-native';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 
 const LocalImage: FC<ImageProps> = ({style, source, ...props}) => {
   return <Image style={[styles.image, style]} source={source} {...props} />;

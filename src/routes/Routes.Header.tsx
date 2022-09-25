@@ -5,7 +5,7 @@ import {Animated, StyleSheet, View} from 'react-native';
 import IconButton from '../components/atoms/IconButton';
 import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
 import Typography from '../components/atoms/Typography';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 
 const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   options,

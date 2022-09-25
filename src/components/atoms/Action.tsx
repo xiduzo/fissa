@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import {ButtonProps, StyleSheet, TouchableHighlight, View} from 'react-native';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import Typography from './Typography';
 
 interface ActionProps extends ButtonProps {

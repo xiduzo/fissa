@@ -1,15 +1,8 @@
-import VectorImage, {VectorImageProps} from 'react-native-vector-image';
 import {FC} from 'react';
-import {Color} from '../../../types/Color';
+import Icon, {IconProps} from './_Icon';
 
-interface MoreIconProps extends Omit<VectorImageProps, 'source'> {}
-
-const MoreIcon: FC<MoreIconProps> = ({style, ...props}) => (
-  <VectorImage
-    {...props}
-    style={[{tintColor: Color.light}, style]}
-    source={require('../../../../assets/icons/more.svg')}
-  />
+const MoreIcon: FC<IconProps> = props => (
+  <Icon {...props} source={require('../../../../assets/icons/more.svg')} />
 );
 
 export default MoreIcon;

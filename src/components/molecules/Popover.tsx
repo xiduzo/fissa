@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSwipe} from '../../hooks/useSwipe';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import BottomDrawer from '../atoms/BottomDrawer';
 import DraggableView from '../atoms/DraggableView';
 

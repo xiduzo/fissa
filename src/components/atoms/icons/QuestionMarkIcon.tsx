@@ -1,13 +1,9 @@
-import VectorImage, {VectorImageProps} from 'react-native-vector-image';
 import {FC} from 'react';
-import {Color} from '../../../types/Color';
+import Icon, {IconProps} from './_Icon';
 
-interface QuestionMarkIconProps extends Omit<VectorImageProps, 'source'> {}
-
-const QuestionMarkIcon: FC<QuestionMarkIconProps> = ({style, ...props}) => (
-  <VectorImage
+const QuestionMarkIcon: FC<IconProps> = props => (
+  <Icon
     {...props}
-    style={[{tintColor: Color.light}, style]}
     source={require('../../../../assets/icons/question_mark.svg')}
   />
 );

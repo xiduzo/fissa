@@ -1,4 +1,4 @@
-type Theme = {
+export type Theme = {
   name: string;
   main: string;
   dark: string;
@@ -82,8 +82,8 @@ const limey: Theme = {
   },
 };
 
-const colors = [sunny, limey, blueey, pinkey, orangy, greeny];
+const themes = [sunny, limey, blueey, pinkey, orangy, greeny];
 
 const {floor, random} = Math;
 
-export const Color: Theme = colors[floor(random() * colors.length)];
+export const Color: Theme = themes[floor(random() * themes.length)];

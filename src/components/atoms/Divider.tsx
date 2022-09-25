@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import {StyleSheet, View, ViewProps} from 'react-native';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 
 const Divider: FC<ViewProps> = ({style, ...props}) => {
   return <View style={[styling.divider, style]} {...props} />;

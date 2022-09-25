@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import LottieView, {AnimatedLottieViewProps} from 'lottie-react-native';
-import {Color} from '../../../types/Color';
+import {Color} from '../../../types/Theme';
 
 interface AnimationProps extends Omit<AnimatedLottieViewProps, 'source'> {}
 

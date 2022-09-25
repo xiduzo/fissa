@@ -2,7 +2,7 @@ import {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Typography from '../components/atoms/Typography';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 
 const OnboardingSlideOne: FC = () => (
   <View>

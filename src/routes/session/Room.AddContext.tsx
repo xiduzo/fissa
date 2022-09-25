@@ -8,7 +8,7 @@ import DeleteIcon from '../../components/atoms/icons/DeleteIcon';
 import Typography from '../../components/atoms/Typography';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
 import {useRoomPlaylist} from './Room.PlaylistContext';
 

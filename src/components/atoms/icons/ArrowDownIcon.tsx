@@ -1,13 +1,9 @@
-import VectorImage, {VectorImageProps} from 'react-native-vector-image';
 import {FC} from 'react';
-import {Color} from '../../../types/Color';
+import Icon, {IconProps} from './_Icon';
 
-interface ArrowDownIconProps extends Omit<VectorImageProps, 'source'> {}
-
-const ArrowDownIcon: FC<ArrowDownIconProps> = ({style, ...props}) => (
-  <VectorImage
+const ArrowDownIcon: FC<IconProps> = props => (
+  <Icon
     {...props}
-    style={[{tintColor: Color.light}, style]}
     source={require('../../../../assets/icons/arrow_down.svg')}
   />
 );

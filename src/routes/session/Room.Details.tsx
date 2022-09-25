@@ -7,7 +7,7 @@ import InfoIcon from '../../components/atoms/icons/InfoIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from './Room.PlaylistContext';
 

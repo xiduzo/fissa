@@ -4,7 +4,7 @@ import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
 import {VectorImageProps} from 'react-native-vector-image';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import IconButton from './IconButton';
 import CLoseIcon from './icons/CloseIcon';
 

@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedbackProps,
   View,
 } from 'react-native';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import Image from '../atoms/Image';
 import Typography from '../atoms/Typography';
 

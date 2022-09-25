@@ -6,7 +6,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 
 interface FabProps extends ButtonProps {
   scale?: number;

@@ -5,7 +5,7 @@ import OnboardingSwiper from 'react-native-onboarding-swiper';
 import Button from '../components/atoms/Button';
 import ArrowRightIcon from '../components/atoms/icons/ArrowRightIcon';
 import Typography from '../components/atoms/Typography';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 import DotComponent from './Onboarding.DotComponent';
 import OnboardingSlideOne from './Onboarding.SlideOne';
 import OnboardingSlideThree from './Onboarding.SlideThree';

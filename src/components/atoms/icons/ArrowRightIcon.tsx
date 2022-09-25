@@ -1,13 +1,10 @@
 import VectorImage, {VectorImageProps} from 'react-native-vector-image';
 import {FC} from 'react';
-import {Color} from '../../../types/Color';
+import Icon, {IconProps} from './_Icon';
 
-interface ArrowRightIconProps extends Omit<VectorImageProps, 'source'> {}
-
-const ArrowRightIcon: FC<ArrowRightIconProps> = ({style, ...props}) => (
-  <VectorImage
+const ArrowRightIcon: FC<IconProps> = props => (
+  <Icon
     {...props}
-    style={[{tintColor: Color.light}, style]}
     source={require('../../../../assets/icons/arrow_right.svg')}
   />
 );

@@ -16,7 +16,7 @@ import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';

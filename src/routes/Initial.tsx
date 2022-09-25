@@ -4,7 +4,7 @@ import {Animated, StyleSheet} from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Animation from '../components/atoms/animations/Animation';
 import Typography from '../components/atoms/Typography';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 import {RootStackParamList} from './Routes';
 
 interface InitialProps

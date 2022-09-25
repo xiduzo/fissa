@@ -4,7 +4,7 @@ import {Alert} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import IconButton from '../components/atoms/IconButton';
 import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 import Home from './Home';
 import Initial from './Initial';
 import Onboarding from './Onboarding';

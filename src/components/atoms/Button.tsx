@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import Typography from './Typography';
 
 export interface ButtonProps extends NativeButtonProps {

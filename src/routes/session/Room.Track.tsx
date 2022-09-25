@@ -10,7 +10,7 @@ import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
 
 interface RoomTrackProps {

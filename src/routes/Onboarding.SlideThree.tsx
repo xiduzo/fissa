@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ArrowDownIcon from '../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../components/atoms/icons/ArrowUpIcon';
 import Typography from '../components/atoms/Typography';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 
 const OnboardingSlideThree: FC = () => (
   <View>

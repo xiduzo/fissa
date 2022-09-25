@@ -5,7 +5,7 @@ import Toast, {
   ToastConfig,
   ToastConfigParams,
 } from 'react-native-toast-message';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import Typography from './Typography';
 
 interface ToastProps extends ToastConfigParams<any> {

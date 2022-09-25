@@ -6,7 +6,7 @@ import Button from '../components/atoms/Button';
 import PlusIcon from '../components/atoms/icons/PlusIcon';
 import Typography from '../components/atoms/Typography';
 import {useSpotify} from '../providers/SpotifyProvider';
-import {Color} from '../types/Color';
+import {Color} from '../types/Theme';
 import {RootStackParamList} from './Routes';
 
 interface HomeProps

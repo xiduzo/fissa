@@ -8,7 +8,7 @@ import Playlist from '../../components/molecules/ListItem.Playlist';
 import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Color';
+import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 
 interface FromPlaylistProps
