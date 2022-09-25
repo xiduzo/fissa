@@ -40,8 +40,8 @@ const Onboarding: FC<OnboardingProps> = ({navigation}) => {
             onPress={finishOnboarding}
             end={
               <ArrowRightIcon
+                color="dark"
                 style={{
-                  tintColor: Color.dark,
                   marginLeft: 12,
                 }}
               />

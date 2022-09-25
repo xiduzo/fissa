@@ -8,6 +8,12 @@ export interface IconProps extends Omit<VectorImageProps, 'source'> {
    */
   color?: keyof Omit<Theme, 'name' | 'gradient'>;
   /**
+   * In percentages from 0 to 100
+   *  @default 100
+   */
+  colorOpacity?: number;
+  /**
+   * As a factor of the original size
    * @default 1
    */
   scale?: number;
@@ -21,11 +27,15 @@ const Icon: FC<LocalIconProps> = ({
   style,
   color = 'light',
   scale = 1,
+  colorOpacity = 100,
   ...props
 }) => (
   <VectorImage
     {...props}
-    style={[{tintColor: Color[color], transform: [{scale}]}, style]}
+    style={[
+      {tintColor: Color[color] + colorOpacity, transform: [{scale}]},
+      style,
+    ]}
   />
 );
 

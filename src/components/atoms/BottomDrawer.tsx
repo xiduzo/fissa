@@ -7,11 +7,12 @@ import {VectorImageProps} from 'react-native-vector-image';
 import {Color} from '../../types/Theme';
 import IconButton from './IconButton';
 import CLoseIcon from './icons/CloseIcon';
+import {IconProps} from './icons/_Icon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
   title?: JSX.Element;
   action?: (event: GestureResponderEvent) => void;
-  actionIcon?: FC<any>;
+  actionIcon?: FC<IconProps>;
 }
 
 const BottomDrawer: FC<BottomDrawerProps> = ({
@@ -34,7 +35,7 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
         {title}
         {action && (
           <IconButton title="close" onPress={action} variant="contained">
-            <Icon style={{tintColor: Color.dark, transform: [{scale: 0.6}]}} />
+            <Icon color="dark" scale={0.6} />
           </IconButton>
         )}
       </View>

@@ -58,11 +58,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           variant="text"
           onPress={startFromBlank}
           disabled={waitForResponse}
-          end={
-            <ArrowRightIcon
-              style={{tintColor: Color.light, transform: [{scale: 0.6}]}}
-            />
-          }
+          end={<ArrowRightIcon scale={0.6} />}
         />
       </View>
     </SafeAreaView>

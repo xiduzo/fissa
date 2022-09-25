@@ -53,13 +53,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
             toggleRoomDetails();
             navigation.replace('Home');
           }}
-          icon={
-            <ArrowUpIcon
-              style={{
-                tintColor: Color.dark + '40',
-              }}
-            />
-          }
+          icon={<ArrowUpIcon color="dark" colorOpacity={40} />}
         />
         {playlistId && (
           <Action
@@ -71,13 +65,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
                 'https://open.spotify.com/playlist/' + playlistId,
               );
             }}
-            icon={
-              <SpotifyIcon
-                style={{
-                  tintColor: Color.dark + '40',
-                }}
-              />
-            }
+            icon={<SpotifyIcon color="dark" colorOpacity={40} />}
           />
         )}
       </Popover>

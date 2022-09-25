@@ -59,6 +59,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
   }, [isUpcomingTrack, myVote]);
 
   const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
+  const showVoteIcon = myVote && !isUpcomingTrack;
 
   return (
     <View>
@@ -68,10 +69,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
         end={
           <EndIcon
-            style={{
-              tintColor:
-                myVote && !isUpcomingTrack ? Color.main : Color.light + '80',
-            }}
+            color={showVoteIcon ? 'main' : 'light'}
+            colorOpacity={showVoteIcon ? 100 : 80}
           />
         }
       />
@@ -83,9 +82,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <VotesIcon
-              style={{tintColor: Color.dark, transform: [{scale: 0.6}]}}
-            />
+            <VotesIcon color="dark" scale={0.6} />
             <Typography style={{color: Color.dark}} variant="bodyM">
               {totalVotes}
             </Typography>
@@ -103,7 +100,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         />
         {isUpcomingTrack && (
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <LockIcon style={{tintColor: Color.dark, marginRight: 4}} />
+            <LockIcon color="dark" style={{marginRight: 4}} />
             <Typography
               style={{color: Color.dark, flexShrink: 1}}
               variant="bodyL">
@@ -120,9 +117,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
           active={myVote === 'up'}
           icon={
             <ArrowUpIcon
-              style={{
-                tintColor: myVote === 'up' ? Color.main : Color.dark + '40',
-              }}
+              color={myVote === 'up' ? 'main' : 'dark'}
+              colorOpacity={myVote === 'up' ? 100 : 40}
             />
           }
           subtitle="And it will move up in the queue"
@@ -136,9 +132,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
           onPress={castVote('down')}
           icon={
             <ArrowDownIcon
-              style={{
-                tintColor: myVote === 'down' ? Color.main : Color.dark + '40',
-              }}
+              color={myVote === 'down' ? 'main' : 'dark'}
+              colorOpacity={myVote === 'down' ? 100 : 40}
             />
           }
           subtitle="And it will move down in the queue"

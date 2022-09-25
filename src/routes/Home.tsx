@@ -55,11 +55,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
             variant="text"
             title="create a fissa"
             onPress={() => navigation.navigate('NewSession')}
-            start={
-              <PlusIcon
-                style={{tintColor: Color.light, transform: [{scale: 0.6}]}}
-              />
-            }
+            start={<PlusIcon scale={0.6} />}
           />
         </View>
       )}

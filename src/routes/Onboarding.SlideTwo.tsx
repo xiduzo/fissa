@@ -9,7 +9,7 @@ const OnboardingSlideTwo: FC = () => (
   <View style={styles.view}>
     <Typography style={styles.icon}>💃🏾</Typography>
     <LinearGradient style={styles.button} {...Color.gradient}>
-      <PlusIcons style={styles.buttonIcon} />
+      <PlusIcons color="dark" scale={1.5} />
     </LinearGradient>
     <Typography style={{...styles.icon, ...styles.rotated}}>🕺🏻</Typography>
   </View>
@@ -41,9 +41,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 32,
     borderRadius: 16,
-  },
-  buttonIcon: {
-    tintColor: Color.dark,
-    transform: [{scale: 1.5}],
   },
 });

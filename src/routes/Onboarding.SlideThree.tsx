@@ -12,22 +12,13 @@ const OnboardingSlideThree: FC = () => (
     <LinearGradient
       style={[styles.button, styles.buttonUp]}
       {...Color.gradient}>
-      <ArrowUpIcon
-        style={[{tintColor: Color.dark, transform: [{scale: 1.5}]}]}
-      />
+      <ArrowUpIcon color="dark" scale={1.5} />
     </LinearGradient>
     <LinearGradient
       style={[styles.button, styles.buttonDown]}
       {...Color.gradient}
       colors={[Color.light, Color.light]}>
-      <ArrowDownIcon
-        style={[
-          {
-            tintColor: Color.dark + '16',
-            transform: [{scale: 1.5}],
-          },
-        ]}
-      />
+      <ArrowDownIcon scale={1.5} color="dark" colorOpacity={16} />
     </LinearGradient>
     <Typography style={{...styles.icon, ...styles.shit}}>💩</Typography>
   </View>

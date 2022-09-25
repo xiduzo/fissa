@@ -40,7 +40,7 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
         title="Add tracks"
         onPress={startAddingTracks}
         scale={addingTracks ? 0 : 1}>
-        <PlusIcons style={{tintColor: Color.dark}} />
+        <PlusIcons color="dark" />
       </Fab>
       <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
         {!copyFromSpotify && (
