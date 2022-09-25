@@ -61,7 +61,12 @@ const RoomTrack: FC<RoomTrackProps> = ({
       <Track
         track={track}
         onPress={selectTrack}
-        onLongPress={() => Alert.alert(`long press ${track.name}`)}
+        onLongPress={() =>
+          Alert.alert(
+            'Quick vote function will come here',
+            'be patient my young pawadan',
+          )
+        }
         end={
           <EndIcon
             color={myVote ? 'main' : 'light'}
