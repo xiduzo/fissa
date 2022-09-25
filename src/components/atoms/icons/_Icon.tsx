@@ -9,7 +9,7 @@ export interface IconProps extends Omit<VectorImageProps, 'source'> {
   color?: keyof Omit<Theme, 'name' | 'gradient'>;
   /**
    * In percentages from 0 to 100
-   *  @default 100
+   * @default 100
    */
   colorOpacity?: number;
   /**
@@ -23,20 +23,32 @@ interface LocalIconProps extends IconProps {
   source: number;
 }
 
+const isValidOpacity = (opacity?: number) => {
+  if (opacity === undefined) return false;
+  return opacity > 0 && opacity < 100;
+};
+
 const Icon: FC<LocalIconProps> = ({
   style,
   color = 'light',
   scale = 1,
   colorOpacity = 100,
   ...props
-}) => (
-  <VectorImage
-    {...props}
-    style={[
-      {tintColor: Color[color] + colorOpacity, transform: [{scale}]},
-      style,
-    ]}
-  />
-);
+}) => {
+  const opacity = isValidOpacity(colorOpacity) ? colorOpacity?.toString() : '';
+  return (
+    <VectorImage
+      {...props}
+      // TODO: fix color opacity in tint color
+      style={[
+        {
+          tintColor: Color[color] + opacity,
+          transform: [{scale}],
+        },
+        style,
+      ]}
+    />
+  );
+};
 
 export default Icon;
