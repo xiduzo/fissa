@@ -25,7 +25,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
   track,
   myVote,
   pin,
-  isUpcomingTrack,
   totalVotes = 0,
 }) => {
   const [selected, setSelected] = useState(false);
@@ -33,11 +32,11 @@ const RoomTrack: FC<RoomTrackProps> = ({
 
   const selectTrack = () => setSelected(true);
 
-  const castVote = (state: 'up' | 'down') => async () => {
+  const castVote = (state?: 'up' | 'down') => async () => {
     setSelected(false);
     Notification.show({
-      icon: state === 'up' ? '🫴' : '🫳',
-      message: 'Your vote has been cast!',
+      icon: myVote === state ? '🔄' : state === 'up' ? '⬆️' : '⬇️',
+      message: `Your vote has been ${myVote === state ? 'reverted' : 'cast'}!`,
     });
 
     await request<any>('POST', '/room/vote', {
@@ -49,17 +48,14 @@ const RoomTrack: FC<RoomTrackProps> = ({
   };
 
   const EndIcon = useMemo(() => {
-    if (isUpcomingTrack) return LockIcon;
-
     if (myVote) {
       return myVote === 'up' ? ArrowUpIcon : ArrowDownIcon;
     }
 
     return MoreIcon;
-  }, [isUpcomingTrack, myVote]);
+  }, [myVote]);
 
   const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
-  const showVoteIcon = myVote && !isUpcomingTrack;
 
   return (
     <View>
@@ -69,8 +65,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
         onLongPress={() => Alert.alert(`long press ${track.name}`)}
         end={
           <EndIcon
-            color={showVoteIcon ? 'main' : 'light'}
-            colorOpacity={showVoteIcon ? 100 : 80}
+            color={myVote ? 'main' : 'light'}
+            colorOpacity={myVote ? 100 : 80}
           />
         }
       />
@@ -98,19 +94,9 @@ const RoomTrack: FC<RoomTrackProps> = ({
             marginVertical: 16,
           }}
         />
-        {isUpcomingTrack && (
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <LockIcon color="dark" style={{marginRight: 4}} />
-            <Typography color="dark" style={{flexShrink: 1}} variant="bodyL">
-              Oops! Tacks up next in the queue can not be voted for anymore.
-            </Typography>
-          </View>
-        )}
         <Action
           title="Up vote track"
           inverted
-          disabled={myVote === 'up'}
-          hidden={isUpcomingTrack}
           onPress={castVote('up')}
           active={myVote === 'up'}
           icon={
@@ -124,8 +110,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Down vote track"
           inverted
-          disabled={myVote === 'down'}
-          hidden={isUpcomingTrack}
           active={myVote === 'down'}
           onPress={castVote('down')}
           icon={

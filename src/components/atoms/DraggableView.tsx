@@ -11,14 +11,14 @@ interface DraggableViewProps extends ViewProps {
   /**
    * After how many pixels of dragging should the view drag along
    *
-   * default: `0`
+   * @default 10
    */
   touchThreshold?: number;
 }
 
 const DraggableView: FC<DraggableViewProps> = ({
   children,
-  touchThreshold = 0,
+  touchThreshold = 10,
   ...viewProps
 }) => {
   const pan = useRef(new Animated.ValueXY()).current;
