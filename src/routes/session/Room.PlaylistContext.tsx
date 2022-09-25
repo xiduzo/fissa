@@ -157,14 +157,14 @@ const PlaylistContextProvider: FC = ({children}) => {
 
     mqttClient.on('message', (topic, message) => {
       // TODO: validate message to expected format?
-      const payload = JSON.parse(message.toString());
+      const payload = JSON.parse(message?.toString() ?? '{}');
       switch (topic) {
         case `fissa/room/${pin}/tracks/added`:
           fetchTracks();
           break;
         case `fissa/room/${pin}/tracks/reordered`:
           console.log('tracks reordered');
-          //fetchTracks();
+          fetchTracks();
           break;
         case `fissa/room/${pin}/votes`:
           sortAndSetVotes(payload);
