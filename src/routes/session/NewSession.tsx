@@ -2,9 +2,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Button from '../../components/atoms/Button';
+import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import Typography from '../../components/atoms/Typography';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
+import {Color} from '../../types/Color';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 import {Room} from './Room.PlaylistContext';
@@ -56,6 +58,11 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           variant="text"
           onPress={startFromBlank}
           disabled={waitForResponse}
+          end={
+            <ArrowRightIcon
+              style={{tintColor: Color.light, transform: [{scale: 0.6}]}}
+            />
+          }
         />
       </View>
     </SafeAreaView>
