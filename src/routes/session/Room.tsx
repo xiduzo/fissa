@@ -168,7 +168,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
               paddingVertical: 150,
               marginBottom: 150,
             }}>
-            <Typography variant="h1" gutterBottom>
+            <Typography variant="h1" gutter>
               🦦
             </Typography>
             <Typography variant="bodyM">Nothing to see here</Typography>

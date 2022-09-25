@@ -83,7 +83,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
               alignItems: 'center',
             }}>
             <VotesIcon color="dark" scale={0.6} />
-            <Typography style={{color: Color.dark}} variant="bodyM">
+            <Typography color="dark" variant="bodyM">
               {totalVotes}
             </Typography>
           </View>
@@ -101,9 +101,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         {isUpcomingTrack && (
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <LockIcon color="dark" style={{marginRight: 4}} />
-            <Typography
-              style={{color: Color.dark, flexShrink: 1}}
-              variant="bodyL">
+            <Typography color="dark" style={{flexShrink: 1}} variant="bodyL">
               Oops! Tacks up next in the queue can not be voted for anymore.
             </Typography>
           </View>

@@ -48,7 +48,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
         navigation={navigation}
         style={styles.container}
         scrollEventThrottle={30}>
-        <Typography variant="h1" gutterBottom={32}>
+        <Typography variant="h1" gutter={32}>
           Your playlists
         </Typography>
         {playlists.map(playlist => (

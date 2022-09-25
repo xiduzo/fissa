@@ -1,6 +1,6 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
-import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Linking, TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import InfoIcon from '../../components/atoms/icons/InfoIcon';
@@ -41,7 +41,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
         </View>
       </TouchableOpacity>
       <Popover visible={!!showRoomDetails} onRequestClose={toggleRoomDetails}>
-        <Typography variant="h2" style={styles.popoverText}>
+        <Typography variant="h2" color="dark" align="center">
           {pin}
         </Typography>
         <Action
@@ -74,10 +74,3 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
 };
 
 export default RoomDetails;
-
-const styles = StyleSheet.create({
-  popoverText: {
-    color: Color.dark,
-    textAlign: 'center',
-  },
-});

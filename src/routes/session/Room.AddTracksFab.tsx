@@ -45,10 +45,10 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
       <Popover visible={!!addingTracks} onRequestClose={stopAddingTracks}>
         {!copyFromSpotify && (
           <>
-            <Typography variant="h2" style={styles.popoverText}>
+            <Typography variant="h2" color="dark" align="center">
               Add tracks
             </Typography>
-            <Typography variant="bodyL" style={styles.popoverText}>
+            <Typography variant="bodyL" color="dark" align="center">
               And keep this fissa going!
             </Typography>
             <View style={styles.popoverButtons}>
@@ -70,10 +70,10 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
         )}
         {copyFromSpotify && (
           <>
-            <Typography variant="h2" style={styles.popoverText}>
+            <Typography variant="h2" color="dark" align="center">
               Add tracks
             </Typography>
-            <Typography variant="bodyL" gutterBottom style={styles.popoverText}>
+            <Typography variant="bodyL" gutter color="dark" align="center">
               Copy a Spotify song link and come back.
             </Typography>
             <ListItem
@@ -100,10 +100,6 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
 export default RoomAddTracksFab;
 
 const styles = StyleSheet.create({
-  popoverText: {
-    color: Color.dark,
-    textAlign: 'center',
-  },
   popoverButtons: {
     marginTop: 32,
   },

@@ -27,7 +27,7 @@ const ListHeader: FC<ListHeaderProps> = ({name, imageUri}) => {
           uri: imageUri,
         }}
       />
-      <Typography variant="h1" gutterBottom={24}>
+      <Typography variant="h1" gutter={24}>
         {name}
       </Typography>
     </>

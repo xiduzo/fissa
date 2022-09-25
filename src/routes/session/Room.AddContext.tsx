@@ -102,7 +102,7 @@ export const AddContextBottomDrawer: FC = () => {
     <SharedElement id="tracks-to-add-drawer">
       <View style={styles.view}>
         <BottomDrawer action={reset} actionIcon={DeleteIcon}>
-          <Typography style={styles.text} variant="h6" gutterBottom={24}>
+          <Typography color="dark" align="center" variant="h6" gutter={24}>
             {selectedTracks.length} tracks selected
           </Typography>
           <Button
@@ -124,9 +124,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-  },
-  text: {
-    color: Color.dark,
-    textAlign: 'center',
   },
 });

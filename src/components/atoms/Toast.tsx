@@ -19,7 +19,7 @@ const Toaster: FC<ToastProps> = ({text1, text2}) => {
   return (
     <SafeAreaView style={[styles.container]} accessibilityRole="alert">
       {text2 && <Text style={styles.emoji}>{text2}</Text>}
-      <Typography style={styles.text} variant="h6">
+      <Typography color="dark" style={styles.text} variant="h6">
         {text1}
       </Typography>
     </SafeAreaView>
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   text: {
-    color: Color.dark,
     maxWidth: '87.5%',
     flexGrow: 1,
   },

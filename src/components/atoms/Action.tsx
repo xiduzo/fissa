@@ -48,19 +48,15 @@ const Action: FC<ActionProps> = ({
           }}>
           <Typography
             variant="h4"
-            style={{
-              marginBottom: 4,
-              color: inverted ? Color.dark : Color.light,
-            }}>
+            color={inverted ? 'dark' : 'light'}
+            style={{marginBottom: 4}}>
             {title}
           </Typography>
           {subtitle && (
             <Typography
               variant="bodyM"
-              style={{
-                opacity: 0.6,
-                color: inverted ? Color.dark : Color.light,
-              }}>
+              color={inverted ? 'dark' : 'light'}
+              style={{opacity: 0.6}}>
               {subtitle}
             </Typography>
           )}

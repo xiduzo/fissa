@@ -48,10 +48,8 @@ const Button: FC<ButtonProps> = ({
           {start && <View style={styles.start}>{start}</View>}
           <Typography
             variant={size === 'small' ? 'bodyL' : 'h4'}
-            style={{
-              textAlign: 'center',
-              color: inverted ? Color.dark : Color.light,
-            }}>
+            color={inverted ? 'dark' : 'light'}
+            align="center">
             {title.toLowerCase()}
           </Typography>
           {end && <View style={styles.end}>{end}</View>}
@@ -83,9 +81,7 @@ const Button: FC<ButtonProps> = ({
         {start && <View style={styles.start}>{start}</View>}
         <Typography
           variant={size === 'small' ? 'h6' : 'h3'}
-          style={{
-            color: inverted ? Color.light : Color.dark,
-          }}>
+          color={inverted ? 'light' : 'dark'}>
           {title.toLowerCase()}
         </Typography>
         {end && <View style={styles.end}>{end}</View>}

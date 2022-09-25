@@ -38,10 +38,10 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{flex: 1, justifyContent: 'center'}}>
-        <Typography variant="h1" gutterBottom style={styles.text}>
+        <Typography variant="h1" gutter style={styles.text}>
           Create a fissa
         </Typography>
-        <Typography variant="h5" gutterBottom={24} style={styles.text}>
+        <Typography variant="h5" gutter={24} style={styles.text}>
           How would you like to start this fissa?
         </Typography>
       </View>

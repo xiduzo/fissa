@@ -61,7 +61,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       style={styles.scrollView}
       navigation={navigation}
       scrollEventThrottle={30}>
-      <Typography variant="h1" gutterBottom={24}>
+      <Typography variant="h1" gutter={24}>
         {title.current}
       </Typography>
       {playlists.map(playlist => (
@@ -72,7 +72,11 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
         />
       ))}
       <Popover visible={!!selectedPlaylist} onRequestClose={closePopOver}>
-        <Typography variant="h2" style={styles.text}>
+        <Typography
+          variant="h2"
+          color="dark"
+          align="center"
+          style={styles.text}>
           Your fissa will start based on
         </Typography>
 
@@ -97,9 +101,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   text: {
-    textAlign: 'center',
     marginHorizontal: 52,
     marginBottom: 32,
-    color: Color.dark,
   },
 });

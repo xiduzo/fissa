@@ -6,9 +6,12 @@ import {
   TextProps,
   TextStyle,
 } from 'react-native';
-import {Color} from '../../types/Theme';
+import {Color, Theme} from '../../types/Theme';
 
 interface TypographyProps extends Omit<TextProps, 'style'> {
+  /**
+   * @default bodyM
+   */
   variant?:
     | 'h1'
     | 'h2'
@@ -20,6 +23,10 @@ interface TypographyProps extends Omit<TextProps, 'style'> {
     | 'body2'
     | 'bodyL'
     | 'bodyM';
+  /**
+   * @default light
+   */
+  color?: keyof Omit<Theme, 'name' | 'gradient'>;
   style?:
     | false
     | RegisteredStyle<TextStyle>
@@ -28,23 +35,42 @@ interface TypographyProps extends Omit<TextProps, 'style'> {
     | Animated.WithAnimatedObject<TextStyle>
     | null
     | undefined;
-  gutterBottom?: boolean | number;
+  /**
+   * Adds spacing at the bottom of the component
+   * @default false
+   */
+  gutter?: boolean | number;
+  /**
+   * Where to align the text
+   * @default left
+   */
+  align?:
+    | Animated.Value
+    | 'left'
+    | 'right'
+    | 'auto'
+    | 'center'
+    | 'justify'
+    | Animated.AnimatedInterpolation<string | number>
+    | undefined;
 }
 
 const Typography: FC<TypographyProps> = ({
   variant = 'bodyM',
+  color = 'light',
   children,
   style,
-  gutterBottom = false,
+  gutter = false,
+  align,
   ...props
 }) => {
   const marginBottom = useMemo(() => {
-    if (!gutterBottom) return 0;
+    if (!gutter) return 0;
 
-    if (typeof gutterBottom === 'number') return gutterBottom;
+    if (typeof gutter === 'number') return gutter;
 
-    return gutterBottom ? 16 : 0;
-  }, [gutterBottom]);
+    return gutter ? 16 : 0;
+  }, [gutter]);
 
   return (
     <Animated.Text
@@ -53,6 +79,8 @@ const Typography: FC<TypographyProps> = ({
         styles[variant],
         {
           marginBottom,
+          textAlign: align,
+          color: Color[color],
         },
         style,
       ]}
@@ -67,7 +95,6 @@ export default Typography;
 const styles = StyleSheet.create({
   all: {
     fontFamily: 'Inter',
-    color: Color.light,
   },
   h1: {
     fontWeight: '700',

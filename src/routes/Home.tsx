@@ -25,7 +25,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{flex: 1, justifyContent: 'center'}}>
-        <Typography variant="h1" gutterBottom style={styles.text}>
+        <Typography variant="h1" gutter style={styles.text}>
           Hi there {currentUser?.display_name?.split(' ')[0] ?? 'stranger'},
         </Typography>
         <Typography variant="h5" style={styles.text}>

@@ -116,18 +116,14 @@ const ListItem: FC<ListItemProps> = ({
           <Typography
             numberOfLines={2}
             variant="h4"
-            style={{
-              ...styles.title,
-              color: inverted ? Color.dark : Color.light,
-            }}>
+            color={inverted ? 'dark' : 'light'}
+            style={styles.title}>
             {title}
           </Typography>
           <Typography
+            color={inverted ? 'dark' : 'light'}
             numberOfLines={1}
-            style={{
-              ...styles.subtitle,
-              color: inverted ? Color.dark : Color.light,
-            }}
+            style={styles.subtitle}
             variant="bodyM">
             {subtitle}
           </Typography>
