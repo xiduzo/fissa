@@ -18,8 +18,9 @@ const Home: FC<HomeProps> = ({navigation}) => {
   const [signingIn, setSigningIn] = useState(false);
 
   const signIn = async () => {
-    setSigningIn(true);
+    setSigningIn(() => true);
     await auth();
+    setSigningIn(() => false);
   };
 
   return (
