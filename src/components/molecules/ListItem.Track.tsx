@@ -1,10 +1,11 @@
 import {DateTime} from 'luxon';
 import {FC, useMemo} from 'react';
+import {Track as TrackInterface} from '../../routes/session/Room.PlaylistContext';
 import ProgressBar from '../atoms/ProgressBar';
 import ListItem, {ListItemProps} from './ListItem';
 
 interface TrackProps extends Partial<ListItemProps> {
-  track?: SpotifyApi.TrackObjectFull;
+  track?: TrackInterface;
   progressMs?: number;
   expectedEndTime?: string;
 }
@@ -33,9 +34,9 @@ const Track: FC<TrackProps> = ({
 
   return (
     <ListItem
-      imageUri={track.album.images[0]?.url}
+      imageUri={track.image}
       title={track.name}
-      subtitle={track.artists.map((x: any) => x.name).join(', ')}
+      subtitle={track.artists}
       extra={
         <ProgressBar
           progress={progress}

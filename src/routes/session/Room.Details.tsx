@@ -13,11 +13,10 @@ import {useRoomPlaylist} from './Room.PlaylistContext';
 
 interface RoomDetailsProps {
   pin: string;
-  playlistId?: string;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Room', undefined>;
 }
 
-const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
+const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
   const {leaveRoom} = useRoomPlaylist(pin);
 
   const [showRoomDetails, setShowRoomDetails] = useState(false);
@@ -55,19 +54,13 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, playlistId, navigation}) => {
           }}
           icon={<ArrowUpIcon color="dark" colorOpacity={40} />}
         />
-        {playlistId && (
-          <Action
-            title="Open in Spotify"
-            subtitle="Check the complete playlist"
-            inverted
-            onPress={() => {
-              Linking.openURL(
-                'https://open.spotify.com/playlist/' + playlistId,
-              );
-            }}
-            icon={<SpotifyIcon color="dark" colorOpacity={40} />}
-          />
-        )}
+        <Action
+          title="Create playlist in spotify"
+          subtitle="And keep the memories of this fissa"
+          inverted
+          disabled
+          icon={<SpotifyIcon color="dark" colorOpacity={40} />}
+        />
       </Popover>
     </View>
   );

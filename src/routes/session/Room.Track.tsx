@@ -12,12 +12,14 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
+import {Track as TrackInterface} from './Room.PlaylistContext';
 
 interface RoomTrackProps {
-  track: SpotifyApi.TrackObjectFull;
+  track: TrackInterface;
   totalVotes?: number;
   myVote?: 'up' | 'down';
   pin: string;
+  isNextTrack?: boolean;
 }
 
 const RoomTrack: FC<RoomTrackProps> = ({
@@ -25,6 +27,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
   myVote,
   pin,
   totalVotes = 0,
+  isNextTrack,
 }) => {
   const [selected, setSelected] = useState(false);
   const {spotify} = useSpotify();
@@ -42,17 +45,19 @@ const RoomTrack: FC<RoomTrackProps> = ({
       state,
       accessToken: spotify.getAccessToken(),
       pin,
-      trackUri: track.uri,
+      trackId: track.id,
     });
   };
 
   const EndIcon = useMemo(() => {
+    if (isNextTrack) return LockIcon;
+
     if (myVote) {
       return myVote === 'up' ? ArrowUpIcon : ArrowDownIcon;
     }
 
     return MoreIcon;
-  }, [myVote]);
+  }, [myVote, isNextTrack]);
 
   const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
 
@@ -69,8 +74,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
         }
         end={
           <EndIcon
-            color={myVote ? 'main' : 'light'}
-            colorOpacity={myVote ? 100 : 80}
+            color={myVote && !isNextTrack ? 'main' : 'light'}
+            colorOpacity={myVote && !isNextTrack ? 100 : 80}
           />
         }
       />
@@ -99,8 +104,16 @@ const RoomTrack: FC<RoomTrackProps> = ({
           }}
         />
         <Action
+          title="Locked track"
+          inverted
+          hidden={!isNextTrack}
+          icon={<LockIcon color={'dark'} />}
+          subtitle="Voting is disabled on the next track"
+        />
+        <Action
           title="Up vote track"
           inverted
+          hidden={isNextTrack}
           onPress={castVote('up')}
           active={myVote === 'up'}
           icon={
@@ -114,6 +127,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Down vote track"
           inverted
+          hidden={isNextTrack}
           active={myVote === 'down'}
           onPress={castVote('down')}
           icon={

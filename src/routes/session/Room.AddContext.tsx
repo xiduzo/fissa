@@ -66,7 +66,7 @@ const AddContextProvider: FC = ({children}) => {
     });
 
     await request<any>('POST', '/room/track', {
-      trackUris: selectedTracks,
+      trackIds: selectedTracks,
       pin: room.pin,
       accessToken: spotify.getAccessToken(),
     });

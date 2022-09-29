@@ -46,7 +46,6 @@ const authConfig: AuthConfiguration = {
     'playlist-read-collaborative',
     // Modify
     'playlist-modify-public',
-    'playlist-modify-private',
     'user-modify-playback-state',
   ],
   serviceConfiguration: {

@@ -3,7 +3,7 @@ import {ButtonProps, StyleSheet, TouchableHighlight, View} from 'react-native';
 import {Color} from '../../types/Theme';
 import Typography from './Typography';
 
-interface ActionProps extends ButtonProps {
+interface ActionProps extends Omit<ButtonProps, 'color'> {
   icon: JSX.Element;
   subtitle?: string;
   active?: boolean;

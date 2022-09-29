@@ -10,12 +10,10 @@ import {
 import {AppState} from 'react-native';
 import Config from 'react-native-config';
 import {request} from '../../lib/utils/api';
-import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 
 export interface Room {
   id?: string;
-  playlistId: string;
   pin: string;
   createdBy: string;
   currentIndex: number;
@@ -28,8 +26,18 @@ export interface Vote {
   trackUri: string;
 }
 
+export interface Track {
+  id: string;
+  pin: string;
+  image?: string;
+  index: number;
+  artists: string;
+  name: string;
+  duration_ms: number;
+}
+
 interface RoomPlaylistContextState {
-  tracks: SpotifyApi.PlaylistTrackObject[];
+  tracks: Track[];
   room?: Room;
   votes: {[key: string]: Vote[]};
   setPin: (pin: string) => void;
@@ -51,21 +59,18 @@ const PlaylistContextProvider: FC = ({children}) => {
   const [votes, setVotes] = useState(initialState.votes);
   const [room, setRoom] = useState(initialState.room);
   const [pin, setPin] = useState('');
-  const {spotify} = useSpotify();
 
-  const fetchTracks = useCallback(
-    async (newTracks: SpotifyApi.PlaylistTrackObject[] = [], offset = 0) => {
-      if (!room?.playlistId) return;
-      spotify.getPlaylistTracks(room.playlistId, {offset}).then(result => {
-        newTracks = newTracks.concat(result.items);
-        if (!result.next) {
-          return setTracks(newTracks);
-        }
-        fetchTracks(newTracks, newTracks.length);
-      });
-    },
-    [room?.playlistId, spotify],
-  );
+  const fetchTracks = useCallback(async () => {
+    if (!room?.pin) return;
+    console.log('fetchTracks');
+    const {content} = await request<Track[]>(
+      'GET',
+      `/room/track?pin=${room.pin}`,
+    );
+    console.log('tracks', content);
+
+    setTracks(content);
+  }, [room?.pin]);
 
   const sortAndSetVotes = useCallback((newVotes: Vote[]) => {
     const sorted = newVotes?.reduce(
@@ -115,11 +120,11 @@ const PlaylistContextProvider: FC = ({children}) => {
   }, [pin]);
 
   useEffect(() => {
-    if (!room?.playlistId) return;
+    if (!room?.pin) return;
 
     fetchTracks();
     fetchVotes();
-  }, [room?.playlistId, fetchTracks, fetchVotes]);
+  }, [room?.pin, fetchTracks, fetchVotes]);
 
   useEffect(() => {
     if (!pin) return;

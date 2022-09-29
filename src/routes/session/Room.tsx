@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useMemo, useRef} from 'react';
+import {FC, useCallback, useRef} from 'react';
 import {
   Animated,
   ListRenderItemInfo,
@@ -20,7 +20,7 @@ import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';
-import {useRoomPlaylist} from './Room.PlaylistContext';
+import {Track as TrackInterface, useRoomPlaylist} from './Room.PlaylistContext';
 import RoomTrack from './Room.Track';
 import {request} from '../../lib/utils/api';
 
@@ -37,8 +37,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const backTopTopAnimation = useRef(
     new Animated.Value(SCROLL_TOP_OFFSET),
   ).current;
-  const scrollRef =
-    useRef<VirtualizedList<SpotifyApi.PlaylistTrackObject>>(null);
+  const scrollRef = useRef<VirtualizedList<TrackInterface>>(null);
 
   const activeTrackIndex = room?.currentIndex ?? -1;
   const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
@@ -70,31 +69,31 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     });
   };
 
-  const renderTrack = useCallback(
-    (render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>) => {
-      const track = render.item.track as SpotifyApi.TrackObjectFull;
-      const trackVotes = votes[track.uri];
+  console.log(tracks);
 
-      const myVote = trackVotes?.find(
-        vote => vote.createdBy === currentUser?.id,
-      );
+  const renderTrack = (render: ListRenderItemInfo<TrackInterface>) => {
+    console.log('render tracks');
+    const {item} = render;
+    console.log(item);
+    const trackVotes = votes[item.id];
 
-      const total = trackVotes?.reduce(
-        (acc, vote) => acc + (vote.state === 'up' ? 1 : -1),
-        0,
-      );
+    const myVote = trackVotes?.find(vote => vote.createdBy === currentUser?.id);
 
-      return (
-        <RoomTrack
-          track={track}
-          pin={pin}
-          totalVotes={total}
-          myVote={myVote?.state}
-        />
-      );
-    },
-    [votes, pin, currentUser],
-  );
+    const total = trackVotes?.reduce(
+      (acc, vote) => acc + (vote.state === 'up' ? 1 : -1),
+      0,
+    );
+
+    return (
+      <RoomTrack
+        track={item}
+        pin={pin}
+        totalVotes={total}
+        myVote={myVote?.state}
+        isNextTrack={render.index === 0}
+      />
+    );
+  };
 
   const restartPlaylist = async () => {
     await request('POST', '/room/play', {pin});
@@ -134,11 +133,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     return (
       <View style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
-          <RoomDetails
-            pin={pin}
-            playlistId={room.playlistId}
-            navigation={navigation}
-          />
+          <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
           icon="🦥"
@@ -156,7 +151,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1}}>
-      <VirtualizedList<SpotifyApi.PlaylistTrackObject>
+      <VirtualizedList<TrackInterface>
         style={styles.container}
         ref={scrollRef}
         ListFooterComponent={
@@ -177,17 +172,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           <>
             <View style={styles.header}>
               <Typography variant="h2">Now Playing</Typography>
-              <RoomDetails
-                pin={pin}
-                playlistId={room.playlistId}
-                navigation={navigation}
-              />
+              <RoomDetails pin={pin} navigation={navigation} />
             </View>
             <Track
               imageStyle={{width: 125, height: 125}}
-              track={
-                tracks[activeTrackIndex]?.track as SpotifyApi.TrackObjectFull
-              }
+              track={tracks[activeTrackIndex]}
               expectedEndTime={room?.expectedEndTime}
             />
             <View style={styles.queue}>
@@ -205,7 +194,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         renderItem={renderTrack}
         getItemCount={() => queue.length}
         getItem={(data, index) => data[index]}
-        keyExtractor={(item, index) => item.track.id + index}
+        keyExtractor={(item, index) => item.id + index}
       />
       <LinearGradient
         colors={[Color.dark + '00', Color.dark]}

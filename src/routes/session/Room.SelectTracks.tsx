@@ -41,13 +41,13 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   const [playlist, setPlaylist] = useState<SpotifyApi.SinglePlaylistResponse>();
   const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
 
-  const toggleTrack = (trackUri: string) => () => {
-    if (selectedTracks.includes(trackUri)) {
-      removeTrack(trackUri);
+  const toggleTrack = (trackId: string) => () => {
+    if (selectedTracks.includes(trackId)) {
+      removeTrack(trackId);
       return;
     }
 
-    addTrack(trackUri);
+    addTrack(trackId);
   };
 
   useEffect(() => {
@@ -89,9 +89,17 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
 
     return (
       <Track
-        track={track}
-        onPress={toggleTrack(track.uri)}
-        selected={selectedTracks.includes(track.uri)}
+        track={{
+          id: track.id,
+          name: track.name,
+          artists: track.artists.map(artist => artist.name).join(', '),
+          duration_ms: track.duration_ms,
+          index: render.index,
+          image: track.album.images[0]?.url,
+          pin: 'XXXX',
+        }}
+        onPress={toggleTrack(track.id)}
+        selected={selectedTracks.includes(track.id)}
       />
     );
   };
