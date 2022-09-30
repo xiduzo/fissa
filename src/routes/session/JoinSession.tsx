@@ -38,6 +38,9 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
       const input =
         e.nativeEvent.text[e.nativeEvent.text.length - 1].toUpperCase();
 
+      if (!input.match(/\w/)) return;
+      if (input.match(/\d/)) return;
+
       newCode[index] = input;
       setPin(newCode);
 
