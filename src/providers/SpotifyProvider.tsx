@@ -4,7 +4,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -41,6 +40,7 @@ const authConfig: AuthConfiguration = {
     'user-read-playback-state',
     'user-read-recently-played',
     'user-read-currently-playing',
+    'user-top-read',
     'user-library-read',
     'playlist-read-private',
     'playlist-read-collaborative',

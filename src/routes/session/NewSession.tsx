@@ -17,7 +17,7 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
-  const startFromBlank = async () => {
+  const surprisePlaylist = async () => {
     setWaitForResponse(true);
     try {
       const {content: pin} = await request<string>('POST', '/room', {
@@ -27,7 +27,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
       navigation.popToTop();
       navigation.replace('Room', {pin});
       Notification.show({
-        message: 'Aye, have a funky night sailor!',
+        message: 'Aye, have a funky fissa sailor!',
         icon: '🚢',
       });
     } catch (error) {
@@ -54,9 +54,9 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           />
         </View>
         <Button
-          title="start from blank"
+          title="surprise me"
           variant="text"
-          onPress={startFromBlank}
+          onPress={surprisePlaylist}
           disabled={waitForResponse}
           end={<ArrowRightIcon scale={0.6} />}
         />
