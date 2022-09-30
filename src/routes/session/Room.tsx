@@ -114,21 +114,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       </View>
     );
 
-  if (!tracks.length)
-    return (
-      <View style={{flex: 1}}>
-        <View style={[styles.header, styles.headerEmpty]}>
-          <RoomDetails pin={pin} navigation={navigation} />
-        </View>
-        <EmptyState
-          icon="🦨"
-          title="This fissa stinks"
-          subtitle="Add tracks to get the fissa started"
-        />
-        <RoomAddTracksFab navigation={navigation} />
-      </View>
-    );
-
   if (activeTrackIndex === -1)
     return (
       <View style={{flex: 1}}>
@@ -146,6 +131,21 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             )
           }
         />
+      </View>
+    );
+
+  if (!tracks.length)
+    return (
+      <View style={{flex: 1}}>
+        <View style={[styles.header, styles.headerEmpty]}>
+          <RoomDetails pin={pin} navigation={navigation} />
+        </View>
+        <EmptyState
+          icon="🦨"
+          title="This fissa stinks"
+          subtitle="Add tracks to get the fissa started"
+        />
+        <RoomAddTracksFab navigation={navigation} />
       </View>
     );
 
