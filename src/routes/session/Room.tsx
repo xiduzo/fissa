@@ -69,12 +69,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     });
   };
 
-  console.log(tracks);
-
   const renderTrack = (render: ListRenderItemInfo<TrackInterface>) => {
-    console.log('render tracks');
     const {item} = render;
-    console.log(item);
     const trackVotes = votes[item.id];
 
     const myVote = trackVotes?.find(vote => vote.createdBy === currentUser?.id);

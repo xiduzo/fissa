@@ -67,8 +67,6 @@ const PlaylistContextProvider: FC = ({children}) => {
       'GET',
       `/room/track?pin=${room.pin}`,
     );
-    console.log('tracks', content);
-
     setTracks(content);
   }, [room?.pin]);
 

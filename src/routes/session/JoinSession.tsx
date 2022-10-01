@@ -6,7 +6,6 @@ import {
   TextInput,
   TextInputChangeEventData,
   TextInputKeyPressEventData,
-  TouchableHighlight,
   View,
 } from 'react-native';
 import Button from '../../components/atoms/Button';
@@ -92,7 +91,6 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
           message: `You've joined ${pin}, add some of your favorite tracks to keep the party going!`,
         });
       } catch (error) {
-        console.log(error);
         reset();
         if (error === 404) {
           Notification.show({
