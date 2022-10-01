@@ -23,7 +23,7 @@ export interface Room {
 export interface Vote {
   createdBy: string;
   state: 'up' | 'down';
-  trackUri: string;
+  trackId: string;
 }
 
 export interface Track {
@@ -62,7 +62,6 @@ const PlaylistContextProvider: FC = ({children}) => {
 
   const fetchTracks = useCallback(async () => {
     if (!room?.pin) return;
-    console.log('fetchTracks');
     const {content} = await request<Track[]>(
       'GET',
       `/room/track?pin=${room.pin}`,
@@ -73,8 +72,8 @@ const PlaylistContextProvider: FC = ({children}) => {
   const sortAndSetVotes = useCallback((newVotes: Vote[]) => {
     const sorted = newVotes?.reduce(
       (acc: {[key: string]: Vote[]}, vote: Vote) => {
-        acc[vote.trackUri] = acc[vote.trackUri] || [];
-        acc[vote.trackUri].push(vote);
+        acc[vote.trackId] = acc[vote.trackId] || [];
+        acc[vote.trackId].push(vote);
         return acc;
       },
       {},
@@ -166,7 +165,6 @@ const PlaylistContextProvider: FC = ({children}) => {
           fetchTracks();
           break;
         case `fissa/room/${pin}/tracks/reordered`:
-          console.log('tracks reordered');
           fetchTracks();
           break;
         case `fissa/room/${pin}/votes`:

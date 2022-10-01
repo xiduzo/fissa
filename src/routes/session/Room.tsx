@@ -118,12 +118,12 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         </View>
         <EmptyState
           icon="🦥"
-          title="This fissa is over"
+          title="This fissa is out of sync"
           subtitle={
             room?.createdBy !== currentUser?.id ? (
-              'Poke your host to restart this fissa'
+              'Poke your host to resync this fissa'
             ) : (
-              <Button title="restart fissa" onPress={restartPlaylist} />
+              <Button title="resync fissa" onPress={restartPlaylist} />
             )
           }
         />
@@ -155,13 +155,15 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              paddingVertical: 150,
+              paddingVertical: 100,
               marginBottom: 150,
             }}>
             <Typography variant="h1" gutter>
               🦦
             </Typography>
-            <Typography variant="bodyM">Nothing to see here</Typography>
+            <Typography variant="bodyM">
+              Add tracks or I'll fill the queue
+            </Typography>
           </View>
         }
         ListHeaderComponent={

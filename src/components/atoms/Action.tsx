@@ -38,6 +38,7 @@ const Action: FC<ActionProps> = ({
                   : Color.light
                 : 'transparent',
               borderColor: (inverted ? Color.dark : Color.light) + '10',
+              opacity: props.disabled ? 0.3 : 1,
             },
           ]}>
           {icon}
