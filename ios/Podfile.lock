@@ -304,9 +304,9 @@ PODS:
     - React-Core
   - react-native-encrypted-storage (4.0.2):
     - React-Core
-  - react-native-netinfo (9.3.1):
+  - react-native-netinfo (9.3.3):
     - React-Core
-  - react-native-safe-area-context (4.3.4):
+  - react-native-safe-area-context (4.4.1):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -378,7 +378,7 @@ PODS:
     - React-jsi (= 0.70.1)
     - React-logger (= 0.70.1)
     - React-perflogger (= 0.70.1)
-  - RNGestureHandler (2.6.1):
+  - RNGestureHandler (2.7.0):
     - React-Core
   - RNScreens (3.17.0):
     - React-Core
@@ -606,8 +606,8 @@ SPEC CHECKSUMS:
   react-native-app-auth: fd1eaa667c0bc014199456d14a6440cb74de814e
   react-native-config: 7cd105e71d903104e8919261480858940a6b9c0e
   react-native-encrypted-storage: e78d848ce0fb663c2ce306e37921d026809322e6
-  react-native-netinfo: c8d02a805706024f8de3a339a028f7e64f63b4b6
-  react-native-safe-area-context: dfe5aa13bee37a0c7e8059d14f72ffc076d120e9
+  react-native-netinfo: b514dd6d9cd512b90e178c5b7158df1a1c568d47
+  react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   React-perflogger: 48c6b363e867d64b682e84f80ca45636bd65e19c
   React-RCTActionSheet: 33c74fe5c754835e3715c300618da9aa2f7203fa
   React-RCTAnimation: 2dbf0120d4d1ab7716079b4180f2ca89c465e46b
@@ -620,7 +620,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: e9164827303fb6a5cf79e4c4af4846a09956b11f
   React-runtimeexecutor: a11d0c2e14140baf1e449264ca9168ae9ae6bbd0
   ReactCommon: 7f86326b92009925c6dcf93f8e825060171c379f
-  RNGestureHandler: 28ad20bf02257791f7f137b31beef34b9549f54b
+  RNGestureHandler: 7673697e7c0e9391adefae4faa087442bc04af33
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSharedElement: eb7d506733952d58634f34c82ec17e82f557e377
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
