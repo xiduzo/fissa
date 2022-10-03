@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useRef} from 'react';
+import {FC, useCallback, useRef, useState} from 'react';
 import {
   Animated,
   ListRenderItemInfo,
@@ -33,6 +33,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
   const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const backTopTopAnimation = useRef(
     new Animated.Value(SCROLL_TOP_OFFSET),
@@ -69,6 +70,12 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     });
   };
 
+  const restartPlaylist = async () => {
+    setIsSyncing(true);
+    await request('POST', '/room/play', {pin});
+    setIsSyncing(false);
+  };
+
   const renderTrack = (render: ListRenderItemInfo<TrackInterface>) => {
     const {item} = render;
     const trackVotes = votes[item.id];
@@ -82,6 +89,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
     return (
       <RoomTrack
+        key={item.id}
         track={item}
         pin={pin}
         totalVotes={total}
@@ -89,10 +97,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         isNextTrack={render.index === 0}
       />
     );
-  };
-
-  const restartPlaylist = async () => {
-    await request('POST', '/room/play', {pin});
   };
 
   if (!room?.pin)
@@ -123,7 +127,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             room?.createdBy !== currentUser?.id ? (
               'Poke your host to resync this fissa'
             ) : (
-              <Button title="resync fissa" onPress={restartPlaylist} />
+              <Button
+                disabled={isSyncing}
+                title="resync fissa"
+                onPress={restartPlaylist}
+              />
             )
           }
         />
