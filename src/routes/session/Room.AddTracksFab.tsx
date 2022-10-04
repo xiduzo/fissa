@@ -6,9 +6,7 @@ import Fab from '../../components/atoms/Fab';
 import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
-import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
-import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 
 interface RoomAddTracksFabProps {
@@ -52,19 +50,19 @@ const RoomAddTracksFab: FC<RoomAddTracksFabProps> = ({navigation}) => {
               And keep this fissa going!
             </Typography>
             <View style={styles.popoverButtons}>
-              <View style={{marginBottom: 32}}>
+              <View style={{marginBottom: 16}}>
                 <Button
                   onPress={addFromPlaylist}
                   inverted
                   title="From my Spotify playlists"
                 />
               </View>
-              <Button
+              {/* <Button
                 onPress={openSpotify}
                 variant="text"
                 inverted
                 title="Copy song link in Spotify"
-              />
+              /> */}
             </View>
           </>
         )}

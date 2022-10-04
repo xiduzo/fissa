@@ -108,7 +108,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
                 style={{
                   fontWeight: 'bold',
                   fontSize: 12,
-                  width: 18 + (totalVotes > 10 ? 6 : 0),
+                  width: 16 + (totalVotes > 10 ? 6 : 0),
                 }}>
                 {totalVotes > 0 && '+'}
                 {totalVotes}
