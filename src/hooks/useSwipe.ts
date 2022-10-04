@@ -1,5 +1,5 @@
-import {useRef} from 'react';
-import {GestureResponderEvent, PanResponder} from 'react-native';
+import {useRef, useState} from 'react';
+import {GestureResponderEvent} from 'react-native';
 
 interface SwipeProps {
   onSwipeLeft?: (event: GestureResponderEvent) => void;
@@ -14,6 +14,7 @@ export const useSwipe = (
 ) => {
   const xRef = useRef(0);
   const yRef = useRef(0);
+  const [isActive, setIsActive] = useState(false);
 
   const touchStart = (event: GestureResponderEvent) => {
     const {
@@ -22,6 +23,7 @@ export const useSwipe = (
 
     xRef.current = pageX;
     yRef.current = pageY;
+    setIsActive(true);
   };
 
   const touchEnd = (event: GestureResponderEvent) => {
@@ -44,10 +46,13 @@ export const useSwipe = (
     if (pageY - triggerAmount > yRef.current) {
       onSwipeDown && onSwipeDown(event);
     }
+
+    setTimeout(() => setIsActive(false), 500);
   };
 
   return {
     touchStart,
     touchEnd,
+    isActive,
   };
 };

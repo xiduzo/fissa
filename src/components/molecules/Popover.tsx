@@ -45,7 +45,7 @@ const Popover: FC<PopOverProps> = ({
     onRequestClose && onRequestClose(event);
   };
 
-  const {touchStart, touchEnd} = useSwipe({
+  const {touchStart, touchEnd, isActive} = useSwipe({
     onSwipeDown: close,
   });
 
@@ -67,7 +67,12 @@ const Popover: FC<PopOverProps> = ({
         style={style}>
         <View style={styles.view}>
           <DraggableView onTouchStart={touchStart} onTouchEnd={touchEnd}>
-            <BottomDrawer title={title} action={close}>
+            <BottomDrawer
+              title={title}
+              action={close}
+              style={{
+                borderRadius: isActive ? 24 : 0,
+              }}>
               {children}
             </BottomDrawer>
           </DraggableView>
