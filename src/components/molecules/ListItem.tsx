@@ -16,6 +16,7 @@ export interface ListItemProps extends TouchableWithoutFeedbackProps {
   imageUri?: string;
   title: string;
   subtitle: string;
+  subtitlePrefix?: JSX.Element;
   extra?: JSX.Element;
   imageStyle?: StyleProp<ImageStyle>;
   inverted?: boolean;
@@ -28,6 +29,7 @@ const ListItem: FC<ListItemProps> = ({
   imageUri,
   title,
   subtitle,
+  subtitlePrefix,
   extra,
   end,
   imageStyle = {},
@@ -120,13 +122,16 @@ const ListItem: FC<ListItemProps> = ({
             style={styles.title}>
             {title}
           </Typography>
-          <Typography
-            color={inverted ? 'dark' : 'light'}
-            numberOfLines={1}
-            style={styles.subtitle}
-            variant="bodyM">
-            {subtitle}
-          </Typography>
+          <View style={{flexDirection: 'row'}}>
+            {subtitlePrefix}
+            <Typography
+              color={inverted ? 'dark' : 'light'}
+              numberOfLines={1}
+              style={styles.subtitle}
+              variant="bodyM">
+              {subtitle}
+            </Typography>
+          </View>
           {extra}
         </Animated.View>
         <Animated.View
@@ -167,6 +172,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   subtitle: {
-    opacity: 0.8,
+    opacity: 0.6,
   },
 });

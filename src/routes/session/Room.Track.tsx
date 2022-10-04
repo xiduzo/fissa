@@ -1,5 +1,6 @@
-import {FC, useMemo, useState} from 'react';
-import {Alert, View} from 'react-native';
+import {FC, useEffect, useMemo, useRef, useState} from 'react';
+import {Alert, Animated, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -32,6 +33,18 @@ const RoomTrack: FC<RoomTrackProps> = ({
   const [selected, setSelected] = useState(false);
   const {spotify} = useSpotify();
 
+  const voteChangedAnimation = useRef(new Animated.Value(0)).current;
+  const previousVoteCount = useRef(totalVotes);
+
+  const votesBackgroundColorInterpolation = voteChangedAnimation.interpolate({
+    inputRange: [0, 0.7, 1],
+    outputRange: [Color.light + 70, Color.main, Color.light + 70],
+  });
+  const votesScaleInterpolation = voteChangedAnimation.interpolate({
+    inputRange: [0, 0.9, 1],
+    outputRange: [1, 1.2, 1],
+  });
+
   const selectTrack = () => setSelected(true);
 
   const castVote = (state?: 'up' | 'down') => async () => {
@@ -61,10 +74,48 @@ const RoomTrack: FC<RoomTrackProps> = ({
 
   const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
 
+  useEffect(() => {
+    if (previousVoteCount.current === totalVotes) return;
+    const animation = Animated.spring(voteChangedAnimation, {
+      toValue: Number(totalVotes !== 0),
+      friction: 10,
+      useNativeDriver: false,
+    });
+
+    animation.start(() => {
+      animation.reset();
+      previousVoteCount.current = totalVotes;
+    });
+  }, [totalVotes]);
+
   return (
     <View>
       <Track
         track={track}
+        subtitlePrefix={
+          totalVotes !== 0 ? (
+            <Animated.View
+              style={{
+                backgroundColor: votesBackgroundColorInterpolation,
+                transform: [{scale: votesScaleInterpolation}],
+                borderRadius: 2,
+                paddingHorizontal: 2,
+                marginRight: 4,
+              }}>
+              <Typography
+                color="dark"
+                align="center"
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  width: 18 + (totalVotes > 10 ? 6 : 0),
+                }}>
+                {totalVotes > 0 && '+'}
+                {totalVotes}
+              </Typography>
+            </Animated.View>
+          ) : undefined
+        }
         onPress={selectTrack}
         onLongPress={() =>
           Alert.alert(

@@ -1,12 +1,9 @@
-import {transform} from '@babel/core';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Button from '../components/atoms/Button';
-import PlusIcon from '../components/atoms/icons/PlusIcon';
 import Typography from '../components/atoms/Typography';
 import {useSpotify} from '../providers/SpotifyProvider';
-import {Color} from '../types/Theme';
 import {RootStackParamList} from './Routes';
 
 interface HomeProps
@@ -45,18 +42,18 @@ const Home: FC<HomeProps> = ({navigation}) => {
         </View>
       )}
       {currentUser && (
-        <View style={{flex: 1, justifyContent: 'space-between'}}>
-          <View style={{marginBottom: 36}}>
+        <View style={{flex: 1}}>
+          <View style={{marginBottom: 16}}>
             <Button
               title="Join a fissa"
               onPress={() => navigation.navigate('JoinSession')}
             />
           </View>
           <Button
-            variant="text"
+            variant="outlined"
+            inverted
             title="create a fissa"
             onPress={() => navigation.navigate('NewSession')}
-            start={<PlusIcon scale={0.6} />}
           />
         </View>
       )}
