@@ -60,15 +60,6 @@ const PlaylistContextProvider: FC = ({children}) => {
   const [room, setRoom] = useState(initialState.room);
   const [pin, setPin] = useState('');
 
-  const fetchTracks = useCallback(async () => {
-    if (!room?.pin) return;
-    const {content} = await request<Track[]>(
-      'GET',
-      `/room/track?pin=${room.pin}`,
-    );
-    setTracks(content);
-  }, [room?.pin]);
-
   const sortAndSetVotes = useCallback((newVotes: Vote[]) => {
     const sorted = newVotes?.reduce(
       (acc: {[key: string]: Vote[]}, vote: Vote) => {
@@ -82,9 +73,15 @@ const PlaylistContextProvider: FC = ({children}) => {
     setVotes(sorted);
   }, []);
 
+  const leaveRoom = useCallback(() => {
+    setVotes({});
+    setTracks([]);
+    setRoom(undefined);
+    setPin('');
+  }, []);
+
   const fetchVotes = useCallback(async () => {
     if (!room?.pin) return;
-
     const {content} = await request<Vote[]>(
       'GET',
       `/room/vote?pin=${room.pin}`,
@@ -92,12 +89,14 @@ const PlaylistContextProvider: FC = ({children}) => {
     sortAndSetVotes(content);
   }, [room?.pin]);
 
-  const leaveRoom = useCallback(() => {
-    setVotes({});
-    setTracks([]);
-    setRoom(undefined);
-    setPin('');
-  }, []);
+  const fetchTracks = useCallback(async () => {
+    if (!room?.pin) return;
+    const {content} = await request<Track[]>(
+      'GET',
+      `/room/track?pin=${room.pin}`,
+    );
+    setTracks(content);
+  }, [room?.pin]);
 
   const fetchRoom = useCallback(async () => {
     if (!pin) return;
@@ -159,23 +158,27 @@ const PlaylistContextProvider: FC = ({children}) => {
 
     mqttClient.on('message', (topic, message) => {
       // TODO: validate message to expected format?
-      const payload = JSON.parse(message?.toString() ?? '{}');
       switch (topic) {
         case `fissa/room/${pin}/tracks/added`:
-          fetchTracks();
-          break;
         case `fissa/room/${pin}/tracks/reordered`:
+          console.log('fetching tracks');
           fetchTracks();
           break;
-        case `fissa/room/${pin}/votes`:
+        case `fissa/room/${pin}/votes`: {
+          const payload = JSON.parse(message?.toString() ?? '[]');
           sortAndSetVotes(payload);
           break;
-        case `fissa/room/${pin}`:
+        }
+        case `fissa/room/${pin}`: {
+          const payload = JSON.parse(message?.toString() ?? '{}');
           setRoom(payload);
           break;
-        default:
-          console.info(topic, payload);
+        }
+        default: {
+          const payload = JSON.parse(message?.toString() ?? '');
+          console.warn(topic, payload);
           break;
+        }
       }
     });
 

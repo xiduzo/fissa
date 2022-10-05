@@ -155,7 +155,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1}}>
-      <VirtualizedList<TrackInterface>
+      <VirtualizedList
         style={styles.container}
         ref={scrollRef}
         ListFooterComponent={
@@ -200,7 +200,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         renderItem={renderTrack}
         getItemCount={() => queue.length}
         getItem={(data, index) => data[index]}
-        keyExtractor={(item, index) => item.id + index}
+        keyExtractor={item => item.id}
       />
       <LinearGradient
         colors={[Color.dark + '00', Color.dark]}
