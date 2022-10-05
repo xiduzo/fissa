@@ -37,11 +37,11 @@ const RoomTrack: FC<RoomTrackProps> = ({
   const previousVoteCount = useRef(totalVotes);
 
   const votesBackgroundColorInterpolation = voteChangedAnimation.interpolate({
-    inputRange: [0, 0.7, 1],
-    outputRange: [Color.light + 70, Color.main, Color.light + 70],
+    inputRange: [0, 0.1, 0.7, 1],
+    outputRange: [Color.light + 70, Color.main, Color.main, Color.light + 70],
   });
   const votesScaleInterpolation = voteChangedAnimation.interpolate({
-    inputRange: [0, 0.9, 1],
+    inputRange: [0, 0.8, 1],
     outputRange: [1, 1.2, 1],
   });
 
