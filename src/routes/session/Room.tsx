@@ -1,6 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useRef, useState} from 'react';
+import {FC, useRef, useState} from 'react';
 import {
+  Alert,
   Animated,
   ListRenderItemInfo,
   NativeScrollEvent,
@@ -24,6 +25,11 @@ import {Track as TrackInterface, useRoomPlaylist} from './Room.PlaylistContext';
 import RoomTrack from './Room.Track';
 import {request} from '../../lib/utils/api';
 import {ShowProps} from '../../utils/Notification';
+import Popover from '../../components/molecules/Popover';
+import Action from '../../components/atoms/Action';
+import CLoseIcon from '../../components/atoms/icons/CloseIcon';
+import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
+import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -35,6 +41,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [currentTrackSelected, setCurrentTrackSelected] = useState(-1);
 
   const backTopTopAnimation = useRef(
     new Animated.Value(SCROLL_TOP_OFFSET),
@@ -69,6 +76,17 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       index: 0,
       viewOffset: 500,
     });
+  };
+
+  const skipTrack = async () => {
+    setCurrentTrackSelected(-1);
+    try {
+      await request('POST', `/room/skip`, {
+        pin,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const restartPlaylist = async () => {
@@ -196,6 +214,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
               imageStyle={{width: 125, height: 125}}
               track={tracks[activeTrackIndex]}
               expectedEndTime={room?.expectedEndTime}
+              onPress={() => setCurrentTrackSelected(room.currentIndex)}
             />
             <View style={styles.queue}>
               <Typography variant="h2">Queue</Typography>
@@ -235,6 +254,31 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           end={<ArrowUpIcon />}
         />
       </Animated.View>
+      <Popover
+        visible={!!tracks[currentTrackSelected]}
+        onRequestClose={() => setCurrentTrackSelected(-1)}>
+        <Track inverted hasBorder track={tracks[currentTrackSelected]} />
+        <Action
+          title="Safe track"
+          subtitle="And dance to it later"
+          inverted
+          onPress={() => {
+            Alert.alert(
+              'Saving tracks to your library is coming soon',
+              'be patient my young pawadan',
+            );
+          }}
+          icon={<SpotifyIcon color="dark" colorOpacity={40} />}
+        />
+        <Action
+          hidden={room?.createdBy !== currentUser?.id}
+          title="Skip track"
+          subtitle="Use your power responsibly"
+          inverted
+          onPress={skipTrack}
+          icon={<ArrowRightIcon color="dark" colorOpacity={40} />}
+        />
+      </Popover>
     </View>
   );
 };

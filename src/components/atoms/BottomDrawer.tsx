@@ -10,13 +10,11 @@ import CLoseIcon from './icons/CloseIcon';
 import {IconProps} from './icons/_Icon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
-  title?: JSX.Element;
   action?: (event: GestureResponderEvent) => void;
   actionIcon?: FC<IconProps>;
 }
 
 const BottomDrawer: FC<BottomDrawerProps> = ({
-  title,
   action,
   children,
   style,
@@ -29,10 +27,9 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
         style={[
           styles.actions,
           {
-            justifyContent: title ? 'space-between' : 'flex-end',
+            justifyContent: 'flex-end',
           },
         ]}>
-        {title}
         {action && (
           <IconButton title="close" onPress={action} variant="contained">
             <Icon color="dark" scale={0.6} />

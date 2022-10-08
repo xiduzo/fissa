@@ -1,13 +1,12 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
-import {Linking, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import InfoIcon from '../../components/atoms/icons/InfoIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
-import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from './Room.PlaylistContext';
 
