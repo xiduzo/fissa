@@ -14,6 +14,7 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify, refreshToken} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
+
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
     try {

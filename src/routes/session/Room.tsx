@@ -71,9 +71,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   };
 
   const restartPlaylist = async () => {
-    setIsSyncing(true);
-    await request('POST', '/room/play', {pin});
-    setIsSyncing(false);
+    try {
+      setIsSyncing(true);
+      await request('POST', '/room/play', {pin});
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const renderTrack = (render: ListRenderItemInfo<TrackInterface>) => {
