@@ -15,8 +15,10 @@ export const useSwipe = (
   const xRef = useRef(0);
   const yRef = useRef(0);
   const [isActive, setIsActive] = useState(false);
+  const cancelSwipeTimeout = useRef<NodeJS.Timeout>();
 
   const touchStart = (event: GestureResponderEvent) => {
+    clearTimeout(cancelSwipeTimeout.current);
     const {
       nativeEvent: {pageX, pageY},
     } = event;
@@ -47,7 +49,7 @@ export const useSwipe = (
       onSwipeDown && onSwipeDown(event);
     }
 
-    setTimeout(() => setIsActive(false), 500);
+    cancelSwipeTimeout.current = setTimeout(() => setIsActive(false), 500);
   };
 
   return {
