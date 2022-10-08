@@ -15,12 +15,15 @@ import {Color} from '../../types/Theme';
 import BottomDrawer from '../atoms/BottomDrawer';
 import DraggableView from '../atoms/DraggableView';
 
-interface PopOverProps extends ModalProps {}
+interface PopOverProps extends ModalProps {
+  title?: JSX.Element;
+}
 
 const Popover: FC<PopOverProps> = ({
   children,
   style,
   onRequestClose,
+  title,
   ...props
 }) => {
   const fadeAnimation = useRef(new Animated.Value(0)).current;
@@ -65,6 +68,7 @@ const Popover: FC<PopOverProps> = ({
         <View style={styles.view}>
           <DraggableView onTouchStart={touchStart} onTouchEnd={touchEnd}>
             <BottomDrawer
+              title={title}
               action={close}
               style={{
                 borderRadius: isActive ? 24 : 0,
