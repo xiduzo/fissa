@@ -2,7 +2,7 @@ import {Platform, ToastAndroid} from 'react-native';
 import Toast from 'react-native-toast-message';
 
 type ToastType = 'success' | 'warning' | 'error' | 'info';
-interface ShowProps {
+export interface ShowProps {
   type?: ToastType;
   icon?: string;
   message: string;

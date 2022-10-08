@@ -23,6 +23,7 @@ import RoomDetails from './Room.Details';
 import {Track as TrackInterface, useRoomPlaylist} from './Room.PlaylistContext';
 import RoomTrack from './Room.Track';
 import {request} from '../../lib/utils/api';
+import {ShowProps} from '../../utils/Notification';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -73,7 +74,13 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const restartPlaylist = async () => {
     try {
       setIsSyncing(true);
-      await request('POST', '/room/play', {pin});
+      const errorResponses = new Map<number, Partial<ShowProps>>();
+      errorResponses.set(409, {
+        message: 'The playlist is already playing',
+        icon: '',
+      });
+
+      await request('POST', '/room/play', {pin}, errorResponses);
     } catch (error) {
       console.log(error);
     } finally {
