@@ -6,6 +6,7 @@ import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
 import Playlist from '../../components/molecules/ListItem.Playlist';
+import {SAVED_TRACK_IMAGE_URL} from '../../lib/constants/Images';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
@@ -28,7 +29,25 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
   };
 
   useEffect(() => {
-    spotify.getUserPlaylists().then(result => setPlaylists(result.items));
+    spotify.getUserPlaylists().then(result => {
+      setPlaylists(result.items);
+      spotify.getMySavedTracks().then(savedTracks => {
+        if (savedTracks.items.length <= 0) return;
+        setPlaylists(prev => [
+          {
+            name: 'Saved Tracks',
+            description: 'Your liked songs',
+            id: 'saved-tracks',
+            images: [
+              {
+                url: SAVED_TRACK_IMAGE_URL,
+              },
+            ],
+          } as any as SpotifyApi.PlaylistObjectSimplified,
+          ...prev,
+        ]);
+      });
+    });
   }, [spotify]);
 
   useEffect(() => {
@@ -41,15 +60,16 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
     });
   }, [navigation, cancel]);
 
+  const title = 'Your playlists';
   return (
     <View>
       <ScrollViewWithHeaderTitle
-        title="Your playlists"
+        title={title}
         navigation={navigation}
         style={styles.container}
         scrollEventThrottle={30}>
         <Typography variant="h1" gutter={32}>
-          Your playlists
+          {title}
         </Typography>
         {playlists.map(playlist => (
           <Playlist

@@ -34,8 +34,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   const changeCode =
     (index: number) => (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
       const newCode = [...pin];
-      const input =
-        e.nativeEvent.text[e.nativeEvent.text.length - 1].toUpperCase();
+      const input = e.nativeEvent.text.toUpperCase();
 
       if (!input.match(/\w/)) return;
       if (input.match(/\d/)) return;
@@ -67,7 +66,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     (index: number) =>
     (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
       if (index === 0) return;
-      if (event.nativeEvent.key !== 'Backspace') return;
+      if (event.nativeEvent?.key.toLowerCase() !== 'backspace') return;
       keys[index - 1].current?.focus();
     };
 

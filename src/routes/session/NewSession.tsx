@@ -12,13 +12,14 @@ interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
 
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
-  const {spotify} = useSpotify();
+  const {spotify, refreshToken} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
     try {
       const {content: pin} = await request<string>('POST', '/room', {
         accessToken: spotify.getAccessToken(),
+        refreshToken,
       });
 
       navigation.popToTop();

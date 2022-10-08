@@ -20,13 +20,14 @@ import {TOKEN_ENDPOINT} from '../lib/constants/Endpoint';
 
 interface SpotifyProviderState {
   spotify: SpotifyWebApi.SpotifyWebApiJs;
-  auth: () => Promise<boolean>;
+  auth: () => Promise<void>;
+  refreshToken?: string | null;
   currentUser?: SpotifyApi.CurrentUsersProfileResponse;
 }
 
 const initialState: SpotifyProviderState = {
   spotify: new SpotifyWebApi(),
-  auth: async () => false,
+  auth: async () => {},
 };
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);
@@ -61,6 +62,7 @@ type Tokens = {
 
 const SpotifyProvider: FC = ({children}) => {
   const spotifyApi = useRef(initialState.spotify);
+  const localRefreshToken = useRef<string | null>('');
   const [currentUser, setCurrentUser] =
     useState<SpotifyApi.CurrentUsersProfileResponse>();
 
@@ -70,13 +72,17 @@ const SpotifyProvider: FC = ({children}) => {
 
       spotifyApi.current.setAccessToken(result.accessToken);
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));
-      return true;
+      setCurrentUser(await spotifyApi.current.getMe());
     } catch (error) {
-      return false;
+      console.error(`spotifyAuth error: ${error}`);
     }
   }, []);
 
   const refresh = useCallback(async ({refreshToken, access_token}: Tokens) => {
+    if (!refreshToken) return;
+    if (!access_token) return;
+    console.log('refresh token');
+
     try {
       const result = await spotifyApiRefresh(
         {
@@ -95,62 +101,57 @@ const SpotifyProvider: FC = ({children}) => {
       );
 
       spotifyApi.current.setAccessToken(result.accessToken);
+      localRefreshToken.current = result.refreshToken;
       setCurrentUser(await spotifyApi.current.getMe());
 
       EncryptedStorage.setItem(
         'accessToken',
         JSON.stringify({
           ...result,
-          refreshToken, // keep the refresh token in the encrypted storage
+          refreshToken, // keep the refresh token
         }),
       );
-
-      setTimeout(() => {
-        refresh({
-          refreshToken,
-          access_token: result.accessToken,
-        });
-      }, Math.max(0, Math.abs(new Date().getTime() - new Date(result.accessTokenExpirationDate).getTime()) - 60000));
     } catch (error) {
       console.error('refresh error', error);
     }
   }, []);
 
+  // Set user when token is present
+  useEffect(() => {
+    EncryptedStorage.getItem('accessToken').then(value => {
+      if (!value) return;
+
+      const {accessTokenExpirationDate, accessToken} = JSON.parse(
+        value,
+      ) as AuthorizeResult;
+
+      if (
+        accessTokenExpirationDate &&
+        new Date() < new Date(accessTokenExpirationDate)
+      ) {
+        spotifyApi.current.setAccessToken(accessToken);
+        spotifyApi.current.getMe().then(user => {
+          setCurrentUser(user);
+        });
+      }
+    });
+  }, []);
+
   useEffect(() => {
     let refreshTokenSubscription: NativeEventSubscription;
-    const auth = async () => {
-      try {
-        const item = await EncryptedStorage.getItem('accessToken');
+    EncryptedStorage.getItem('accessToken').then(value => {
+      if (!value) return;
 
-        const {accessTokenExpirationDate, refreshToken, accessToken} =
-          JSON.parse(item ?? JSON.stringify('')) as AuthorizeResult;
+      const {accessToken, refreshToken} = JSON.parse(value) as AuthorizeResult;
 
-        if (accessToken && refreshToken) {
-          // Current token is still valid, lets use it while it lasts
-          if (new Date() < new Date(accessTokenExpirationDate)) {
-            spotifyApi.current.setAccessToken(accessToken);
-            setCurrentUser(await spotifyApi.current.getMe());
-          }
-
-          const tokens = {
-            refreshToken,
-            access_token: accessToken,
-          };
-
-          refresh(tokens);
-
-          // TODO: set background progress to refresh the token each ~20 minutes
-          refreshTokenSubscription = AppState.addEventListener('change', () => {
-            if (AppState.currentState !== 'active') return;
-            refresh(tokens);
-          });
-        }
-      } catch (error) {
-        console.error('auth error', error);
-      }
-    };
-
-    auth();
+      localRefreshToken.current = refreshToken;
+      // TODO: set background progress to refresh the token each ~20 minutes instead of this hack
+      console.log('add token subscription');
+      refreshTokenSubscription = AppState.addEventListener('change', () => {
+        if (AppState.currentState !== 'active') return;
+        refresh({refreshToken, access_token: accessToken});
+      });
+    });
 
     return () => {
       refreshTokenSubscription?.remove();
@@ -163,6 +164,7 @@ const SpotifyProvider: FC = ({children}) => {
         spotify: spotifyApi.current,
         auth: spotifyAuth,
         currentUser,
+        refreshToken: localRefreshToken.current,
       }}>
       {children}
     </SpotifyContext.Provider>

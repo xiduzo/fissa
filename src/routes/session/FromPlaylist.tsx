@@ -8,7 +8,6 @@ import Playlist from '../../components/molecules/ListItem.Playlist';
 import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 
 interface FromPlaylistProps
@@ -17,7 +16,7 @@ interface FromPlaylistProps
 const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
   const [selectedPlaylist, setSelectedPlaylist] =
     useState<SpotifyApi.PlaylistObjectSimplified>();
-  const {spotify} = useSpotify();
+  const {spotify, refreshToken} = useSpotify();
   const [playlists, setPlaylists] = useState<
     SpotifyApi.PlaylistObjectSimplified[]
   >([]);
@@ -40,6 +39,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       const {content: pin} = await request<string>('POST', '/room', {
         accessToken: spotify.getAccessToken(),
         playlistId: selectedPlaylist.id,
+        refreshToken,
       });
 
       closePopOver();
@@ -52,7 +52,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
 
   useEffect(() => {
     spotify.getUserPlaylists().then(result => setPlaylists(result.items));
-    spotify.getMySavedTracks({}).then(console.log);
+    spotify.getMySavedTracks().then(console.log);
   }, [spotify]);
 
   return (

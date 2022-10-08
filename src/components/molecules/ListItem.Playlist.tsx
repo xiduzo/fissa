@@ -18,7 +18,7 @@ const Playlist: FC<PlaylistProps> = ({playlist, ...props}) => {
     <ListItem
       imageUri={playlist.images[0]?.url}
       title={playlist.name}
-      subtitle={playlist.owner.display_name ?? playlist.description ?? ''}
+      subtitle={playlist.owner?.display_name ?? playlist.description ?? ''}
       {...props}
     />
   );

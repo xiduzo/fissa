@@ -7,6 +7,7 @@ import Image from '../../components/atoms/Image';
 import Typography from '../../components/atoms/Typography';
 import VirtualizedListWithHeader from '../../components/atoms/VirtualizedListWithHeader';
 import Track from '../../components/molecules/ListItem.Track';
+import {SAVED_TRACK_IMAGE_URL} from '../../lib/constants/Images';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
@@ -39,7 +40,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   const {spotify} = useSpotify();
   const {playlistId} = route.params;
   const [playlist, setPlaylist] = useState<SpotifyApi.SinglePlaylistResponse>();
-  const [tracks, setTracks] = useState<SpotifyApi.PlaylistTrackObject[]>([]);
+  const [tracks, setTracks] = useState<SpotifyApi.TrackObjectFull[]>([]);
 
   const toggleTrack = (trackId: string) => () => {
     if (selectedTracks.includes(trackId)) {
@@ -51,25 +52,45 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    const fetchTracks = async (offset: number) => {
+    const fetchTracks = async (offset = 0) => {
+      if (playlistId === 'saved-tracks') {
+        spotify.getMySavedTracks({offset}).then(result => {
+          // TODO: filter tracks to be unique, no need for double tracks
+          setTracks(prev => prev.concat(result.items.map(item => item.track)));
+          if (!result.next) return;
+          fetchTracks(offset + result.items.length);
+        });
+        return;
+      }
+
       spotify.getPlaylistTracks(playlistId, {offset}).then(result => {
         // TODO: filter tracks to be unique, no need for double tracks
-        setTracks(prev => [...prev, ...result.items]);
+        setTracks(prev =>
+          prev.concat(
+            result.items.map(item => item.track as SpotifyApi.TrackObjectFull),
+          ),
+        );
         if (!result.next) return;
         fetchTracks(offset + result.items.length);
       });
     };
 
-    spotify.getPlaylist(playlistId).then(result => {
-      setPlaylist(result);
-    });
+    if (playlistId === 'saved-tracks') {
+      setPlaylist({
+        name: 'Saved Tracks',
+        images: [
+          {
+            url: SAVED_TRACK_IMAGE_URL,
+          },
+        ],
+      } as any as SpotifyApi.SinglePlaylistResponse);
+    } else {
+      spotify.getPlaylist(playlistId).then(result => {
+        setPlaylist(result);
+      });
+    }
 
-    spotify.getPlaylistTracks(playlistId).then(result => {
-      setTracks(result.items);
-      if (!result.next) return;
-
-      fetchTracks(result.offset + result.items.length);
-    });
+    fetchTracks();
   }, [playlistId, spotify]);
 
   useEffect(() => {
@@ -83,10 +104,9 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   }, [navigation, cancel]);
 
   const renderItem = (
-    render: ListRenderItemInfo<SpotifyApi.PlaylistTrackObject>,
+    render: ListRenderItemInfo<SpotifyApi.TrackObjectFull>,
   ) => {
-    const track = render.item.track as SpotifyApi.TrackObjectFull;
-
+    const track = render.item;
     return (
       <Track
         track={{
@@ -106,7 +126,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
 
   return (
     <View>
-      <VirtualizedListWithHeader<SpotifyApi.PlaylistTrackObject>
+      <VirtualizedListWithHeader
         navigation={navigation}
         scrollHeightTrigger={230}
         title={playlist?.name}
@@ -123,7 +143,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
         renderItem={renderItem}
         getItemCount={data => data.length}
         getItem={(data, index) => data[index]}
-        keyExtractor={item => item.track.id + item.added_at}
+        keyExtractor={item => item.id}
       />
       <AddContextBottomDrawer />
     </View>
