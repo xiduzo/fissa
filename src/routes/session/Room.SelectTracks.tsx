@@ -5,7 +5,10 @@ import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import Tracks from '../../components/organisms/Tracks';
 import {SharedElementStackParamList} from '../Routes';
-import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
+import {
+  AddContextBottomDrawer,
+  useAddContext,
+} from '../../providers/AddTracksProvider';
 
 interface SelectTracksProps
   extends NativeStackScreenProps<SharedElementStackParamList, 'SelectTracks'> {}
@@ -15,7 +18,6 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   const {playlistId} = route.params;
 
   const toggleTrack = (trackId: string) => {
-    console.log(trackId);
     if (selectedTracks.includes(trackId)) {
       removeTrack(trackId);
       return;

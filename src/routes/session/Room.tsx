@@ -21,7 +21,7 @@ import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';
-import {Track as TrackInterface, useRoomPlaylist} from './Room.PlaylistContext';
+import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import RoomTrack from './Room.Track';
 import {request} from '../../lib/utils/api';
 import {ShowProps} from '../../utils/Notification';
@@ -29,6 +29,7 @@ import Popover from '../../components/molecules/Popover';
 import Action from '../../components/atoms/Action';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
+import {Track as TrackInterface} from '../../lib/interfaces/Track';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}

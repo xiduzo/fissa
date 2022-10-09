@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {Animated} from 'react-native';
-import {Track as TrackInterface} from '../../routes/session/Room.PlaylistContext';
+import {Track as TrackInterface} from '../../providers/PlaylistProvider';
 import {Color} from '../../types/Theme';
 import ProgressBar from '../atoms/ProgressBar';
 import Typography from '../atoms/Typography';

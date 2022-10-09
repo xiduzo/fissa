@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
+import {Room} from '../../lib/interfaces/Room';
 import {request} from '../../lib/utils/api';
 import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
-import {Room} from './Room.PlaylistContext';
 
 interface JoinSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'JoinSession'> {}

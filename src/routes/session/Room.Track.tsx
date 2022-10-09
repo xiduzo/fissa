@@ -5,14 +5,13 @@ import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import LockIcon from '../../components/atoms/icons/LockIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
-import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
-import {Track as TrackInterface} from './Room.PlaylistContext';
+import {Track as TrackInterface} from '../../lib/interfaces/Track';
 
 interface RoomTrackProps {
   track: TrackInterface;

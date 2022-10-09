@@ -9,32 +9,11 @@ import {
 } from 'react';
 import {AppState} from 'react-native';
 import Config from 'react-native-config';
-import {request} from '../../lib/utils/api';
-import Notification from '../../utils/Notification';
-
-export interface Room {
-  id?: string;
-  pin: string;
-  createdBy: string;
-  currentIndex: number;
-  expectedEndTime?: string;
-}
-
-export interface Vote {
-  createdBy: string;
-  state: 'up' | 'down';
-  trackId: string;
-}
-
-export interface Track {
-  id: string;
-  pin: string;
-  image?: string;
-  index: number;
-  artists: string;
-  name: string;
-  duration_ms: number;
-}
+import {Room} from '../lib/interfaces/Room';
+import {Track} from '../lib/interfaces/Track';
+import {Vote} from '../lib/interfaces/Vote';
+import {request} from '../lib/utils/api';
+import Notification from '../utils/Notification';
 
 interface RoomPlaylistContextState {
   tracks: Track[];
@@ -51,10 +30,9 @@ const initialState: RoomPlaylistContextState = {
   leaveRoom: () => {},
 };
 
-const RoomPlaylistContext =
-  createContext<RoomPlaylistContextState>(initialState);
+const PlaylistContext = createContext<RoomPlaylistContextState>(initialState);
 
-const PlaylistContextProvider: FC = ({children}) => {
+const PlaylistProvider: FC = ({children}) => {
   const [tracks, setTracks] = useState(initialState.tracks);
   const [votes, setVotes] = useState(initialState.votes);
   const [room, setRoom] = useState(initialState.room);
@@ -200,7 +178,7 @@ const PlaylistContextProvider: FC = ({children}) => {
   }, [fetchRoom, fetchTracks, fetchVotes]);
 
   return (
-    <RoomPlaylistContext.Provider
+    <PlaylistContext.Provider
       value={{
         tracks,
         room,
@@ -209,12 +187,12 @@ const PlaylistContextProvider: FC = ({children}) => {
         leaveRoom,
       }}>
       {children}
-    </RoomPlaylistContext.Provider>
+    </PlaylistContext.Provider>
   );
 };
 
 export const useRoomPlaylist = (pin?: string) => {
-  const context = useContext(RoomPlaylistContext);
+  const context = useContext(PlaylistContext);
   if (!context) {
     throw new Error(
       'useRoomPlaylist must be used within a RoomPlaylistContext',
@@ -239,4 +217,4 @@ export const useRoomPlaylist = (pin?: string) => {
   };
 };
 
-export default PlaylistContextProvider;
+export default PlaylistProvider;

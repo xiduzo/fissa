@@ -2,16 +2,16 @@ import {useNavigation} from '@react-navigation/native';
 import {createContext, FC, useCallback, useContext, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {SharedElement} from 'react-navigation-shared-element';
-import BottomDrawer from '../../components/atoms/BottomDrawer';
-import Button from '../../components/atoms/Button';
-import DeleteIcon from '../../components/atoms/icons/DeleteIcon';
-import Typography from '../../components/atoms/Typography';
-import Tracks from '../../components/organisms/Tracks';
-import {request} from '../../lib/utils/api';
-import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Theme';
-import Notification from '../../utils/Notification';
-import {useRoomPlaylist} from './Room.PlaylistContext';
+import BottomDrawer from '../components/atoms/BottomDrawer';
+import Button from '../components/atoms/Button';
+import DeleteIcon from '../components/atoms/icons/DeleteIcon';
+import Typography from '../components/atoms/Typography';
+import Tracks from '../components/organisms/Tracks';
+import {request} from '../lib/utils/api';
+import {useSpotify} from './SpotifyProvider';
+import {Color} from '../types/Theme';
+import Notification from '../utils/Notification';
+import {useRoomPlaylist} from './PlaylistProvider';
 
 interface RoomAddContextState {
   selectedTracks: string[];
@@ -31,9 +31,9 @@ const initialState: RoomAddContextState = {
   reset: () => {},
 };
 
-const RoomAddContext = createContext<RoomAddContextState>(initialState);
+const AddTracksContext = createContext<RoomAddContextState>(initialState);
 
-const AddContextProvider: FC = ({children}) => {
+const AddTracksProvider: FC = ({children}) => {
   const {goBack, canGoBack} = useNavigation();
   const {room} = useRoomPlaylist();
   const {spotify, currentUser} = useSpotify();
@@ -80,7 +80,7 @@ const AddContextProvider: FC = ({children}) => {
   }, []);
 
   return (
-    <RoomAddContext.Provider
+    <AddTracksContext.Provider
       value={{
         selectedTracks,
         addTrack,
@@ -90,11 +90,11 @@ const AddContextProvider: FC = ({children}) => {
         reset,
       }}>
       {children}
-    </RoomAddContext.Provider>
+    </AddTracksContext.Provider>
   );
 };
 
-export const useAddContext = () => useContext(RoomAddContext);
+export const useAddContext = () => useContext(AddTracksContext);
 
 export const AddContextBottomDrawer: FC = props => {
   const {selectedTracks, addToQueue, reset} = useAddContext();
@@ -127,7 +127,7 @@ export const AddContextBottomDrawer: FC = props => {
   );
 };
 
-export default AddContextProvider;
+export default AddTracksProvider;
 
 const styles = StyleSheet.create({
   view: {

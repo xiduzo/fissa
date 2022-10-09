@@ -8,7 +8,7 @@ import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
 import {RootStackParamList} from '../Routes';
-import {useRoomPlaylist} from './Room.PlaylistContext';
+import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
 
 interface RoomDetailsProps {

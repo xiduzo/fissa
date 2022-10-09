@@ -4,19 +4,19 @@ import NetworkMonitor from './src/components/atoms/NetworkMonitor';
 import ToastContainer from './src/components/atoms/Toast';
 import SpotifyProvider from './src/providers/SpotifyProvider';
 import Routes from './src/routes/Routes';
-import AddContextProvider from './src/routes/session/Room.AddContext';
-import PlaylistContextProvider from './src/routes/session/Room.PlaylistContext';
+import AddTracksProvider from './src/providers/AddTracksProvider';
+import PlaylistProvider from './src/providers/PlaylistProvider';
 
 const App = () => {
   return (
     <SpotifyProvider>
       <NavigationContainer>
-        <PlaylistContextProvider>
-          <AddContextProvider>
+        <PlaylistProvider>
+          <AddTracksProvider>
             <Routes />
             <NetworkMonitor />
-          </AddContextProvider>
-        </PlaylistContextProvider>
+          </AddTracksProvider>
+        </PlaylistProvider>
         <ToastContainer />
       </NavigationContainer>
     </SpotifyProvider>

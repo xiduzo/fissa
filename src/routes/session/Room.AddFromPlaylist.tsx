@@ -6,7 +6,10 @@ import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
 import {SharedElementStackParamList} from '../Routes';
-import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
+import {
+  AddContextBottomDrawer,
+  useAddContext,
+} from '../../providers/AddTracksProvider';
 import Playlists from '../../components/organisms/Playlists';
 
 interface AddFromPlaylistProps
