@@ -36,7 +36,6 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
     return animate;
   }, [canGoBack]);
 
-  console.log(options.headerTitle);
   return (
     <View style={[styles.container]}>
       <Animated.View style={{opacity: backAnimation}}>

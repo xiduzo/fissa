@@ -6,6 +6,7 @@ import BottomDrawer from '../../components/atoms/BottomDrawer';
 import Button from '../../components/atoms/Button';
 import DeleteIcon from '../../components/atoms/icons/DeleteIcon';
 import Typography from '../../components/atoms/Typography';
+import Tracks from '../../components/organisms/Tracks';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
@@ -95,16 +96,25 @@ const AddContextProvider: FC = ({children}) => {
 
 export const useAddContext = () => useContext(RoomAddContext);
 
-export const AddContextBottomDrawer: FC = () => {
+export const AddContextBottomDrawer: FC = props => {
   const {selectedTracks, addToQueue, reset} = useAddContext();
 
   return (
     <SharedElement id="tracks-to-add-drawer">
       <View style={styles.view}>
         <BottomDrawer action={reset} actionIcon={DeleteIcon}>
-          <Typography color="dark" align="center" variant="h6" gutter={24}>
-            {selectedTracks.length} tracks selected
-          </Typography>
+          <View style={styles.selectedAmountContainer}>
+            <Typography
+              color="dark"
+              align="center"
+              variant="h6"
+              style={styles.selectedAmount}>
+              {selectedTracks.length}
+            </Typography>
+            <Typography color="dark" align="center" variant="h6" gutter={24}>
+              tracks selected
+            </Typography>
+          </View>
           <Button
             inverted
             title="Add to queue"
@@ -124,5 +134,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
+  },
+  selectedAmountContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  selectedAmount: {
+    minWidth: 28,
   },
 });

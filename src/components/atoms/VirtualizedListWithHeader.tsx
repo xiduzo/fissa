@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import {ScrolledHeaderTitle} from './ScrolledHeaderTitle';
 
-interface VirtualizedListWithHeaderProps<T> extends VirtualizedListProps<T> {
+export interface VirtualizedListWithHeaderProps<T>
+  extends VirtualizedListProps<T> {
   navigation: NativeStackNavigationProp<ParamListBase>;
   title: string;
   scrollHeightTrigger?: number;
@@ -28,16 +29,13 @@ function VirtualizedListWithHeader<T>({
     const scrollHeight = event.nativeEvent.contentOffset.y;
 
     navigation.setOptions({
-      headerTitle: props => {
-        console.log(props);
-        return (
-          <ScrolledHeaderTitle
-            title={title}
-            scrollPercentage={(scrollHeight / scrollHeightTrigger) * 100}
-            {...props}
-          />
-        );
-      },
+      headerTitle: props => (
+        <ScrolledHeaderTitle
+          title={title}
+          scrollPercentage={(scrollHeight / scrollHeightTrigger) * 100}
+          {...props}
+        />
+      ),
     });
   };
 
