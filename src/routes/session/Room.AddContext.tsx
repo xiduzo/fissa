@@ -35,7 +35,7 @@ const RoomAddContext = createContext<RoomAddContextState>(initialState);
 const AddContextProvider: FC = ({children}) => {
   const {goBack, canGoBack} = useNavigation();
   const {room} = useRoomPlaylist();
-  const {spotify} = useSpotify();
+  const {spotify, currentUser} = useSpotify();
 
   const [selectedTracks, setSelectedTracks] = useState<string[]>(
     initialState.selectedTracks,
@@ -68,7 +68,7 @@ const AddContextProvider: FC = ({children}) => {
     await request<any>('POST', '/room/track', {
       trackIds: selectedTracks,
       pin: room.pin,
-      accessToken: spotify.getAccessToken(),
+      createdBy: currentUser?.id,
     });
   }, [room?.pin, spotify, selectedTracks, goToRoom]);
 

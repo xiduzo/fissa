@@ -129,7 +129,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
       <VirtualizedListWithHeader
         navigation={navigation}
         scrollHeightTrigger={230}
-        title={playlist?.name}
+        title={playlist?.name ?? ''}
         style={[styles.container]}
         ListHeaderComponent={
           <ListHeader

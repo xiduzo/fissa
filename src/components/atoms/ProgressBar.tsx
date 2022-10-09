@@ -23,7 +23,6 @@ const ProgressBar: FC<ProgressBarProps> = ({progress, track, style}) => {
     // When you leave the app the interval pauses
     // And when you come back the interval starts again
     // So you need to account for this time
-
     const updateFrequency = 250;
     const interval = setInterval(() => {
       setLocalProgress(prev => {

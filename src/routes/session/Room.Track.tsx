@@ -1,6 +1,5 @@
-import {FC, useEffect, useMemo, useRef, useState} from 'react';
-import {Alert, Animated, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import {FC, useMemo, useState} from 'react';
+import {Alert, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -33,18 +32,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
   const [selected, setSelected] = useState(false);
   const {spotify, currentUser} = useSpotify();
 
-  const voteChangedAnimation = useRef(new Animated.Value(0)).current;
-  const previousVoteCount = useRef(totalVotes);
-
-  const votesBackgroundColorInterpolation = voteChangedAnimation.interpolate({
-    inputRange: [0, 0.1, 0.7, 1],
-    outputRange: [Color.light + 70, Color.main, Color.main, Color.light + 70],
-  });
-  const votesScaleInterpolation = voteChangedAnimation.interpolate({
-    inputRange: [0, 0.8, 1],
-    outputRange: [1, 1.2, 1],
-  });
-
   const selectTrack = () => setSelected(true);
 
   const castVote = (state?: 'up' | 'down') => async () => {
@@ -75,48 +62,11 @@ const RoomTrack: FC<RoomTrackProps> = ({
 
   const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
 
-  useEffect(() => {
-    if (previousVoteCount.current === totalVotes) return;
-    const animation = Animated.spring(voteChangedAnimation, {
-      toValue: Number(totalVotes !== 0),
-      friction: 10,
-      useNativeDriver: false,
-    });
-
-    animation.start(() => {
-      animation.reset();
-      previousVoteCount.current = totalVotes;
-    });
-  }, [totalVotes]);
-
   return (
     <View>
       <Track
         track={track}
-        subtitlePrefix={
-          totalVotes !== 0 ? (
-            <Animated.View
-              style={{
-                backgroundColor: votesBackgroundColorInterpolation,
-                transform: [{scale: votesScaleInterpolation}],
-                borderRadius: 2,
-                paddingHorizontal: 2,
-                marginRight: 4,
-              }}>
-              <Typography
-                color="dark"
-                align="center"
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  width: 16 + (totalVotes > 10 ? 6 : 0),
-                }}>
-                {totalVotes > 0 && '+'}
-                {totalVotes}
-              </Typography>
-            </Animated.View>
-          ) : undefined
-        }
+        totalVotes={totalVotes}
         onPress={selectTrack}
         onLongPress={() =>
           Alert.alert(
@@ -131,23 +81,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
           />
         }
       />
-      <Popover
-        title={
-          <View
-            style={{
-              opacity: 0.6,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <VotesIcon color="dark" scale={0.6} />
-            <Typography color="dark" variant="bodyM">
-              {totalVotes}
-            </Typography>
-          </View>
-        }
-        visible={!!selected}
-        onRequestClose={() => setSelected(false)}>
-        <Track track={track} inverted hasBorder />
+      <Popover visible={!!selected} onRequestClose={() => setSelected(false)}>
+        <Track track={track} totalVotes={totalVotes} inverted hasBorder />
         <View
           style={{
             borderBottomWidth: 2,
@@ -158,13 +93,15 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Locked track"
           inverted
+          disabled
           hidden={!isNextTrack}
           icon={<LockIcon color={'dark'} />}
-          subtitle="Voting is disabled on the next track"
+          subtitle="This track will not move"
         />
         <Action
-          title="Up vote track"
+          title="Up-vote track"
           inverted
+          disabled={myVote === 'up'}
           hidden={isNextTrack}
           onPress={castVote('up')}
           active={myVote === 'up'}
@@ -174,12 +111,17 @@ const RoomTrack: FC<RoomTrackProps> = ({
               colorOpacity={myVote === 'up' ? 100 : 40}
             />
           }
-          subtitle="It might move up in the queue"
+          subtitle={
+            myVote === 'up'
+              ? 'You already up-voted this track'
+              : 'It might move up in the queue'
+          }
         />
         <Action
-          title="Down vote track"
+          title="Down-vote track"
           inverted
           hidden={isNextTrack}
+          disabled={myVote === 'down'}
           active={myVote === 'down'}
           onPress={castVote('down')}
           icon={
@@ -188,7 +130,11 @@ const RoomTrack: FC<RoomTrackProps> = ({
               colorOpacity={myVote === 'down' ? 100 : 40}
             />
           }
-          subtitle="It might move down in the queue"
+          subtitle={
+            myVote === 'down'
+              ? 'You already down-voted this track'
+              : 'It might move down in the queue'
+          }
         />
       </Popover>
     </View>

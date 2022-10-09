@@ -1,11 +1,12 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useEffect, useRef, useState} from 'react';
+import {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import Button from '../../components/atoms/Button';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
 import Playlist from '../../components/molecules/ListItem.Playlist';
 import Popover from '../../components/molecules/Popover';
+import Playlists from '../../components/organisms/Playlists';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {RootStackParamList} from '../Routes';
@@ -17,17 +18,18 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
   const [selectedPlaylist, setSelectedPlaylist] =
     useState<SpotifyApi.PlaylistObjectSimplified>();
   const {spotify, refreshToken, currentUser} = useSpotify();
-  const [playlists, setPlaylists] = useState<
-    SpotifyApi.PlaylistObjectSimplified[]
-  >([]);
+
   const title = useRef('Select a playlist');
 
   const [waitForResponse, setWaitForResponse] = useState(false);
 
-  const selectPlaylist =
-    (playlist: SpotifyApi.PlaylistObjectSimplified) => () => {
+  const selectPlaylist = useCallback(
+    (playlist: SpotifyApi.PlaylistObjectSimplified) => {
       setSelectedPlaylist(playlist);
-    };
+    },
+    [],
+  );
+
   const closePopOver = () => setSelectedPlaylist(undefined);
 
   const startFromPlaylist = async () => {
@@ -51,11 +53,6 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    spotify.getUserPlaylists().then(result => setPlaylists(result.items));
-    spotify.getMySavedTracks().then(console.log);
-  }, [spotify]);
-
   return (
     <ScrollViewWithHeaderTitle
       title={title.current}
@@ -65,13 +62,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       <Typography variant="h1" gutter={24}>
         {title.current}
       </Typography>
-      {playlists.map(playlist => (
-        <Playlist
-          playlist={playlist}
-          key={playlist.id}
-          onPress={selectPlaylist(playlist)}
-        />
-      ))}
+      <Playlists onPlaylistPress={selectPlaylist} />
       <Popover visible={!!selectedPlaylist} onRequestClose={closePopOver}>
         <Typography
           variant="h2"

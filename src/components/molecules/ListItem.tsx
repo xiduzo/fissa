@@ -127,7 +127,11 @@ const ListItem: FC<ListItemProps> = ({
             <Typography
               color={inverted ? 'dark' : 'light'}
               numberOfLines={1}
-              style={styles.subtitle}
+              style={{
+                ...styles.subtitle,
+                flex: 1,
+                // maxWidth: subtitlePrefix ? '85%' : '100%',
+              }}
               variant="bodyM">
               {subtitle}
             </Typography>

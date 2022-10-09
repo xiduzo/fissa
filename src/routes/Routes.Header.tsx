@@ -10,10 +10,9 @@ import {Color} from '../types/Theme';
 const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   options,
   navigation,
+  ...props
 }) => {
   const backAnimation = useRef(new Animated.Value(0)).current;
-  const titleAnimation = useRef(new Animated.Value(-80)).current;
-  const previousHeaderTitle = useRef(options.headerTitle);
   const canGoBack = navigation.canGoBack();
 
   const goBack = () => {
@@ -28,7 +27,7 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
         duration: 0,
         delay: 0,
         useNativeDriver: false,
-        ...(config ?? {}),
+        ...config,
       }).start();
     };
 
@@ -37,47 +36,21 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
     return animate;
   }, [canGoBack]);
 
-  useEffect(() => {
-    const animate = (config?: Partial<Animated.TimingAnimationConfig>) => {
-      Animated.timing(titleAnimation, {
-        toValue: -80,
-        duration: 100,
-        delay: 0,
-        useNativeDriver: false,
-        ...(config ?? {}),
-      }).start(() => {
-        previousHeaderTitle.current = options.headerTitle;
-      });
-    };
-
-    options.headerTitle ? animate({toValue: 0, duration: 300}) : animate();
-
-    return animate;
-  }, [options.headerTitle]);
-
+  console.log(options.headerTitle);
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          borderBottomColor: options.headerTitle
-            ? Color.light + '20'
-            : Color.dark,
-        },
-      ]}>
+    <View style={[styles.container]}>
       <Animated.View style={{opacity: backAnimation}}>
         <IconButton onPress={goBack} title={options.title ?? ''}>
           <ArrowLeftIcon />
         </IconButton>
       </Animated.View>
-      <Animated.View
-        style={{
-          marginBottom: titleAnimation,
-        }}>
-        <Typography variant="h4">
-          {options.headerTitle ?? previousHeaderTitle.current}
-        </Typography>
-      </Animated.View>
+      {typeof options.headerTitle === 'string' && (
+        <Typography variant="h4">{options.headerTitle}</Typography>
+      )}
+      {typeof options.headerTitle === 'function' &&
+        options.headerTitle({
+          children: '',
+        })}
       {options.headerRight ? (
         options.headerRight({canGoBack})
       ) : (
@@ -98,6 +71,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomWidth: 1,
   },
 });

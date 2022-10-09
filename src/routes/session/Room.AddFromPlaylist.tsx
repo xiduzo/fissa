@@ -1,15 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useEffect, useState} from 'react';
+import {FC, useCallback, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
-import Playlist from '../../components/molecules/ListItem.Playlist';
-import {SAVED_TRACK_IMAGE_URL} from '../../lib/constants/Images';
-import {useSpotify} from '../../providers/SpotifyProvider';
 import {SharedElementStackParamList} from '../Routes';
 import {AddContextBottomDrawer, useAddContext} from './Room.AddContext';
+import Playlists from '../../components/organisms/Playlists';
 
 interface AddFromPlaylistProps
   extends NativeStackScreenProps<
@@ -19,36 +17,13 @@ interface AddFromPlaylistProps
 
 const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
   const {cancel} = useAddContext();
-  const {spotify} = useSpotify();
-  const [playlists, setPlaylists] = useState<
-    SpotifyApi.PlaylistObjectSimplified[]
-  >([]);
 
-  const gotoPlaylist = (playlistId: string) => () => {
-    navigation.navigate('SelectTracks', {playlistId});
-  };
-
-  useEffect(() => {
-    spotify.getUserPlaylists().then(result => {
-      setPlaylists(result.items);
-      spotify.getMySavedTracks().then(savedTracks => {
-        if (savedTracks.items.length <= 0) return;
-        setPlaylists(prev => [
-          {
-            name: 'Saved Tracks',
-            description: 'Your liked songs',
-            id: 'saved-tracks',
-            images: [
-              {
-                url: SAVED_TRACK_IMAGE_URL,
-              },
-            ],
-          } as any as SpotifyApi.PlaylistObjectSimplified,
-          ...prev,
-        ]);
-      });
-    });
-  }, [spotify]);
+  const gotoPlaylist = useCallback(
+    (playlist: SpotifyApi.PlaylistObjectSimplified) => {
+      navigation.navigate('SelectTracks', {playlistId: playlist.id});
+    },
+    [navigation],
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -71,13 +46,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
         <Typography variant="h1" gutter={32}>
           {title}
         </Typography>
-        {playlists.map(playlist => (
-          <Playlist
-            playlist={playlist}
-            key={playlist.id}
-            onPress={gotoPlaylist(playlist.id)}
-          />
-        ))}
+        <Playlists onPlaylistPress={gotoPlaylist} />
       </ScrollViewWithHeaderTitle>
       <AddContextBottomDrawer />
     </View>

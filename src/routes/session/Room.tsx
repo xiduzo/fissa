@@ -82,6 +82,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     try {
       await request('POST', `/room/skip`, {
         pin,
+        createdBy: currentUser?.id,
       });
     } catch (error) {
       console.log(error);
@@ -275,6 +276,9 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         />
         <Action
           hidden={room?.createdBy !== currentUser?.id}
+          disabled={
+            tracks[room.currentIndex]?.id !== tracks[currentTrackSelected]?.id
+          }
           title="Skip track"
           subtitle="Use your power responsibly"
           inverted
