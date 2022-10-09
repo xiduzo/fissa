@@ -18,7 +18,7 @@ export interface ListItemProps extends TouchableWithoutFeedbackProps {
   subtitle: string;
   subtitlePrefix?: JSX.Element;
   extra?: JSX.Element;
-  imageStyle?: StyleProp<ImageStyle>;
+  imageStyle?: StyleProp<Pick<ImageStyle, 'width' | 'height' | 'borderRadius'>>;
   inverted?: boolean;
   hasBorder?: boolean;
   end?: JSX.Element;
@@ -32,7 +32,7 @@ const ListItem: FC<ListItemProps> = ({
   subtitlePrefix,
   extra,
   end,
-  imageStyle = {},
+  imageStyle,
   inverted = false,
   hasBorder = false,
   selected = false,

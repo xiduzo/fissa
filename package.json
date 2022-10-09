@@ -1,6 +1,6 @@
 {
   "name": "fissa",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -36,6 +36,7 @@
     "react-native-app-auth": "6.4.3",
     "react-native-config": "1.4.6",
     "react-native-encrypted-storage": "4.0.2",
+    "react-native-fast-image": "^8.6.1",
     "react-native-gesture-handler": "2.7.0",
     "react-native-linear-gradient": "2.6.2",
     "react-native-onboarding-swiper": "1.2.0",

@@ -16,7 +16,7 @@ interface FromPlaylistProps
 const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
   const [selectedPlaylist, setSelectedPlaylist] =
     useState<SpotifyApi.PlaylistObjectSimplified>();
-  const {spotify, refreshToken} = useSpotify();
+  const {spotify, refreshToken, currentUser} = useSpotify();
   const [playlists, setPlaylists] = useState<
     SpotifyApi.PlaylistObjectSimplified[]
   >([]);
@@ -40,6 +40,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
         accessToken: spotify.getAccessToken(),
         playlistId: selectedPlaylist.id,
         refreshToken,
+        createdBy: currentUser?.id,
       });
 
       closePopOver();

@@ -1,6 +1,6 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {Alert, TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import InfoIcon from '../../components/atoms/icons/InfoIcon';
@@ -9,13 +9,15 @@ import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from './Room.PlaylistContext';
+import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
 
 interface RoomDetailsProps {
   pin: string;
+  isOwner?: boolean;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Room', undefined>;
 }
 
-const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
+const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
   const {leaveRoom} = useRoomPlaylist(pin);
 
   const [showRoomDetails, setShowRoomDetails] = useState(false);
@@ -52,6 +54,14 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
             navigation.replace('Home');
           }}
           icon={<ArrowUpIcon color="dark" colorOpacity={40} />}
+        />
+        <Action
+          hidden={!isOwner}
+          title="Set speakers"
+          subtitle="Blast those neighbors away"
+          inverted
+          disabled
+          icon={<SpeakerIcon color="dark" colorOpacity={40} />}
         />
         <Action
           title="Create playlist in spotify"

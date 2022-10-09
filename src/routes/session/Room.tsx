@@ -27,7 +27,6 @@ import {request} from '../../lib/utils/api';
 import {ShowProps} from '../../utils/Notification';
 import Popover from '../../components/molecules/Popover';
 import Action from '../../components/atoms/Action';
-import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 
@@ -208,7 +207,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           <>
             <View style={styles.header}>
               <Typography variant="h2">Now Playing</Typography>
-              <RoomDetails pin={pin} navigation={navigation} />
+              <RoomDetails
+                isOwner={room?.createdBy === currentUser?.id}
+                pin={pin}
+                navigation={navigation}
+              />
             </View>
             <Track
               imageStyle={{width: 125, height: 125}}
@@ -260,11 +263,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <Track inverted hasBorder track={tracks[currentTrackSelected]} />
         <Action
           title="Safe track"
-          subtitle="And dance to it later"
+          subtitle="Dance to it later"
           inverted
           onPress={() => {
             Alert.alert(
-              'Saving tracks to your library is coming soon',
+              'Saving tracks  is coming soon',
               'be patient my young pawadan',
             );
           }}

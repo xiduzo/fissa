@@ -31,7 +31,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
   isNextTrack,
 }) => {
   const [selected, setSelected] = useState(false);
-  const {spotify} = useSpotify();
+  const {spotify, currentUser} = useSpotify();
 
   const voteChangedAnimation = useRef(new Animated.Value(0)).current;
   const previousVoteCount = useRef(totalVotes);
@@ -54,11 +54,12 @@ const RoomTrack: FC<RoomTrackProps> = ({
       message: `Your vote has been ${myVote === state ? 'reverted' : 'cast'}!`,
     });
 
-    await request<any>('POST', '/room/vote', {
+    await request('POST', '/room/vote', {
       state,
       accessToken: spotify.getAccessToken(),
       pin,
       trackId: track.id,
+      createdBy: currentUser?.id,
     });
   };
 
@@ -173,7 +174,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
               colorOpacity={myVote === 'up' ? 100 : 40}
             />
           }
-          subtitle="And it will move up in the queue"
+          subtitle="It might move up in the queue"
         />
         <Action
           title="Down vote track"
@@ -187,7 +188,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
               colorOpacity={myVote === 'down' ? 100 : 40}
             />
           }
-          subtitle="And it will move down in the queue"
+          subtitle="It might move down in the queue"
         />
       </Popover>
     </View>

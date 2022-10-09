@@ -1,12 +1,13 @@
 import {FC} from 'react';
-import {Image, ImageProps, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
+import FastImage, {FastImageProps} from 'react-native-fast-image';
 import {Color} from '../../types/Theme';
 
-const LocalImage: FC<ImageProps> = ({style, source, ...props}) => {
-  return <Image style={[styles.image, style]} source={source} {...props} />;
+const Image: FC<FastImageProps> = ({style, ...props}) => {
+  return <FastImage style={[styles.image, style]} {...props} />;
 };
 
-export default LocalImage;
+export default Image;
 
 const styles = StyleSheet.create({
   image: {
