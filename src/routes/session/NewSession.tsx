@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FC, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
 import {request} from '../../lib/utils/api';
@@ -36,7 +36,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={{flex: 1, justifyContent: 'center'}}>
         <Typography variant="h1" gutter style={styles.text}>
           Create a fissa
@@ -61,7 +61,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

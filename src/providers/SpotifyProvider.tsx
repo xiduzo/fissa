@@ -121,10 +121,11 @@ const SpotifyProvider: FC = ({children}) => {
     EncryptedStorage.getItem('accessToken').then(value => {
       if (!value) return;
 
-      const {accessTokenExpirationDate, accessToken} = JSON.parse(
+      const {accessTokenExpirationDate, accessToken, refreshToken} = JSON.parse(
         value,
       ) as AuthorizeResult;
 
+      console.log('accessTokenExpirationDate', accessTokenExpirationDate);
       if (
         accessTokenExpirationDate &&
         new Date() < new Date(accessTokenExpirationDate)
@@ -133,13 +134,27 @@ const SpotifyProvider: FC = ({children}) => {
         spotifyApi.current.getMe().then(user => {
           setCurrentUser(user);
         });
+        return;
       }
+
+      refresh({refreshToken, access_token: accessToken});
     });
   }, []);
 
   useEffect(() => {
     let refreshTokenSubscription: NativeEventSubscription;
     let refreshTimeout: NodeJS.Timeout;
+
+    const refreshTokenOnBackground = (
+      refreshToken: string,
+      access_token: string,
+    ) => {
+      refreshTimeout = setTimeout(() => {
+        console.log('refresh token due to timeout');
+        refresh({refreshToken, access_token});
+        refreshTokenOnBackground(refreshToken, access_token);
+      }, 1000 * 60 * 20);
+    };
     EncryptedStorage.getItem('accessToken').then(value => {
       if (!value) return;
 
@@ -147,11 +162,8 @@ const SpotifyProvider: FC = ({children}) => {
 
       localRefreshToken.current = refreshToken;
       // TODO: set background progress to refresh the token each ~20 minutes instead of this hack
-      console.log('add token subscription');
-      refreshTimeout = setTimeout(() => {
-        refresh({refreshToken, access_token: accessToken});
-      }, 1000 * 60 * 20);
-
+      console.log('add token subscription & token refresh on background');
+      refreshTokenOnBackground(accessToken, refreshToken);
       refreshTokenSubscription = AppState.addEventListener('change', () => {
         if (AppState.currentState !== 'active') return;
         refresh({refreshToken, access_token: accessToken});
@@ -159,6 +171,7 @@ const SpotifyProvider: FC = ({children}) => {
     });
 
     return () => {
+      console.log('reset subscription and timeout');
       refreshTokenSubscription?.remove();
       clearTimeout(refreshTimeout);
     };

@@ -7,7 +7,6 @@ import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
 import {Color} from '../types/Theme';
 import Home from './Home';
 import Initial from './Initial';
-import Onboarding from './Onboarding';
 import Header from './Routes.Header';
 import FromPlaylist from './session/FromPlaylist';
 import JoinSession from './session/JoinSession';
@@ -59,19 +58,12 @@ const Routes: FC = () => {
           headerShown: false,
         }}
       />
-      <RootStack.Screen
-        name="Onboarding"
-        component={Onboarding}
-        options={{
-          headerShown: false,
-        }}
-      />
 
       <RootStack.Screen
         name="Home"
         component={Home}
         options={{
-          animation: 'slide_from_bottom',
+          animation: 'fade',
         }}
       />
       <RootStack.Screen name="NewSession" component={NewSession} />
@@ -128,7 +120,6 @@ export type RootStackParamList = {
     pin: string;
   };
   AddTracks: undefined;
-  Onboarding: undefined;
   Initial: undefined;
 };
 

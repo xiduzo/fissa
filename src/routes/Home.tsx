@@ -1,63 +1,44 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import React, {FC} from 'react';
+import {StyleSheet, View} from 'react-native';
 import Button from '../components/atoms/Button';
 import Typography from '../components/atoms/Typography';
 import {useSpotify} from '../providers/SpotifyProvider';
 import {RootStackParamList} from './Routes';
 
 interface HomeProps
-  extends NativeStackScreenProps<RootStackParamList, 'Home'> {}
+  extends NativeStackScreenProps<RootStackParamList, 'Home', undefined> {
+  children?: React.ReactNode;
+}
 
 const Home: FC<HomeProps> = ({navigation}) => {
-  const {currentUser, auth} = useSpotify();
-
-  const [signingIn, setSigningIn] = useState(false);
-
-  const signIn = async () => {
-    setSigningIn(() => true);
-    await auth();
-    setSigningIn(() => false);
-  };
+  const {currentUser} = useSpotify();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={{flex: 1, justifyContent: 'center'}}>
         <Typography variant="h1" gutter style={styles.text}>
-          Hi there {currentUser?.display_name?.split(' ')[0] ?? 'stranger'},
+          Hi there {currentUser?.display_name?.split(' ')[0]},
         </Typography>
         <Typography variant="h5" style={styles.text}>
-          {currentUser
-            ? 'Would you like to create or join a fissa?'
-            : 'please sign in to spotify to continue.'}
+          Would you like to create or join a fissa?
         </Typography>
       </View>
-      {!currentUser && (
-        <View style={{flex: 1, justifyContent: 'space-between'}}>
+      <View style={{flex: 1}}>
+        <View style={{marginBottom: 16}}>
           <Button
-            title="Sign in to spotify"
-            onPress={signIn}
-            disabled={signingIn}
+            title="Join a fissa"
+            onPress={() => navigation.navigate('JoinSession')}
           />
         </View>
-      )}
-      {currentUser && (
-        <View style={{flex: 1}}>
-          <View style={{marginBottom: 16}}>
-            <Button
-              title="Join a fissa"
-              onPress={() => navigation.navigate('JoinSession')}
-            />
-          </View>
-          <Button
-            variant="outlined"
-            inverted
-            title="create a fissa"
-            onPress={() => navigation.navigate('NewSession')}
-          />
-        </View>
-      )}
-    </SafeAreaView>
+        <Button
+          variant="outlined"
+          inverted
+          title="create a fissa"
+          onPress={() => navigation.navigate('NewSession')}
+        />
+      </View>
+    </View>
   );
 };
 export default Home;

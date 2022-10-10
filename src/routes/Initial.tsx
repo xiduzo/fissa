@@ -1,40 +1,67 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useMemo, useRef} from 'react';
-import {Animated, StyleSheet} from 'react-native';
-import EncryptedStorage from 'react-native-encrypted-storage';
-import Animation from '../components/atoms/animations/Animation';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {Animated, StyleSheet, View} from 'react-native';
+import Logo from '../components/atoms/Logo';
+import Button from '../components/atoms/Button';
+import SpotifyIcon from '../components/atoms/icons/SpotifyIcon';
 import Typography from '../components/atoms/Typography';
+import {useSpotify} from '../providers/SpotifyProvider';
 import {Color} from '../types/Theme';
 import {RootStackParamList} from './Routes';
 
 interface InitialProps
   extends NativeStackScreenProps<RootStackParamList, 'Initial'> {}
 
-const CURRENT_ONBOARDING_VERSION = '1.0.0';
-
 const Initial: FC<InitialProps> = ({navigation}) => {
   const colorAnimation = useRef(new Animated.Value(0)).current;
+  const notSignedInAnimation = useRef(new Animated.Value(0)).current;
+  const signedInAnimation = useRef(new Animated.Value(0)).current;
+  const [signingIn, setSigningIn] = useState(false);
+  const canSkipToHome = useRef(false);
 
-  useMemo(async () => {
-    const onboardingVersion = await EncryptedStorage.getItem('onboarding');
-    await EncryptedStorage.setItem('onboarding', CURRENT_ONBOARDING_VERSION);
+  const {auth, currentUser} = useSpotify();
 
-    colorAnimation.addListener(response => {
-      if (response.value < 1) return;
+  const signIn = async () => {
+    setSigningIn(() => true);
+    await auth();
+    setSigningIn(() => false);
+  };
 
-      if (onboardingVersion !== CURRENT_ONBOARDING_VERSION) {
-        navigation.replace('Onboarding');
-        return;
-      }
+  useEffect(() => {
+    if (!currentUser) return;
 
-      navigation.replace('Home');
-    });
+    canSkipToHome.current = true;
+  }, [currentUser]);
 
+  useEffect(() => {
     Animated.timing(colorAnimation, {
       toValue: 1,
       duration: 2500,
       useNativeDriver: false,
-    }).start();
+    }).start(() => {
+      if (!canSkipToHome.current) {
+        Animated.spring(notSignedInAnimation, {
+          toValue: 1,
+          useNativeDriver: false,
+        }).start();
+        return;
+      }
+
+      Animated.timing(signedInAnimation, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: false,
+      }).start(() => {
+        navigation.replace('Home');
+      });
+    });
   }, [navigation]);
 
   const backgroundColorInterpolation = colorAnimation.interpolate({
@@ -47,20 +74,84 @@ const Initial: FC<InitialProps> = ({navigation}) => {
     outputRange: ['#FFFFFF90', Color.light],
   });
 
+  const positionInterpolation = notSignedInAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -150],
+  });
+
+  const translateInterpolation = notSignedInAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [25, 0],
+  });
+
+  const scaleInterpolation = signedInAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1.75, 80],
+  });
+
+  const signedInTranslateInterpolation = signedInAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -3],
+  });
+
+  const opacityInterpolation = signedInAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+
   return (
     <Animated.View
       style={[
         styles.container,
         {backgroundColor: backgroundColorInterpolation},
       ]}>
-      <Animation
-        style={{transform: [{scale: 1.75}]}}
+      <View />
+
+      <Logo
+        viewStyle={{
+          marginTop: positionInterpolation,
+          opacity: opacityInterpolation,
+          transform: [
+            {scale: scaleInterpolation},
+            {translateY: signedInTranslateInterpolation},
+          ],
+        }}
         progress={colorAnimation}
       />
-
-      <Typography variant="bodyM" style={{color: colorInterpolation}}>
-        Made by Milanovski and Xiduzo
-      </Typography>
+      <View>
+        <Animated.View
+          style={[
+            styles.text,
+            {
+              opacity: notSignedInAnimation,
+              transform: [{translateY: translateInterpolation}],
+            },
+          ]}>
+          <Typography variant="h2" gutter>
+            A collaborative live playlist
+          </Typography>
+          <Typography variant="h6">together with your friends</Typography>
+        </Animated.View>
+        <Animated.View
+          style={{
+            marginBottom: 48,
+            opacity: notSignedInAnimation,
+            transform: [{scale: notSignedInAnimation}],
+          }}>
+          <Button
+            start={<SpotifyIcon color="dark" />}
+            size="small"
+            title="Connect to get started"
+          />
+        </Animated.View>
+        <Typography
+          align="center"
+          variant="bodyM"
+          gutter={32}
+          style={{color: colorInterpolation}}>
+          Made by Milanovski and Xiduzo
+        </Typography>
+      </View>
     </Animated.View>
   );
 };
@@ -70,8 +161,12 @@ export default Initial;
 const styles = StyleSheet.create({
   container: {
     height: '100%',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingVertical: 34,
+    paddingHorizontal: 24,
+  },
+  text: {
+    alignItems: 'center',
+    marginBottom: 150,
   },
 });
