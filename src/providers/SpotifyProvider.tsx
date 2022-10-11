@@ -125,7 +125,6 @@ const SpotifyProvider: FC = ({children}) => {
         value,
       ) as AuthorizeResult;
 
-      console.log('accessTokenExpirationDate', accessTokenExpirationDate);
       if (
         accessTokenExpirationDate &&
         new Date() < new Date(accessTokenExpirationDate)
@@ -134,12 +133,13 @@ const SpotifyProvider: FC = ({children}) => {
         spotifyApi.current.getMe().then(user => {
           setCurrentUser(user);
         });
-        return;
       }
 
-      refresh({refreshToken, access_token: accessToken});
+      if (accessToken && refreshToken) {
+        refresh({refreshToken, access_token: accessToken});
+      }
     });
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     let refreshTokenSubscription: NativeEventSubscription;
