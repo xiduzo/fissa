@@ -1,12 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 import Logo from '../components/atoms/Logo';
 import Button from '../components/atoms/Button';
@@ -29,14 +22,17 @@ const Initial: FC<InitialProps> = ({navigation}) => {
   const {auth, currentUser} = useSpotify();
 
   const signIn = async () => {
-    setSigningIn(() => true);
-    await auth();
-    setSigningIn(() => false);
+    try {
+      setSigningIn(() => true);
+      await auth();
+      navigation.replace('Home');
+    } finally {
+      setSigningIn(() => false);
+    }
   };
 
   useEffect(() => {
     if (!currentUser) return;
-
     canSkipToHome.current = true;
   }, [currentUser]);
 
@@ -86,7 +82,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
 
   const scaleInterpolation = signedInAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: [1.75, 80],
+    outputRange: [1.75, 20],
   });
 
   const signedInTranslateInterpolation = signedInAnimation.interpolate({
@@ -95,8 +91,8 @@ const Initial: FC<InitialProps> = ({navigation}) => {
   });
 
   const opacityInterpolation = signedInAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
+    inputRange: [0, 0.4, 1],
+    outputRange: [1, 1, 0],
   });
 
   return (
@@ -108,6 +104,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
       <View />
 
       <Logo
+        style={{transform: [{scale: 1.75}]}}
         viewStyle={{
           marginTop: positionInterpolation,
           opacity: opacityInterpolation,
@@ -140,6 +137,8 @@ const Initial: FC<InitialProps> = ({navigation}) => {
           }}>
           <Button
             start={<SpotifyIcon color="dark" />}
+            onPress={signIn}
+            disabled={signingIn}
             size="small"
             title="Connect to get started"
           />
