@@ -76,7 +76,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
     }).start(() => {
       Animated.spring(positionAnimation, {
         toValue: 0,
-        delay: index * 20,
         useNativeDriver: false,
       }).start();
     });

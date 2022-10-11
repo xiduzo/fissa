@@ -1,11 +1,11 @@
 import {DateTime} from 'luxon';
 import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {Animated} from 'react-native';
-import {Track as TrackInterface} from '../../providers/PlaylistProvider';
 import {Color} from '../../types/Theme';
 import ProgressBar from '../atoms/ProgressBar';
 import Typography from '../atoms/Typography';
 import ListItem, {ListItemProps} from './ListItem';
+import {Track as TrackInterface} from '../../lib/interfaces/Track';
 
 interface TrackProps extends Partial<ListItemProps> {
   track?: TrackInterface;
