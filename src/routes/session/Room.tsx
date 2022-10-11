@@ -108,7 +108,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   };
 
   const renderTrack = (render: ListRenderItemInfo<TrackInterface>) => {
-    const {item} = render;
+    const {item, index} = render;
     const trackVotes = votes[item.id];
 
     const myVote = trackVotes?.find(vote => vote.createdBy === currentUser?.id);
@@ -122,6 +122,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       <RoomTrack
         key={item.id}
         track={item}
+        index={index}
         pin={pin}
         totalVotes={total}
         myVote={myVote?.state}

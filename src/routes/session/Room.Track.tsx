@@ -1,5 +1,5 @@
-import {FC, useMemo, useState} from 'react';
-import {Alert, View} from 'react-native';
+import {FC, useEffect, useMemo, useRef, useState} from 'react';
+import {Alert, Animated, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -19,17 +19,22 @@ interface RoomTrackProps {
   myVote?: 'up' | 'down';
   pin: string;
   isNextTrack?: boolean;
+  index?: number;
 }
 
 const RoomTrack: FC<RoomTrackProps> = ({
   track,
   myVote,
   pin,
+  index = 0,
   totalVotes = 0,
   isNextTrack,
 }) => {
   const [selected, setSelected] = useState(false);
   const {spotify, currentUser} = useSpotify();
+  const previousIndex = useRef(index);
+  const positionAnimation = useRef(new Animated.Value(0)).current;
+  const height = useRef(0);
 
   const selectTrack = () => setSelected(true);
 
@@ -59,10 +64,31 @@ const RoomTrack: FC<RoomTrackProps> = ({
     return MoreIcon;
   }, [myVote, isNextTrack]);
 
-  const VotesIcon = totalVotes < 0 ? ArrowDownIcon : ArrowUpIcon;
+  useEffect(() => {
+    const diff = previousIndex.current - index;
+    previousIndex.current = index;
+    if (diff === 0) return;
+
+    Animated.timing(positionAnimation, {
+      toValue: diff * 100,
+      duration: 0,
+      useNativeDriver: false,
+    }).start(() => {
+      Animated.spring(positionAnimation, {
+        toValue: 0,
+        delay: index * 20,
+        useNativeDriver: false,
+      }).start();
+    });
+  }, [index, track]);
 
   return (
-    <View>
+    <Animated.View
+      onLayout={e => (height.current = e.nativeEvent.layout.height)}
+      style={{
+        position: 'relative',
+        top: positionAnimation,
+      }}>
       <Track
         track={track}
         totalVotes={totalVotes}
@@ -136,7 +162,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
           }
         />
       </Popover>
-    </View>
+    </Animated.View>
   );
 };
 
