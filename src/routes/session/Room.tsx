@@ -265,7 +265,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         onRequestClose={() => setCurrentTrackSelected(-1)}>
         <Track inverted hasBorder track={tracks[currentTrackSelected]} />
         <Action
-          title="Safe track"
+          title="Save track"
           subtitle="Dance to it later"
           inverted
           onPress={() => {
