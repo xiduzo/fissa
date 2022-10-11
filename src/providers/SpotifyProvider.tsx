@@ -81,7 +81,7 @@ const SpotifyProvider: FC = ({children}) => {
   const refresh = useCallback(async ({refreshToken, access_token}: Tokens) => {
     if (!refreshToken) return;
     if (!access_token) return;
-    console.log('refresh token');
+    console.log('refresh token', {refreshToken, access_token});
 
     try {
       const result = await spotifyApiRefresh(
@@ -101,7 +101,7 @@ const SpotifyProvider: FC = ({children}) => {
       );
 
       spotifyApi.current.setAccessToken(result.accessToken);
-      localRefreshToken.current = result.refreshToken;
+      localRefreshToken.current = refreshToken;
       setCurrentUser(await spotifyApi.current.getMe());
 
       EncryptedStorage.setItem(
@@ -118,7 +118,7 @@ const SpotifyProvider: FC = ({children}) => {
 
   // Set user when token is present
   useEffect(() => {
-    EncryptedStorage.getItem('accessToken').then(value => {
+    EncryptedStorage.getItem('accessToken').then(async value => {
       if (!value) return;
 
       const {accessTokenExpirationDate, accessToken, refreshToken} = JSON.parse(
@@ -136,7 +136,7 @@ const SpotifyProvider: FC = ({children}) => {
       }
 
       if (accessToken && refreshToken) {
-        refresh({refreshToken, access_token: accessToken});
+        await refresh({refreshToken, access_token: accessToken});
       }
     });
   }, [refresh]);
@@ -149,9 +149,9 @@ const SpotifyProvider: FC = ({children}) => {
       refreshToken: string,
       access_token: string,
     ) => {
-      refreshTimeout = setTimeout(() => {
+      refreshTimeout = setTimeout(async () => {
         console.log('refresh token due to timeout');
-        refresh({refreshToken, access_token});
+        await refresh({refreshToken, access_token});
         refreshTokenOnBackground(refreshToken, access_token);
       }, 1000 * 60 * 20);
     };
@@ -164,10 +164,13 @@ const SpotifyProvider: FC = ({children}) => {
       // TODO: set background progress to refresh the token each ~20 minutes instead of this hack
       console.log('add token subscription & token refresh on background');
       refreshTokenOnBackground(accessToken, refreshToken);
-      refreshTokenSubscription = AppState.addEventListener('change', () => {
-        if (AppState.currentState !== 'active') return;
-        refresh({refreshToken, access_token: accessToken});
-      });
+      refreshTokenSubscription = AppState.addEventListener(
+        'change',
+        async () => {
+          if (AppState.currentState !== 'active') return;
+          await refresh({refreshToken, access_token: accessToken});
+        },
+      );
     });
 
     return () => {

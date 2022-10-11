@@ -1,9 +1,6 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {FC} from 'react';
-import {Alert} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
-import IconButton from '../components/atoms/IconButton';
-import QuestionMarkIcon from '../components/atoms/icons/QuestionMarkIcon';
 import {Color} from '../types/Theme';
 import Home from './Home';
 import Initial from './Initial';
@@ -67,24 +64,7 @@ const Routes: FC = () => {
         }}
       />
       <RootStack.Screen name="NewSession" component={NewSession} />
-      <RootStack.Screen
-        name="JoinSession"
-        options={{
-          headerRight: () => (
-            <IconButton
-              title="hi"
-              onPress={() =>
-                Alert.alert(
-                  'Scan function will come here',
-                  'be patient my young pawadan',
-                )
-              }>
-              <QuestionMarkIcon />
-            </IconButton>
-          ),
-        }}
-        component={JoinSession}
-      />
+      <RootStack.Screen name="JoinSession" component={JoinSession} />
 
       <RootStack.Screen name="FromPlaylist" component={FromPlaylist} />
 

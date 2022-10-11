@@ -95,8 +95,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
       setIsSyncing(true);
       const errorResponses = new Map<number, Partial<ShowProps>>();
       errorResponses.set(409, {
-        message: 'The playlist is already playing',
-        icon: '',
+        message: 'The fissa was already playing',
+        icon: '🦀',
       });
 
       await request('POST', '/room/play', {pin}, errorResponses);

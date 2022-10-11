@@ -33,7 +33,6 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
 
     canGoBack ? animate({toValue: 1, duration: 150, delay: 120}) : animate();
 
-    console.log(canGoBack);
     return animate;
   }, [canGoBack]);
 

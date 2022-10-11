@@ -1,5 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {FC, useState} from 'react';
+import {FC, useMemo, useRef, useState} from 'react';
 import {Alert, TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -10,6 +10,7 @@ import Popover from '../../components/molecules/Popover';
 import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
+import {useSpotify} from '../../providers/SpotifyProvider';
 
 interface RoomDetailsProps {
   pin: string;
@@ -19,6 +20,16 @@ interface RoomDetailsProps {
 
 const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
   const {leaveRoom} = useRoomPlaylist(pin);
+  const {spotify} = useSpotify();
+  const [activeDevice, setActiveDevice] = useState<
+    SpotifyApi.UserDevice | undefined
+  >();
+
+  const device = useMemo(async () => {
+    const {devices} = await spotify.getMyDevices();
+
+    setActiveDevice(devices.find(_device => _device.is_active));
+  }, [spotify]);
 
   const [showRoomDetails, setShowRoomDetails] = useState(false);
 
@@ -58,7 +69,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
         <Action
           hidden={!isOwner}
           title="Set speakers"
-          subtitle="Blast those neighbors away"
+          subtitle={activeDevice?.name ?? 'Blast those neighbors away'}
           inverted
           disabled
           icon={<SpeakerIcon color="dark" colorOpacity={40} />}

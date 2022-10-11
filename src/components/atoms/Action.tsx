@@ -38,14 +38,14 @@ const Action: FC<ActionProps> = ({
                   : Color.light
                 : 'transparent',
               borderColor: (inverted ? Color.dark : Color.light) + '10',
-              opacity: props.disabled ? 0.7 : 1,
+              opacity: props.disabled ? 0.3 : 1,
             },
           ]}>
           {icon}
         </View>
         <View
           style={{
-            opacity: props.disabled ? 0.7 : 1,
+            opacity: props.disabled ? 0.3 : 1,
           }}>
           <Typography
             variant="h4"
