@@ -32,7 +32,7 @@ import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 
 interface RoomProps
-  extends NativeStackScreenProps<RootStackParamList, 'Initial', undefined> {}
+  extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
 
 const SCROLL_TOP_OFFSET = -100;
 
