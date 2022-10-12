@@ -1,8 +1,9 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
+import BaseView from '../../components/templates/BaseView';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
@@ -36,12 +37,12 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <BaseView style={{justifyContent: 'space-evenly'}}>
       <View style={{flex: 1, justifyContent: 'center'}}>
-        <Typography variant="h1" gutter style={styles.text}>
+        <Typography variant="h1" gutter align="center">
           Create a fissa
         </Typography>
-        <Typography variant="h5" gutter={24} style={styles.text}>
+        <Typography variant="h5" gutter={24} align="center">
           How would you like to start this fissa?
         </Typography>
       </View>
@@ -61,19 +62,8 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </View>
-    </View>
+    </BaseView>
   );
 };
 
 export default NewSession;
-
-const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    justifyContent: 'space-evenly',
-    marginHorizontal: 24,
-  },
-  text: {
-    textAlign: 'center',
-  },
-});

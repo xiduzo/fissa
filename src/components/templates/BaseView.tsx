@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import LetterLogo from '../molecules/LetterLogo';
 
 interface BaseViewProps {
   style?: StyleProp<ViewStyle>;
@@ -12,6 +13,7 @@ const BaseView: FC<BaseViewProps> = ({style, noPadding, children}) => {
       <View style={[styles.content, {paddingHorizontal: noPadding ? 0 : 24}]}>
         {children}
       </View>
+      <LetterLogo />
     </View>
   );
 };
@@ -19,7 +21,7 @@ const BaseView: FC<BaseViewProps> = ({style, noPadding, children}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflowX: 'hidden',
+    overflow: 'hidden',
   },
   content: {
     // backgroundColor: 'green',
