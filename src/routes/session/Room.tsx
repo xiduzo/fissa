@@ -30,10 +30,9 @@ import Action from '../../components/atoms/Action';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
-import LetterLogo from '../../components/molecules/LetterLogo';
 
 interface RoomProps
-  extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
+  extends NativeStackScreenProps<RootStackParamList, 'Initial', undefined> {}
 
 const SCROLL_TOP_OFFSET = -100;
 
@@ -289,7 +288,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           icon={<ArrowRightIcon color="dark" colorOpacity={40} />}
         />
       </Popover>
-      <LetterLogo marginTop={0} />
     </View>
   );
 };

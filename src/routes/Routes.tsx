@@ -46,6 +46,9 @@ const Routes: FC = () => {
         contentStyle: {
           backgroundColor: Color.dark,
         },
+        headerStyle: {
+          backgroundColor: Color.dark,
+        },
         header: Header,
       }}>
       <RootStack.Screen

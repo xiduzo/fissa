@@ -7,7 +7,6 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
-import LetterLogo from '../../components/molecules/LetterLogo';
 
 interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
@@ -62,7 +61,6 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </View>
-      <LetterLogo marginTop={150} />
     </View>
   );
 };

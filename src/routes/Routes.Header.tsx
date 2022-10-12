@@ -5,7 +5,6 @@ import {Animated, StyleSheet, View} from 'react-native';
 import IconButton from '../components/atoms/IconButton';
 import ArrowLeftIcon from '../components/atoms/icons/ArrowLeftIcon';
 import Typography from '../components/atoms/Typography';
-import {Color} from '../types/Theme';
 
 const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   options,
@@ -37,7 +36,8 @@ const Header: FC<NativeStackHeaderProps | StackHeaderProps> = ({
   }, [canGoBack]);
 
   return (
-    <View style={[styles.container]}>
+    // @ts-ignore-next-line
+    <View style={[styles.container, options.headerStyle]}>
       <Animated.View style={{opacity: backAnimation}}>
         <IconButton onPress={goBack} title={options.title ?? ''}>
           <ArrowLeftIcon />
@@ -63,7 +63,6 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Color.dark,
     paddingHorizontal: 24,
     paddingTop: 52,
     paddingBottom: 20,

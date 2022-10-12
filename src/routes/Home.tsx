@@ -1,27 +1,25 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import Button from '../components/atoms/Button';
 import Typography from '../components/atoms/Typography';
-import LetterLogo from '../components/molecules/LetterLogo';
+import BaseView from '../components/templates/ViewWithLogo';
 import {useSpotify} from '../providers/SpotifyProvider';
 import {RootStackParamList} from './Routes';
 
 interface HomeProps
-  extends NativeStackScreenProps<RootStackParamList, 'Home', undefined> {
-  children?: React.ReactNode;
-}
+  extends NativeStackScreenProps<RootStackParamList, 'Home', undefined> {}
 
 const Home: FC<HomeProps> = ({navigation}) => {
   const {currentUser} = useSpotify();
 
   return (
-    <View style={styles.container}>
+    <BaseView style={{justifyContent: 'space-evenly'}}>
       <View style={{flex: 1, justifyContent: 'center'}}>
-        <Typography variant="h1" gutter style={styles.text}>
+        <Typography variant="h1" gutter align="center">
           Hi there {currentUser?.display_name?.split(' ')[0]},
         </Typography>
-        <Typography variant="h5" style={styles.text}>
+        <Typography variant="h5" align="center">
           Would you like to create or join a fissa?
         </Typography>
       </View>
@@ -39,19 +37,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
           onPress={() => navigation.navigate('NewSession')}
         />
       </View>
-      <LetterLogo />
-    </View>
+    </BaseView>
   );
 };
 export default Home;
-
-const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    marginHorizontal: 24,
-    justifyContent: 'space-evenly',
-  },
-  text: {
-    textAlign: 'center',
-  },
-});
