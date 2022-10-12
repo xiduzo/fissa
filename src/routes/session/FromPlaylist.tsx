@@ -10,6 +10,7 @@ import Playlists from '../../components/organisms/Playlists';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {RootStackParamList} from '../Routes';
+import LetterLogo from '../../components/molecules/LetterLogo';
 
 interface FromPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'FromPlaylist'> {}
@@ -81,6 +82,7 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </Popover>
+      <LetterLogo />
     </ScrollViewWithHeaderTitle>
   );
 };

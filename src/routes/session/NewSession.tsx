@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
@@ -7,6 +7,7 @@ import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
+import LetterLogo from '../../components/molecules/LetterLogo';
 
 interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
@@ -61,6 +62,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </View>
+      <LetterLogo marginTop={150} />
     </View>
   );
 };

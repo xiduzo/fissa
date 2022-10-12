@@ -3,6 +3,7 @@ import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Button from '../components/atoms/Button';
 import Typography from '../components/atoms/Typography';
+import LetterLogo from '../components/molecules/LetterLogo';
 import {useSpotify} from '../providers/SpotifyProvider';
 import {RootStackParamList} from './Routes';
 
@@ -38,6 +39,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
           onPress={() => navigation.navigate('NewSession')}
         />
       </View>
+      <LetterLogo />
     </View>
   );
 };
@@ -46,8 +48,8 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    justifyContent: 'space-evenly',
     marginHorizontal: 24,
+    justifyContent: 'space-evenly',
   },
   text: {
     textAlign: 'center',

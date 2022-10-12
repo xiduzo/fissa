@@ -71,5 +71,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 99,
+    elevation: 99,
   },
 });

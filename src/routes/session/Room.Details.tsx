@@ -24,14 +24,14 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
   const [activeDevice, setActiveDevice] = useState<
     SpotifyApi.UserDevice | undefined
   >();
+  const [showRoomDetails, setShowRoomDetails] = useState(false);
 
-  const device = useMemo(async () => {
+  useMemo(async () => {
+    if (!isOwner) return;
     const {devices} = await spotify.getMyDevices();
 
     setActiveDevice(devices.find(_device => _device.is_active));
-  }, [spotify]);
-
-  const [showRoomDetails, setShowRoomDetails] = useState(false);
+  }, [spotify, showRoomDetails, isOwner]);
 
   const toggleRoomDetails = () => setShowRoomDetails(!showRoomDetails);
 

@@ -30,6 +30,7 @@ import Action from '../../components/atoms/Action';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
+import LetterLogo from '../../components/molecules/LetterLogo';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -288,6 +289,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           icon={<ArrowRightIcon color="dark" colorOpacity={40} />}
         />
       </Popover>
+      <LetterLogo marginTop={0} />
     </View>
   );
 };
