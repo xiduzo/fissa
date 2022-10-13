@@ -11,6 +11,7 @@ import {
   useAddContext,
 } from '../../providers/AddTracksProvider';
 import Playlists from '../../components/organisms/Playlists';
+import BaseView from '../../components/templates/BaseView';
 
 interface AddFromPlaylistProps
   extends NativeStackScreenProps<
@@ -40,7 +41,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
 
   const title = 'Your playlists';
   return (
-    <View>
+    <BaseView noPadding>
       <ScrollViewWithHeaderTitle
         title={title}
         navigation={navigation}
@@ -52,7 +53,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
         <Playlists onPlaylistPress={gotoPlaylist} />
       </ScrollViewWithHeaderTitle>
       <AddContextBottomDrawer />
-    </View>
+    </BaseView>
   );
 };
 
@@ -60,8 +61,8 @@ export default AddFromPlaylist;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 24,
     paddingBottom: '100%',
     marginBottom: 200,
+    paddingHorizontal: 24,
   },
 });

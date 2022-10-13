@@ -9,6 +9,7 @@ import {
   AddContextBottomDrawer,
   useAddContext,
 } from '../../providers/AddTracksProvider';
+import BaseView from '../../components/templates/BaseView';
 
 interface SelectTracksProps
   extends NativeStackScreenProps<SharedElementStackParamList, 'SelectTracks'> {}
@@ -37,7 +38,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   }, [navigation, cancel]);
 
   return (
-    <View>
+    <BaseView noPadding>
       <Tracks
         navigation={navigation}
         playlistId={playlistId}
@@ -45,7 +46,7 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
         toggleTrack={toggleTrack}
       />
       <AddContextBottomDrawer />
-    </View>
+    </BaseView>
   );
 };
 

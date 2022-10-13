@@ -30,6 +30,7 @@ import Action from '../../components/atoms/Action';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
+import BaseView from '../../components/templates/BaseView';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -133,7 +134,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (!room?.pin)
     return (
-      <View style={{flex: 1}}>
+      <BaseView style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
           <Typography variant="h2">&nbsp;</Typography>
           <RoomDetails pin={pin} navigation={navigation} />
@@ -143,12 +144,12 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           title="Fetching fissa details"
           subtitle="Good boy"
         />
-      </View>
+      </BaseView>
     );
 
   if (activeTrackIndex === -1)
     return (
-      <View style={{flex: 1}}>
+      <BaseView style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
@@ -167,12 +168,12 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             )
           }
         />
-      </View>
+      </BaseView>
     );
 
   if (!tracks.length)
     return (
-      <View style={{flex: 1}}>
+      <BaseView style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
@@ -182,11 +183,11 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           subtitle="Add tracks to get the fissa started"
         />
         <RoomAddTracksFab navigation={navigation} />
-      </View>
+      </BaseView>
     );
 
   return (
-    <View style={{flex: 1}}>
+    <BaseView style={{flex: 1}} noPadding>
       <VirtualizedList
         style={styles.container}
         ref={scrollRef}
@@ -288,7 +289,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           icon={<ArrowRightIcon color="dark" colorOpacity={40} />}
         />
       </Popover>
-    </View>
+    </BaseView>
   );
 };
 
@@ -296,8 +297,8 @@ export default Room;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 24,
     paddingTop: 68,
+    paddingHorizontal: 24,
   },
   header: {
     justifyContent: 'space-between',
