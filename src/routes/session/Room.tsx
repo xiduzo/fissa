@@ -307,8 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerEmpty: {
-    padding: 24,
-    marginTop: 44,
+    marginTop: 68,
     justifyContent: 'flex-end',
   },
   queue: {
