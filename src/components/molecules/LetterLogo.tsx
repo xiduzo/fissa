@@ -1,5 +1,6 @@
-import React, {FC, useRef} from 'react';
+import React, {FC, memo, useRef} from 'react';
 import {Animated, Dimensions, View} from 'react-native';
+import {Color, themes} from '../../types/Theme';
 import LetterA from '../atoms/icons/LetterA';
 import LetterF from '../atoms/icons/LetterF';
 import LetterI from '../atoms/icons/LetterI';
@@ -9,8 +10,7 @@ import {IconProps} from '../atoms/icons/_Icon';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-interface MovableLetterProps extends IconProps {}
-const MovableLetter: FC<MovableLetterProps> = ({...iconProps}) => {
+const MovableLetter: FC = () => {
   const prevPos = useRef({
     x: Math.random() * windowWidth,
     y: Math.random() * windowHeight,
@@ -21,6 +21,7 @@ const MovableLetter: FC<MovableLetterProps> = ({...iconProps}) => {
     [LetterA, LetterF, LetterI, LetterS][Math.floor(Math.random() * 4)],
   ).current;
 
+  console.log('render');
   return (
     <Animated.View
       style={{
@@ -30,12 +31,12 @@ const MovableLetter: FC<MovableLetterProps> = ({...iconProps}) => {
         transform: [{rotate: rotate.current + 'deg'}],
       }}>
       <Component
-        {...iconProps}
         style={{
           position: 'absolute',
 
-          tintColor: '#00000020',
-          // tintColor: 'red',
+          tintColor:
+            themes[Math.floor(Math.random() * themes.length)].main + '08',
+          // tintColor: '#00000020',
           transform: [{scale: 0.5}],
         }}
       />
@@ -43,7 +44,7 @@ const MovableLetter: FC<MovableLetterProps> = ({...iconProps}) => {
   );
 };
 
-const LetterLogo: FC = () => {
+const LetterLogo: FC = memo(() => {
   return (
     <View
       style={{
@@ -57,6 +58,6 @@ const LetterLogo: FC = () => {
       ))}
     </View>
   );
-};
+});
 
 export default LetterLogo;

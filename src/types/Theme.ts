@@ -82,7 +82,7 @@ const limey: Theme = {
   },
 };
 
-const themes = [sunny, limey, blueey, pinkey, orangy, greeny];
+export const themes = [sunny, limey, blueey, pinkey, orangy, greeny];
 
 const {floor, random} = Math;
 

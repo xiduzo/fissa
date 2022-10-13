@@ -160,7 +160,7 @@ export default JoinSession;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 72,
+    paddingTop: 72,
   },
   title: {
     textAlign: 'center',
