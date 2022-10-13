@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Button from '../../components/atoms/Button';
 import Typography from '../../components/atoms/Typography';
+import BaseView from '../../components/templates/BaseView';
 import {Room} from '../../lib/interfaces/Room';
 import {request} from '../../lib/utils/api';
 import {Color} from '../../types/Theme';
@@ -116,7 +117,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
   }, [keys]);
 
   return (
-    <View style={styles.container}>
+    <BaseView style={styles.container}>
       <Typography style={styles.title} variant="h5">
         Enter the code of the fissa you would like to join
       </Typography>
@@ -151,7 +152,7 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
         disabled={!pin.includes('')}
         title="reset"
       />
-    </View>
+    </BaseView>
   );
 };
 
@@ -160,7 +161,6 @@ export default JoinSession;
 const styles = StyleSheet.create({
   container: {
     marginTop: 72,
-    paddingHorizontal: 24,
   },
   title: {
     textAlign: 'center',

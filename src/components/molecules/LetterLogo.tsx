@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useRef} from 'react';
 import {Animated, Dimensions, View} from 'react-native';
 import LetterA from '../atoms/icons/LetterA';
 import LetterF from '../atoms/icons/LetterF';
@@ -15,72 +15,19 @@ const MovableLetter: FC<MovableLetterProps> = ({...iconProps}) => {
     x: Math.random() * windowWidth,
     y: Math.random() * windowHeight,
   });
-
-  const positionAnimation = new Animated.ValueXY(prevPos.current);
-  const rotationAnimation = new Animated.Value(Math.random() * 360);
+  const rotate = useRef(Math.random() * 360);
 
   const Component = useRef(
     [LetterA, LetterF, LetterI, LetterS][Math.floor(Math.random() * 4)],
   ).current;
 
-  useEffect(() => {
-    let animation: Animated.CompositeAnimation;
-    const move = () => {
-      console.log('move');
-      const {x, y} = prevPos.current;
-      const newX = (Math.random() * windowWidth) / 10;
-      const newY = (Math.random() * windowHeight) / 10;
-      const newRotation = Math.random() * 360;
-      const animationTime = 60_000;
-      const newPos = {
-        x: Math.max(
-          0,
-          Math.min(windowWidth, x + (Math.random() > 0.5 ? newX : -newX)),
-        ),
-        y: Math.max(
-          0,
-          Math.min(windowHeight, y + (Math.random() > 0.5 ? newY : -newY)),
-        ),
-      };
-
-      prevPos.current = newPos;
-
-      animation = Animated.parallel([
-        Animated.timing(positionAnimation, {
-          duration: animationTime,
-          toValue: newPos,
-          useNativeDriver: false,
-        }),
-        Animated.timing(rotationAnimation, {
-          duration: animationTime,
-          toValue: Math.random() > 0.5 ? newRotation : -newRotation,
-          useNativeDriver: false,
-        }),
-      ]);
-
-      animation.start(move);
-    };
-
-    move();
-
-    return () => {
-      console.log('stop animation');
-      animation.stop();
-    };
-  }, []);
-
-  const rotationAnimationInterpolate = rotationAnimation.interpolate({
-    inputRange: [0, 360],
-    outputRange: ['0deg', '360deg'],
-  });
-
   return (
     <Animated.View
       style={{
         width: '100%',
-        left: positionAnimation.x,
-        top: positionAnimation.y,
-        transform: [{rotate: rotationAnimationInterpolate}],
+        left: prevPos.current.x,
+        top: prevPos.current.y,
+        transform: [{rotate: rotate.current + 'deg'}],
       }}>
       <Component
         {...iconProps}
