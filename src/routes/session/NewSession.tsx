@@ -18,6 +18,12 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
 
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
+    Notification.show({
+      message: 'Creating your fissa...',
+      icon: '🤖',
+      duration: 10_000,
+    });
+
     try {
       const {content: pin} = await request<string>('POST', '/room', {
         accessToken: spotify.getAccessToken(),
@@ -25,13 +31,15 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
         createdBy: currentUser?.id,
       });
 
+      Notification.hide();
+
       navigation.popToTop();
       navigation.replace('Room', {pin});
       Notification.show({
         message: 'Aye, have a funky fissa sailor!',
         icon: '🚢',
       });
-    } catch (error) {
+    } finally {
       setWaitForResponse(false);
     }
   };

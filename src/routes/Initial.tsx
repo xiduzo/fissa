@@ -16,6 +16,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
   const colorAnimation = useRef(new Animated.Value(0)).current;
   const notSignedInAnimation = useRef(new Animated.Value(0)).current;
   const signedInAnimation = useRef(new Animated.Value(0)).current;
+  const animationsDone = useRef(false);
   const [signingIn, setSigningIn] = useState(false);
   const canSkipToHome = useRef(false);
 
@@ -34,6 +35,10 @@ const Initial: FC<InitialProps> = ({navigation}) => {
   useEffect(() => {
     if (!currentUser) return;
     canSkipToHome.current = true;
+
+    if (animationsDone.current) {
+      navigation.replace('Home');
+    }
   }, [currentUser]);
 
   useEffect(() => {
@@ -46,7 +51,9 @@ const Initial: FC<InitialProps> = ({navigation}) => {
         Animated.spring(notSignedInAnimation, {
           toValue: 1,
           useNativeDriver: false,
-        }).start();
+        }).start(() => {
+          animationsDone.current = true;
+        });
         return;
       }
 
@@ -55,6 +62,7 @@ const Initial: FC<InitialProps> = ({navigation}) => {
         duration: 150,
         useNativeDriver: false,
       }).start(() => {
+        animationsDone.current = true;
         navigation.replace('Home');
       });
     });

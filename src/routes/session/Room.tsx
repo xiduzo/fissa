@@ -244,7 +244,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         colors={[Color.dark + '00', Color.dark]}
         style={styles.gradient}
       />
-      <RoomAddTracksFab navigation={navigation} />
       <Animated.View
         style={[
           styles.backToTop,
@@ -261,6 +260,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           end={<ArrowUpIcon />}
         />
       </Animated.View>
+      <RoomAddTracksFab navigation={navigation} />
       <Popover
         visible={!!tracks[currentTrackSelected]}
         onRequestClose={() => setCurrentTrackSelected(-1)}>
