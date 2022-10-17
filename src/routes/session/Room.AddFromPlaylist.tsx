@@ -1,8 +1,8 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {FC, useCallback, useEffect} from 'react';
+import {StyleSheet} from 'react-native';
 import IconButton from '../../components/atoms/IconButton';
-import CLoseIcon from '../../components/atoms/icons/CloseIcon';
+import CloseIcon from '../../components/atoms/icons/CloseIcon';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../components/atoms/Typography';
 import {SharedElementStackParamList} from '../Routes';
@@ -12,6 +12,7 @@ import {
 } from '../../providers/AddTracksProvider';
 import Playlists from '../../components/organisms/Playlists';
 import BaseView from '../../components/templates/BaseView';
+import Spacer from '../../components/atoms/Spacer';
 
 interface AddFromPlaylistProps
   extends NativeStackScreenProps<
@@ -33,7 +34,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
     navigation.setOptions({
       headerRight: () => (
         <IconButton title="cancel" onPress={cancel}>
-          <CLoseIcon />
+          <CloseIcon />
         </IconButton>
       ),
     });
@@ -51,6 +52,7 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
           {title}
         </Typography>
         <Playlists onPlaylistPress={gotoPlaylist} />
+        <Spacer size={300} />
       </ScrollViewWithHeaderTitle>
       <AddContextBottomDrawer />
     </BaseView>
@@ -61,8 +63,6 @@ export default AddFromPlaylist;
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: '100%',
-    marginBottom: 200,
     paddingHorizontal: 24,
   },
 });

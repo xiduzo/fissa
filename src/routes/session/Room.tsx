@@ -267,13 +267,13 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         <Track inverted hasBorder track={tracks[currentTrackSelected]} />
         <Action
           title="Save track"
-          subtitle="Dance to it later"
+          subtitle="And dance to it later"
           inverted
           onPress={() => {
-            Alert.alert(
-              'Saving tracks  is coming soon',
-              'be patient my young pawadan',
-            );
+            navigation.navigate('SaveToPlaylist', {
+              track: tracks[currentTrackSelected],
+            });
+            setCurrentTrackSelected(-1);
           }}
           icon={<SpotifyIcon color="dark" colorOpacity={40} />}
         />

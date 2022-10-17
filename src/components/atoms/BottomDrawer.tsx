@@ -6,7 +6,7 @@ import LinearGradient, {
 import {VectorImageProps} from 'react-native-vector-image';
 import {Color} from '../../types/Theme';
 import IconButton from './IconButton';
-import CLoseIcon from './icons/CloseIcon';
+import CloseIcon from './icons/CloseIcon';
 import {IconProps} from './icons/_Icon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
@@ -22,7 +22,7 @@ const BottomDrawer: FC<BottomDrawerProps> = ({
   style,
   actionIcon,
 }) => {
-  const Icon = actionIcon || CLoseIcon;
+  const Icon = actionIcon || CloseIcon;
   return (
     <LinearGradient {...Color.gradient} style={[styles.card, style]}>
       <View

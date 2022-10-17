@@ -1,6 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useEffect} from 'react';
-import {View} from 'react-native';
+import React, {FC, useEffect} from 'react';
 import IconButton from '../../components/atoms/IconButton';
 import CLoseIcon from '../../components/atoms/icons/CloseIcon';
 import Tracks from '../../components/organisms/Tracks';

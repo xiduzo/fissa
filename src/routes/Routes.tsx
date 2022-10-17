@@ -1,6 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {FC} from 'react';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
+import {Track} from '../lib/interfaces/Track';
 import {Color} from '../types/Theme';
 import Home from './Home';
 import Initial from './Initial';
@@ -10,6 +11,7 @@ import JoinSession from './session/JoinSession';
 import NewSession from './session/NewSession';
 import Room from './session/Room';
 import AddFromPlaylist from './session/Room.AddFromPlaylist';
+import SaveToPlaylist from './session/Room.SaveToPlaylist';
 import SelectTracks from './session/Room.SelectTracks';
 
 const RootStack = createNativeStackNavigator();
@@ -79,6 +81,14 @@ const Routes: FC = () => {
           animation: 'fade',
         }}
       />
+
+      <RootStack.Screen
+        name="SaveToPlaylist"
+        component={SaveToPlaylist}
+        options={{
+          animation: 'slide_from_bottom',
+        }}
+      />
       <RootStack.Screen
         name="AddTracks"
         component={SharedViewComponent}
@@ -99,6 +109,9 @@ export type RootStackParamList = {
   };
   NewSession: undefined;
   JoinSession: undefined;
+  SaveToPlaylist: {
+    track: Track;
+  };
   Room: {
     pin: string;
   };

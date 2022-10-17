@@ -1,5 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {FC, useMemo, useRef, useState} from 'react';
+import {FC, useMemo, useState} from 'react';
 import {Alert, TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -11,6 +11,7 @@ import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
 import {useSpotify} from '../../providers/SpotifyProvider';
+import Notification from '../../utils/Notification';
 
 interface RoomDetailsProps {
   pin: string;
@@ -20,11 +21,53 @@ interface RoomDetailsProps {
 
 const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
   const {leaveRoom} = useRoomPlaylist(pin);
-  const {spotify} = useSpotify();
+  const {tracks} = useRoomPlaylist(pin);
+
+  const {spotify, currentUser} = useSpotify();
+  const [savingPlaylist, setSavingPlaylist] = useState(false);
   const [activeDevice, setActiveDevice] = useState<
     SpotifyApi.UserDevice | undefined
   >();
   const [showRoomDetails, setShowRoomDetails] = useState(false);
+
+  const toggleRoomDetails = () => setShowRoomDetails(!showRoomDetails);
+
+  const createPlaylist = async () => {
+    if (!currentUser) return;
+    setSavingPlaylist(true);
+    try {
+      const playlist = await spotify.createPlaylist(currentUser.id, {
+        name: `Fissa ${pin}`,
+        description: `Playlist created based with Fissa ${pin}`,
+      });
+
+      let tracksAdded = 0;
+      do {
+        await spotify.addTracksToPlaylist(
+          playlist.id,
+          tracks
+            .slice(tracksAdded, tracksAdded + 100)
+            .map(track => `spotify:track:${track.id}`),
+        );
+        tracksAdded += 100;
+      } while (tracksAdded < tracks.length);
+
+      Notification.show({
+        type: 'success',
+        icon: '🎉',
+        message: 'Playlist saved in Spotify',
+      });
+      console.log(playlist);
+    } catch (e) {
+      Notification.show({
+        type: 'warning',
+        message: 'Could not create playlist',
+      });
+    } finally {
+      setSavingPlaylist(false);
+      toggleRoomDetails();
+    }
+  };
 
   useMemo(async () => {
     if (!isOwner) return;
@@ -32,8 +75,6 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
 
     setActiveDevice(devices.find(_device => _device.is_active));
   }, [spotify, showRoomDetails, isOwner]);
-
-  const toggleRoomDetails = () => setShowRoomDetails(!showRoomDetails);
 
   return (
     <View>
@@ -67,19 +108,26 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
           icon={<ArrowUpIcon color="dark" colorOpacity={40} />}
         />
         <Action
-          hidden={!isOwner}
-          title="Set speakers"
-          subtitle={activeDevice?.name ?? 'Blast those neighbors away'}
+          title="Create playlist in spotify"
+          subtitle="And keep the fissa memories"
           inverted
-          disabled
-          icon={<SpeakerIcon color="dark" colorOpacity={40} />}
+          onPress={createPlaylist}
+          disabled={!currentUser || savingPlaylist}
+          icon={<SpotifyIcon color="dark" colorOpacity={40} />}
         />
         <Action
-          title="Create playlist in spotify"
-          subtitle="And keep the memories of this fissa"
+          hidden={!isOwner}
+          title="Set speakers"
+          subtitle={`Current speakers: ${activeDevice?.name ?? 'none'}`}
           inverted
-          disabled
-          icon={<SpotifyIcon color="dark" colorOpacity={40} />}
+          onPress={() => {
+            Alert.alert(
+              'Setting the speakers is coming soon',
+              'be patient my young pawadan',
+            );
+          }}
+          // disabled
+          icon={<SpeakerIcon color="dark" colorOpacity={40} />}
         />
       </Popover>
     </View>

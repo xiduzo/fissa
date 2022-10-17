@@ -1,9 +1,11 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {FC, useEffect, useState} from 'react';
-import {ListRenderItemInfo, StyleSheet, View} from 'react-native';
+import {ListRenderItemInfo, StyleSheet} from 'react-native';
 import {SAVED_TRACK_IMAGE_URL} from '../../lib/constants/Images';
+import {SAVED_TRACKS_PLAYLIST_ID} from '../../lib/constants/Playlist';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Image from '../atoms/Image';
+import Spacer from '../atoms/Spacer';
 import Typography from '../atoms/Typography';
 import VirtualizedListWithHeader from '../atoms/VirtualizedListWithHeader';
 import Track from '../molecules/ListItem.Track';
@@ -55,7 +57,7 @@ const Tracks: FC<TracksProps> = ({
     if (!playlistId) return;
 
     const fetchTracks = async (offset = 0) => {
-      if (playlistId === 'saved-tracks') {
+      if (playlistId === SAVED_TRACKS_PLAYLIST_ID) {
         spotify.getMySavedTracks({offset}).then(result => {
           // TODO: filter tracks to be unique, no need for double tracks
           setTracks(prev => prev.concat(result.items.map(item => item.track)));
@@ -77,7 +79,7 @@ const Tracks: FC<TracksProps> = ({
       });
     };
 
-    if (playlistId === 'saved-tracks') {
+    if (playlistId === SAVED_TRACKS_PLAYLIST_ID) {
       setPlaylist({
         name: 'Saved Tracks',
         images: [
@@ -114,7 +116,7 @@ const Tracks: FC<TracksProps> = ({
           </Typography>
         </>
       }
-      ListFooterComponent={<View style={styles.view} />}
+      ListFooterComponent={<Spacer size={300} />}
       data={tracks}
       initialNumToRender={6}
       scrollEventThrottle={30}
@@ -132,9 +134,6 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
     minHeight: '100%',
-  },
-  view: {
-    paddingBottom: 300,
   },
   image: {
     borderRadius: 8,

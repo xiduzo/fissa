@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   createContext,
   FC,
@@ -32,6 +33,8 @@ const initialState: SpotifyProviderState = {
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);
 
+const SCOPES_VERSION = '1';
+
 const authConfig: AuthConfiguration = {
   usePKCE: false,
   clientId: 'a2a88c4618324942859ce3e1f888b938',
@@ -39,7 +42,6 @@ const authConfig: AuthConfiguration = {
   scopes: [
     // Read
     'user-read-playback-state',
-    'user-read-recently-played',
     'user-read-currently-playing',
     'user-top-read',
     'user-library-read',
@@ -48,6 +50,7 @@ const authConfig: AuthConfiguration = {
     // Modify
     'playlist-modify-public',
     'user-modify-playback-state',
+    'user-library-modify',
   ],
   serviceConfiguration: {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
@@ -72,6 +75,7 @@ const SpotifyProvider: FC = ({children}) => {
 
       spotifyApi.current.setAccessToken(result.accessToken);
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));
+      AsyncStorage.setItem('scopesVersion', SCOPES_VERSION);
       setCurrentUser(await spotifyApi.current.getMe());
     } catch (error) {
       console.error(`spotifyAuth error: ${error}`);
@@ -81,7 +85,11 @@ const SpotifyProvider: FC = ({children}) => {
   const refresh = useCallback(async ({refreshToken, access_token}: Tokens) => {
     if (!refreshToken) return;
     if (!access_token) return;
-    console.log('refresh token', {refreshToken, access_token});
+
+    const scopesVersion = await AsyncStorage.getItem('scopesVersion');
+    if (scopesVersion !== SCOPES_VERSION) {
+      return;
+    }
 
     try {
       const result = await spotifyApiRefresh(
@@ -130,7 +138,9 @@ const SpotifyProvider: FC = ({children}) => {
         new Date() < new Date(accessTokenExpirationDate)
       ) {
         spotifyApi.current.setAccessToken(accessToken);
-        spotifyApi.current.getMe().then(user => {
+        spotifyApi.current.getMe().then(async user => {
+          const scopesVersion = await AsyncStorage.getItem('scopesVersion');
+          if (scopesVersion !== SCOPES_VERSION) return;
           setCurrentUser(user);
         });
       }

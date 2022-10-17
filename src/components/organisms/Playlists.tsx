@@ -1,5 +1,6 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {SAVED_TRACK_IMAGE_URL} from '../../lib/constants/Images';
+import {SAVED_TRACKS_PLAYLIST_ID} from '../../lib/constants/Playlist';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Playlist from '../molecules/ListItem.Playlist';
 
@@ -30,7 +31,7 @@ const Playlists: FC<PlaylistProps> = ({onPlaylistPress}) => {
           {
             name: 'Saved Tracks',
             description: 'Your liked songs',
-            id: 'saved-tracks',
+            id: SAVED_TRACKS_PLAYLIST_ID,
             images: [
               {
                 url: SAVED_TRACK_IMAGE_URL,
