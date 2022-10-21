@@ -59,8 +59,8 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
         const {devices} = await spotify.getMyDevices();
 
         setHasSpeaker(devices.length > 0);
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.error(error);
         setHasSpeaker(false);
       }
     };

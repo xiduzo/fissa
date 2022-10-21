@@ -58,7 +58,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         });
         return;
       }
-      console.log(error);
     } finally {
       setIsSyncing(false);
     }

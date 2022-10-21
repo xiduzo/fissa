@@ -139,7 +139,6 @@ const PlaylistProvider: FC = ({children}) => {
       switch (topic) {
         case `fissa/room/${pin}/tracks/added`:
         case `fissa/room/${pin}/tracks/reordered`:
-          console.log('fetching tracks');
           fetchTracks();
           break;
         case `fissa/room/${pin}/votes`: {

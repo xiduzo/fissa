@@ -20,7 +20,6 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({navigation, route}) => {
 
   const saveToPlaylist = useCallback(
     async (playlist: SpotifyApi.PlaylistObjectSimplified) => {
-      console.log(playlist, track.id, track.name);
       try {
         if (playlist.id === SAVED_TRACKS_PLAYLIST_ID) {
           await spotify.addToMySavedTracks([track.id]);
