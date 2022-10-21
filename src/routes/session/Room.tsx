@@ -1,9 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FC, useRef, useState} from 'react';
 import {
-  Alert,
   Animated,
-  ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -15,22 +13,18 @@ import Button from '../../components/atoms/Button';
 import EmptyState from '../../components/atoms/EmptyState';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import Typography from '../../components/atoms/Typography';
-import Track from '../../components/molecules/ListItem.Track';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
 import {RootStackParamList} from '../Routes';
 import RoomAddTracksFab from './Room.AddTracksFab';
 import RoomDetails from './Room.Details';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
-import RoomTrack from './Room.Track';
+import {renderTrack} from './Room.Track';
 import {request} from '../../lib/utils/api';
 import Notification from '../../utils/Notification';
-import Popover from '../../components/molecules/Popover';
-import Action from '../../components/atoms/Action';
-import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
-import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import BaseView from '../../components/templates/BaseView';
+import RoomListHeader from './Room.ListHeader';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -42,7 +36,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
   const [isSyncing, setIsSyncing] = useState(false);
-  const [currentTrackSelected, setCurrentTrackSelected] = useState(-1);
 
   const backTopTopAnimation = useRef(
     new Animated.Value(SCROLL_TOP_OFFSET),
@@ -79,18 +72,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     });
   };
 
-  const skipTrack = async () => {
-    setCurrentTrackSelected(-1);
-    try {
-      await request('POST', `/room/skip`, {
-        pin,
-        createdBy: currentUser?.id,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const restartPlaylist = async () => {
     try {
       setIsSyncing(true);
@@ -107,30 +88,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     } finally {
       setIsSyncing(false);
     }
-  };
-
-  const renderTrack = (render: ListRenderItemInfo<TrackInterface>) => {
-    const {item, index} = render;
-    const trackVotes = votes[item.id];
-
-    const myVote = trackVotes?.find(vote => vote.createdBy === currentUser?.id);
-
-    const total = trackVotes?.reduce(
-      (acc, vote) => acc + (vote.state === 'up' ? 1 : -1),
-      0,
-    );
-
-    return (
-      <RoomTrack
-        key={item.id}
-        track={item}
-        index={index}
-        pin={pin}
-        totalVotes={total}
-        myVote={myVote?.state}
-        isNextTrack={render.index === 0}
-      />
-    );
   };
 
   if (!room?.pin)
@@ -210,34 +167,18 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           </View>
         }
         ListHeaderComponent={
-          <>
-            <View style={styles.header}>
-              <Typography variant="h2">Now Playing</Typography>
-              <RoomDetails
-                isOwner={room?.createdBy === currentUser?.id}
-                pin={pin}
-                navigation={navigation}
-              />
-            </View>
-            <Track
-              imageStyle={{width: 125, height: 125}}
-              track={tracks[activeTrackIndex]}
-              expectedEndTime={room?.expectedEndTime}
-              onPress={() => setCurrentTrackSelected(room.currentIndex)}
-            />
-            <View style={styles.queue}>
-              <Typography variant="h2">Queue</Typography>
-              <Typography variant="bodyM" style={{opacity: 0.6}}>
-                {Math.max(0, queue.length)} tracks
-              </Typography>
-            </View>
-          </>
+          <RoomListHeader
+            track={tracks[room.currentIndex]}
+            room={room}
+            navigation={navigation}
+            route={route}
+          />
         }
         data={queue}
         initialNumToRender={5}
         scrollEventThrottle={300}
         onScroll={scroll}
-        renderItem={renderTrack}
+        renderItem={renderTrack(votes, room.pin, currentUser?.id)}
         getItemCount={() => queue.length}
         getItem={(data, index) => data[index]}
         keyExtractor={item => item.id}
@@ -263,34 +204,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         />
       </Animated.View>
       <RoomAddTracksFab navigation={navigation} />
-      <Popover
-        visible={!!tracks[currentTrackSelected]}
-        onRequestClose={() => setCurrentTrackSelected(-1)}>
-        <Track inverted hasBorder track={tracks[currentTrackSelected]} />
-        <Action
-          title="Save track"
-          subtitle="And dance to it later"
-          inverted
-          onPress={() => {
-            navigation.navigate('SaveToPlaylist', {
-              track: tracks[currentTrackSelected],
-            });
-            setCurrentTrackSelected(-1);
-          }}
-          icon={<SpotifyIcon color="dark" colorOpacity={40} />}
-        />
-        <Action
-          hidden={room?.createdBy !== currentUser?.id}
-          disabled={
-            tracks[room.currentIndex]?.id !== tracks[currentTrackSelected]?.id
-          }
-          title="Skip track"
-          subtitle="Use your power responsibly"
-          inverted
-          onPress={skipTrack}
-          icon={<ArrowRightIcon color="dark" colorOpacity={40} />}
-        />
-      </Popover>
     </BaseView>
   );
 };
@@ -311,13 +224,6 @@ const styles = StyleSheet.create({
   headerEmpty: {
     marginTop: 68,
     justifyContent: 'flex-end',
-  },
-  queue: {
-    marginBottom: 12,
-    marginTop: 38,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
   gradient: {
     position: 'absolute',

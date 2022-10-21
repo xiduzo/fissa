@@ -1,5 +1,5 @@
 import {FC, useEffect, useMemo, useRef, useState} from 'react';
-import {Alert, Animated, View} from 'react-native';
+import {Alert, Animated, ListRenderItemInfo, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -12,6 +12,7 @@ import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
+import {Vote} from '../../lib/interfaces/Vote';
 
 interface RoomTrackProps {
   track: TrackInterface;
@@ -54,6 +55,10 @@ const RoomTrack: FC<RoomTrackProps> = ({
     });
   };
 
+  const handleLongPress = (track: TrackInterface) => () => {
+    console.log(track);
+  };
+
   const EndIcon = useMemo(() => {
     if (isNextTrack) return LockIcon;
 
@@ -92,12 +97,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         track={track}
         totalVotes={totalVotes}
         onPress={selectTrack}
-        onLongPress={() =>
-          Alert.alert(
-            'Quick vote function will come here',
-            'be patient my young pawadan',
-          )
-        }
+        onLongPress={handleLongPress(track)}
         end={
           <EndIcon
             color={myVote && !isNextTrack ? 'main' : 'light'}
@@ -164,5 +164,31 @@ const RoomTrack: FC<RoomTrackProps> = ({
     </Animated.View>
   );
 };
+
+export const renderTrack =
+  (votes: {[key: string]: Vote[]}, pin: string, currentUserId?: string) =>
+  (render: ListRenderItemInfo<TrackInterface>) => {
+    const {item, index} = render;
+    const trackVotes = votes[item.id];
+
+    const myVote = trackVotes?.find(vote => vote.createdBy === currentUserId);
+
+    const total = trackVotes?.reduce(
+      (acc, vote) => acc + (vote.state === 'up' ? 1 : -1),
+      0,
+    );
+
+    return (
+      <RoomTrack
+        key={item.id}
+        track={item}
+        index={index}
+        pin={pin}
+        totalVotes={total}
+        myVote={myVote?.state}
+        isNextTrack={render.index === 0}
+      />
+    );
+  };
 
 export default RoomTrack;

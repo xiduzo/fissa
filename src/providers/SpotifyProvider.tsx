@@ -153,27 +153,13 @@ const SpotifyProvider: FC = ({children}) => {
 
   useEffect(() => {
     let refreshTokenSubscription: NativeEventSubscription;
-    let refreshTimeout: NodeJS.Timeout;
 
-    const refreshTokenOnBackground = (
-      refreshToken: string,
-      access_token: string,
-    ) => {
-      refreshTimeout = setTimeout(async () => {
-        console.log('refresh token due to timeout');
-        await refresh({refreshToken, access_token});
-        refreshTokenOnBackground(refreshToken, access_token);
-      }, 1000 * 60 * 20);
-    };
     EncryptedStorage.getItem('accessToken').then(value => {
       if (!value) return;
 
       const {accessToken, refreshToken} = JSON.parse(value) as AuthorizeResult;
 
       localRefreshToken.current = refreshToken;
-      // TODO: set background progress to refresh the token each ~20 minutes instead of this hack
-      console.log('add token subscription & token refresh on background');
-      refreshTokenOnBackground(accessToken, refreshToken);
       refreshTokenSubscription = AppState.addEventListener(
         'change',
         async () => {
@@ -184,9 +170,7 @@ const SpotifyProvider: FC = ({children}) => {
     });
 
     return () => {
-      console.log('reset subscription and timeout');
       refreshTokenSubscription?.remove();
-      clearTimeout(refreshTimeout);
     };
   }, [refresh]);
 

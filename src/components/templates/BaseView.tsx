@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import {Animated, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import LetterLogo from '../molecules/LetterLogo';
 
 interface BaseViewProps {
@@ -9,12 +9,12 @@ interface BaseViewProps {
 
 const BaseView: FC<BaseViewProps> = ({style, noPadding, children}) => {
   return (
-    <View style={[styles.container, style]}>
+    <Animated.View style={[styles.container, style]}>
       <View style={[styles.content, {paddingHorizontal: noPadding ? 0 : 24}]}>
         {children}
       </View>
       <LetterLogo />
-    </View>
+    </Animated.View>
   );
 };
 
