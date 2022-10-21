@@ -1,7 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FC, useRef, useState} from 'react';
 import {
-  Animated,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -11,7 +10,6 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Button from '../../components/atoms/Button';
 import EmptyState from '../../components/atoms/EmptyState';
-import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import Typography from '../../components/atoms/Typography';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
@@ -25,11 +23,10 @@ import Notification from '../../utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import BaseView from '../../components/templates/BaseView';
 import RoomListHeader from './Room.ListHeader';
+import RoomBackToTop, {RoomBackToTopRef} from './Room.BackToTop';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
-
-const SCROLL_TOP_OFFSET = -100;
 
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
@@ -37,39 +34,14 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {currentUser} = useSpotify();
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const backTopTopAnimation = useRef(
-    new Animated.Value(SCROLL_TOP_OFFSET),
-  ).current;
   const scrollRef = useRef<VirtualizedList<TrackInterface>>(null);
+  const backToTopRef = useRef<RoomBackToTopRef>(null);
 
   const activeTrackIndex = room?.currentIndex ?? -1;
   const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
 
-  const animateBackToTop = (
-    config?: Partial<Animated.SpringAnimationConfig>,
-  ) => {
-    Animated.spring(backTopTopAnimation, {
-      toValue: SCROLL_TOP_OFFSET,
-      useNativeDriver: false,
-      ...(config ?? {}),
-    }).start();
-  };
-
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scrollHeight = event.nativeEvent.contentOffset.y;
-
-    if (scrollHeight < 500) return animateBackToTop();
-
-    animateBackToTop({
-      toValue: 32,
-    });
-  };
-
-  const scrollToTop = () => {
-    scrollRef.current?.scrollToIndex({
-      index: 0,
-      viewOffset: 500,
-    });
+    backToTopRef.current?.scroll(event);
   };
 
   const restartPlaylist = async () => {
@@ -187,22 +159,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         colors={[Color.dark + '00', Color.dark]}
         style={styles.gradient}
       />
-      <Animated.View
-        style={[
-          styles.backToTop,
-          {
-            bottom: backTopTopAnimation,
-          },
-        ]}>
-        <Button
-          title="Back to top"
-          variant="outlined"
-          size="small"
-          inverted
-          onPress={scrollToTop}
-          end={<ArrowUpIcon />}
-        />
-      </Animated.View>
+      <RoomBackToTop scrollRef={scrollRef} ref={backToTopRef} />
       <RoomAddTracksFab navigation={navigation} />
     </BaseView>
   );
@@ -232,11 +189,5 @@ const styles = StyleSheet.create({
     height: 100,
     width: '100%',
     backgroundColor: 'transparent',
-  },
-  backToTop: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
   },
 });

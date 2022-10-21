@@ -4,6 +4,7 @@ import LetterLogo from '../molecules/LetterLogo';
 
 interface BaseViewProps {
   style?: StyleProp<ViewStyle>;
+  inverted?: boolean;
   noPadding?: boolean;
 }
 
@@ -24,7 +25,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   content: {
-    // backgroundColor: 'green',
     flex: 1,
   },
 });

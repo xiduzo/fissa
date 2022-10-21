@@ -1,5 +1,5 @@
 import {FC, useEffect, useMemo, useRef, useState} from 'react';
-import {Alert, Animated, ListRenderItemInfo, View} from 'react-native';
+import {Animated, ListRenderItemInfo, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -13,6 +13,7 @@ import {Color} from '../../types/Theme';
 import Notification from '../../utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {Vote} from '../../lib/interfaces/Vote';
+import Divider from '../../components/atoms/Divider';
 
 interface RoomTrackProps {
   track: TrackInterface;
@@ -107,13 +108,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
       />
       <Popover visible={!!selected} onRequestClose={() => setSelected(false)}>
         <Track track={track} totalVotes={totalVotes} inverted hasBorder />
-        <View
-          style={{
-            borderBottomWidth: 2,
-            borderBottomColor: Color.dark + '10',
-            marginVertical: 16,
-          }}
-        />
+        <Divider color={Color.dark + '10'} />
         <Action
           title="Locked track"
           inverted
