@@ -5,10 +5,10 @@ import Typography from './Typography';
 interface EmptyStateProps {
   icon: string;
   title: string;
-  subtitle?: string | JSX.Element;
+  subtitle?: string;
 }
 
-const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle}) => {
+const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle, children}) => {
   return (
     <View style={styles.container}>
       <Typography
@@ -19,14 +19,12 @@ const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle}) => {
       <Typography style={{textAlign: 'center', paddingTop: 16}} variant="h2">
         {title}
       </Typography>
-      {typeof subtitle === 'string' && (
+      {subtitle && (
         <Typography style={{textAlign: 'center', paddingTop: 16}}>
           {subtitle}
         </Typography>
       )}
-      {typeof subtitle !== 'string' && (
-        <View style={styles.subtitleView}>{subtitle}</View>
-      )}
+      {children && <View style={styles.subtitleView}>{children}</View>}
     </View>
   );
 };

@@ -35,8 +35,7 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({navigation, route}) => {
           icon: '🎶',
           message: `${track.name} has been added to ${playlist.name}`,
         });
-      } catch (err) {
-        console.log(err);
+      } catch {
         Notification.show({
           type: 'warning',
           message: 'Could not add track to playlist',

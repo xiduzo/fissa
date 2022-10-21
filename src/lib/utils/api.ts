@@ -3,11 +3,12 @@ import {API_ENDPOINT} from '../constants/Endpoint';
 
 type Method = 'GET' | 'POST';
 
+export type ErrorResponseMap = Map<number, Partial<ShowProps>>;
+
 export const request = async <T>(
   method: Method,
   route: string,
   body?: any,
-  errorResponses?: Map<number, Partial<ShowProps>>,
 ): Promise<{
   content: T;
   status: number;
@@ -26,11 +27,9 @@ export const request = async <T>(
   const response = await fetch(API_ENDPOINT + route, options);
 
   if (response.status !== 200) {
-    const customError = errorResponses?.get(response.status);
     Notification.show({
       type: 'warning',
       message: 'Oops... something went wrong',
-      ...customError,
     });
     return Promise.reject(response.status);
   }

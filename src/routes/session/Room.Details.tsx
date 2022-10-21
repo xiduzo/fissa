@@ -57,8 +57,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
         icon: '🎉',
         message: 'Playlist saved in Spotify',
       });
-      console.log(playlist);
-    } catch (e) {
+    } catch {
       Notification.show({
         type: 'warning',
         message: 'Could not create playlist',

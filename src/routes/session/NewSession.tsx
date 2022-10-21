@@ -1,10 +1,11 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {View} from 'react-native';
 import Button from '../../components/atoms/Button';
+import EmptyState from '../../components/atoms/EmptyState';
 import Typography from '../../components/atoms/Typography';
 import BaseView from '../../components/templates/BaseView';
-import {request} from '../../lib/utils/api';
+import {ErrorResponseMap, request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
@@ -15,13 +16,14 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify, refreshToken, currentUser} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
+  const [hasSpeaker, setHasSpeaker] = useState(true);
 
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
     Notification.show({
-      message: 'Creating your fissa...',
-      icon: '🤖',
-      duration: 10_000,
+      message: 'Ay captain, we be creating a playlist for ye!',
+      icon: '🦜',
+      duration: 8000,
     });
 
     try {
@@ -36,13 +38,46 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
       navigation.popToTop();
       navigation.replace('Room', {pin});
       Notification.show({
-        message: 'Aye, have a funky fissa sailor!',
-        icon: '🚢',
+        message: 'Have a funky fissa sailor!',
+        icon: '🦜',
       });
+    } catch (error) {
+      if (error === 404) {
+        Notification.show({
+          message: 'Could not find an active speaker in spotify',
+          icon: '🦑',
+        });
+      }
     } finally {
       setWaitForResponse(false);
     }
   };
+
+  useEffect(() => {
+    const checkForSpeaker = async () => {
+      try {
+        const {devices} = await spotify.getMyDevices();
+
+        setHasSpeaker(devices.length > 0);
+      } catch (e) {
+        console.log(e);
+        setHasSpeaker(false);
+      }
+    };
+
+    checkForSpeaker();
+  }, []);
+
+  if (!hasSpeaker)
+    return (
+      <BaseView style={{justifyContent: 'space-evenly'}}>
+        <EmptyState
+          icon="🦑"
+          title="No speaker found"
+          subtitle={`Make sure you have at least one speaker connected to ${currentUser?.display_name}'s spotify account`}
+        />
+      </BaseView>
+    );
 
   return (
     <BaseView style={{justifyContent: 'space-evenly'}}>

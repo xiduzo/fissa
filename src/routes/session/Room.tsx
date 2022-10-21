@@ -24,7 +24,7 @@ import RoomDetails from './Room.Details';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import RoomTrack from './Room.Track';
 import {request} from '../../lib/utils/api';
-import {ShowProps} from '../../utils/Notification';
+import Notification from '../../utils/Notification';
 import Popover from '../../components/molecules/Popover';
 import Action from '../../components/atoms/Action';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
@@ -94,14 +94,15 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const restartPlaylist = async () => {
     try {
       setIsSyncing(true);
-      const errorResponses = new Map<number, Partial<ShowProps>>();
-      errorResponses.set(409, {
-        message: 'The fissa was already playing',
-        icon: '🦀',
-      });
-
-      await request('POST', '/room/play', {pin}, errorResponses);
+      await request('POST', '/room/play', {pin});
     } catch (error) {
+      if (error === 409) {
+        Notification.show({
+          message: 'The fissa was already playing',
+          icon: '🦀',
+        });
+        return;
+      }
       console.log(error);
     } finally {
       setIsSyncing(false);
@@ -157,17 +158,18 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
           icon="🦥"
           title="This fissa is out of sync"
           subtitle={
-            room?.createdBy !== currentUser?.id ? (
-              'Poke your host to resync this fissa'
-            ) : (
-              <Button
-                disabled={isSyncing}
-                title="resync fissa"
-                onPress={restartPlaylist}
-              />
-            )
-          }
-        />
+            room?.createdBy !== currentUser?.id
+              ? 'Poke your host to resync this fissa'
+              : undefined
+          }>
+          {room?.createdBy === currentUser?.id && (
+            <Button
+              disabled={isSyncing}
+              title="resync fissa"
+              onPress={restartPlaylist}
+            />
+          )}
+        </EmptyState>
       </BaseView>
     );
 
