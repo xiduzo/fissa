@@ -1,11 +1,5 @@
 import React, {FC, useRef} from 'react';
-import {
-  Animated,
-  PanResponder,
-  StyleSheet,
-  View,
-  ViewProps,
-} from 'react-native';
+import {Animated, PanResponder, ViewProps} from 'react-native';
 
 interface DraggableViewProps extends ViewProps {
   /**

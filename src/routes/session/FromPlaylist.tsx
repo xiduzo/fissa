@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useEffect, useRef, useState} from 'react';
+import {FC, useCallback, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import Button from '../../components/atoms/Button';
 import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';

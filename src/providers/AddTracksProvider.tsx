@@ -6,10 +6,8 @@ import BottomDrawer from '../components/atoms/BottomDrawer';
 import Button from '../components/atoms/Button';
 import DeleteIcon from '../components/atoms/icons/DeleteIcon';
 import Typography from '../components/atoms/Typography';
-import Tracks from '../components/organisms/Tracks';
 import {request} from '../lib/utils/api';
 import {useSpotify} from './SpotifyProvider';
-import {Color} from '../types/Theme';
 import Notification from '../utils/Notification';
 import {useRoomPlaylist} from './PlaylistProvider';
 

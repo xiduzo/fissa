@@ -5,7 +5,7 @@ import Button from '../../components/atoms/Button';
 import EmptyState from '../../components/atoms/EmptyState';
 import Typography from '../../components/atoms/Typography';
 import BaseView from '../../components/templates/BaseView';
-import {ErrorResponseMap, request} from '../../lib/utils/api';
+import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';

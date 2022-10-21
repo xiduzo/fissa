@@ -4,7 +4,6 @@ import {
   Modal,
   ModalProps,
   NativeSyntheticEvent,
-  PanResponder,
   SafeAreaView,
   StyleSheet,
   View,

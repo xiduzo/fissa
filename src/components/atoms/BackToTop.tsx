@@ -1,12 +1,12 @@
-import React, {FC, forwardRef, useImperativeHandle, useRef} from 'react';
+import React, {forwardRef, useImperativeHandle, useRef} from 'react';
 import {
   Animated,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
 } from 'react-native';
-import Button from '../../components/atoms/Button';
-import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
+import Button from './Button';
+import ArrowUpIcon from './icons/ArrowUpIcon';
 
 interface RoomBackToTopProps {
   scrollRef: React.RefObject<any>;

@@ -1,9 +1,7 @@
-import Notification, {ShowProps} from '../../utils/Notification';
+import Notification from '../../utils/Notification';
 import {API_ENDPOINT} from '../constants/Endpoint';
 
 type Method = 'GET' | 'POST';
-
-export type ErrorResponseMap = Map<number, Partial<ShowProps>>;
 
 export const request = async <T>(
   method: Method,

@@ -23,7 +23,9 @@ import Notification from '../../utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import BaseView from '../../components/templates/BaseView';
 import RoomListHeader from './Room.ListHeader';
-import RoomBackToTop, {RoomBackToTopRef} from './Room.BackToTop';
+import RoomBackToTop, {
+  RoomBackToTopRef,
+} from '../../components/atoms/BackToTop';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}

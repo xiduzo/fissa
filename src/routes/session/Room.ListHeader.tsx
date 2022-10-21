@@ -78,7 +78,7 @@ const RoomListHeader: FC<RoomListHeaderProps> = ({
             navigation.navigate('SaveToPlaylist', {
               track,
             });
-            togglePopover;
+            togglePopover();
           }}
           icon={<SpotifyIcon color="dark" colorOpacity={40} />}
         />
