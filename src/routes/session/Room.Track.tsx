@@ -1,5 +1,10 @@
 import {FC, useEffect, useMemo, useRef, useState} from 'react';
-import {Animated, ListRenderItemInfo, View} from 'react-native';
+import {
+  Animated,
+  GestureResponderEvent,
+  ListRenderItemInfo,
+  View,
+} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
@@ -15,6 +20,10 @@ import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {Vote} from '../../lib/interfaces/Vote';
 import Divider from '../../components/atoms/Divider';
 
+type LongPressTrack = (
+  track: TrackInterface,
+) => (event: GestureResponderEvent) => void;
+
 interface RoomTrackProps {
   track: TrackInterface;
   totalVotes?: number;
@@ -22,6 +31,7 @@ interface RoomTrackProps {
   pin: string;
   isNextTrack?: boolean;
   index?: number;
+  onLongPress?: LongPressTrack;
 }
 
 const RoomTrack: FC<RoomTrackProps> = ({
@@ -31,6 +41,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
   index = 0,
   totalVotes = 0,
   isNextTrack,
+  onLongPress,
 }) => {
   const [selected, setSelected] = useState(false);
   const {spotify, currentUser} = useSpotify();
@@ -54,10 +65,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
       trackId: track.id,
       createdBy: currentUser?.id,
     });
-  };
-
-  const handleLongPress = (track: TrackInterface) => () => {
-    console.log(track);
   };
 
   const EndIcon = useMemo(() => {
@@ -98,7 +105,7 @@ const RoomTrack: FC<RoomTrackProps> = ({
         track={track}
         totalVotes={totalVotes}
         onPress={selectTrack}
-        onLongPress={handleLongPress(track)}
+        onLongPress={onLongPress && onLongPress(track)}
         end={
           <EndIcon
             color={myVote && !isNextTrack ? 'main' : 'light'}
@@ -161,7 +168,12 @@ const RoomTrack: FC<RoomTrackProps> = ({
 };
 
 export const renderTrack =
-  (votes: {[key: string]: Vote[]}, pin: string, currentUserId?: string) =>
+  (
+    votes: {[key: string]: Vote[]},
+    pin: string,
+    currentUserId?: string,
+    onLongPress?: LongPressTrack,
+  ) =>
   (render: ListRenderItemInfo<TrackInterface>) => {
     const {item, index} = render;
     const trackVotes = votes[item.id];
@@ -173,6 +185,11 @@ export const renderTrack =
       0,
     );
 
+    const handleLongPress =
+      (track: TrackInterface) => (event: GestureResponderEvent) => {
+        onLongPress && onLongPress(track)(event);
+      };
+
     return (
       <RoomTrack
         key={item.id}
@@ -182,6 +199,7 @@ export const renderTrack =
         totalVotes={total}
         myVote={myVote?.state}
         isNextTrack={render.index === 0}
+        onLongPress={handleLongPress}
       />
     );
   };

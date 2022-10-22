@@ -1,6 +1,11 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FC, useRef, useState} from 'react';
 import {
+  AccessibilityInfo,
+  Animated,
+  findNodeHandle,
+  GestureResponderEvent,
+  Modal,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -26,6 +31,8 @@ import RoomListHeader from './Room.ListHeader';
 import RoomBackToTop, {
   RoomBackToTopRef,
 } from '../../components/atoms/BackToTop';
+import Track from '../../components/molecules/ListItem.Track';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -35,9 +42,13 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [focussedTrack, setFocussedTrack] = useState<
+    TrackInterface | undefined
+  >(undefined);
 
   const scrollRef = useRef<VirtualizedList<TrackInterface>>(null);
   const backToTopRef = useRef<RoomBackToTopRef>(null);
+  const modalRef = useRef<View>(null);
 
   const activeTrackIndex = room?.currentIndex ?? -1;
   const queue = tracks.slice(activeTrackIndex + 1, tracks.length);
@@ -45,6 +56,25 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const scroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     backToTopRef.current?.scroll(event);
   };
+
+  const handleTrackLongPress =
+    (track: TrackInterface) => (event: GestureResponderEvent) => {
+      setFocussedTrack(track);
+      // TODO: set focus on modal
+      console.log(
+        event.target,
+        event.nativeEvent.pageY, // this is > than half animate up, else animate down
+      );
+      if (modalRef?.current) {
+        const reactTag = findNodeHandle(modalRef.current);
+        console.log(reactTag);
+        console.log(modalRef.current?.focus);
+        if (reactTag) {
+          AccessibilityInfo.setAccessibilityFocus(reactTag);
+        }
+      }
+      // overlayRef.current?.focus();
+    };
 
   const restartPlaylist = async () => {
     try {
@@ -122,6 +152,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     <BaseView style={{flex: 1}} noPadding>
       <VirtualizedList
         style={styles.container}
+        scrollEnabled={!focussedTrack}
         ref={scrollRef}
         ListFooterComponent={
           <View
@@ -145,13 +176,19 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
             room={room}
             navigation={navigation}
             route={route}
+            queueLength={queue.length}
           />
         }
         data={queue}
         initialNumToRender={5}
         scrollEventThrottle={300}
         onScroll={scroll}
-        renderItem={renderTrack(votes, room.pin, currentUser?.id)}
+        renderItem={renderTrack(
+          votes,
+          room.pin,
+          currentUser?.id,
+          handleTrackLongPress,
+        )}
         getItemCount={() => queue.length}
         getItem={(data, index) => data[index]}
         keyExtractor={item => item.id}
@@ -160,6 +197,17 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         colors={[Color.dark + '00', Color.dark]}
         style={styles.gradient}
       />
+      <Modal transparent visible={!!focussedTrack}>
+        <View
+          style={[styles.modalContent]}
+          ref={modalRef}
+          onTouchMove={() => {
+            console.log('move');
+            setFocussedTrack(undefined);
+          }}>
+          <Track track={focussedTrack} />
+        </View>
+      </Modal>
       <RoomBackToTop scrollRef={scrollRef} ref={backToTopRef} />
       <RoomAddTracksFab navigation={navigation} />
     </BaseView>
@@ -172,6 +220,18 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 68,
     paddingHorizontal: 24,
+  },
+  modalContent: {
+    padding: 24,
+    backgroundColor: Color.dark,
+    opacity: 0.95,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     justifyContent: 'space-between',

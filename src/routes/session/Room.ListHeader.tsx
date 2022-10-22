@@ -18,14 +18,14 @@ interface RoomListHeaderProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {
   room: Room;
   track?: TrackInterface;
-  queueLength?: number;
+  queueLength: number;
 }
 
 const RoomListHeader: FC<RoomListHeaderProps> = ({
   navigation,
   room,
   track,
-  queueLength = 0,
+  queueLength,
 }) => {
   const {currentUser} = useSpotify();
   const [currentTrackSelected, setCurrentTrackSelected] = useState(false);

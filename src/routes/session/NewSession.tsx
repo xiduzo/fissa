@@ -23,7 +23,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     Notification.show({
       message: 'Ay captain, we be creating a playlist for ye!',
       icon: '🦜',
-      duration: 8000,
+      duration: 10000,
     });
 
     try {
