@@ -33,8 +33,6 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
         createdBy: currentUser?.id,
       });
 
-      Notification.hide();
-
       navigation.popToTop();
       navigation.replace('Room', {pin});
       Notification.show({
@@ -57,7 +55,6 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     const checkForSpeaker = async () => {
       try {
         const {devices} = await spotify.getMyDevices();
-
         setHasSpeaker(devices.length > 0);
       } catch (error) {
         console.error(error);

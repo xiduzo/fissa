@@ -47,7 +47,6 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
         createdBy: currentUser?.id,
       });
 
-      closePopOver();
       navigation.popToTop();
       navigation.replace('Room', {pin});
     } catch (error) {
@@ -58,6 +57,8 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
         });
       }
       setWaitForResponse(false);
+    } finally {
+      closePopOver();
     }
   };
 
