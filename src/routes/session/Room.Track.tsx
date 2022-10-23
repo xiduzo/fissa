@@ -1,8 +1,10 @@
-import {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Animated,
   GestureResponderEvent,
   ListRenderItemInfo,
+  Modal,
+  StyleSheet,
   View,
 } from 'react-native';
 import Action from '../../components/atoms/Action';
@@ -19,10 +21,9 @@ import Notification from '../../utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {Vote} from '../../lib/interfaces/Vote';
 import Divider from '../../components/atoms/Divider';
-
-type LongPressTrack = (
-  track: TrackInterface,
-) => (event: GestureResponderEvent) => void;
+import {Dimensions} from 'react-native';
+const windowHeight = Dimensions.get('window').height;
+const windowCenter = windowHeight / 2;
 
 interface RoomTrackProps {
   track: TrackInterface;
@@ -31,7 +32,7 @@ interface RoomTrackProps {
   pin: string;
   isNextTrack?: boolean;
   index?: number;
-  onLongPress?: LongPressTrack;
+  toggleScroll?: () => void;
 }
 
 const RoomTrack: FC<RoomTrackProps> = ({
@@ -41,13 +42,21 @@ const RoomTrack: FC<RoomTrackProps> = ({
   index = 0,
   totalVotes = 0,
   isNextTrack,
-  onLongPress,
+  toggleScroll,
+  ...listItemTrackProps
 }) => {
   const [selected, setSelected] = useState(false);
   const {spotify, currentUser} = useSpotify();
   const previousIndex = useRef(index);
   const positionAnimation = useRef(new Animated.Value(0)).current;
+  const focussedAnimation = useRef(new Animated.Value(0)).current;
+  const actionOpacityAnimation = useRef(new Animated.Value(0)).current;
+  const [actionSelected, setActionSelected] = useState<
+    'up' | 'down' | undefined
+  >(undefined);
+  const focussedPosition = useRef(0);
   const height = useRef(0);
+  const [focussedTrack, setFocussedTrack] = useState(false);
 
   const selectTrack = () => setSelected(true);
 
@@ -65,6 +74,45 @@ const RoomTrack: FC<RoomTrackProps> = ({
       trackId: track.id,
       createdBy: currentUser?.id,
     });
+  };
+
+  const toggleLongPress = async (event: GestureResponderEvent) => {
+    if (isNextTrack) return;
+    focussedPosition.current = event.nativeEvent.pageY;
+
+    if (actionSelected) {
+      castVote(actionSelected)();
+    }
+
+    toggleScroll && toggleScroll();
+    setFocussedTrack(!focussedTrack);
+    setActionSelected(undefined);
+  };
+
+  const handleMove = (event: GestureResponderEvent) => {
+    if (!focussedTrack) {
+      setActionSelected(undefined);
+      return;
+    }
+
+    const TRIGGER_DIFF = 100;
+
+    const currentY = event.nativeEvent.pageY;
+
+    if (currentY < windowCenter - TRIGGER_DIFF) {
+      console.log('top event');
+      setActionSelected('up');
+      return;
+    }
+
+    if (currentY > windowCenter + TRIGGER_DIFF) {
+      console.log('bottom event');
+      setActionSelected('down');
+      return;
+    }
+
+    // Reset
+    setActionSelected(undefined);
   };
 
   const EndIcon = useMemo(() => {
@@ -94,6 +142,48 @@ const RoomTrack: FC<RoomTrackProps> = ({
     });
   }, [index, track]);
 
+  useEffect(() => {
+    if (!focussedTrack) return;
+    const offset = focussedPosition.current - windowCenter;
+    Animated.timing(focussedAnimation, {
+      toValue: offset,
+      duration: 0,
+      useNativeDriver: false,
+    }).start(() => {
+      Animated.parallel([
+        Animated.spring(focussedAnimation, {
+          toValue: 0,
+          bounciness: 3,
+          useNativeDriver: false,
+        }),
+        Animated.timing(actionOpacityAnimation, {
+          duration: 200,
+          delay: 100,
+          toValue: 1,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    });
+
+    return () => {
+      Animated.timing(actionOpacityAnimation, {
+        duration: 0,
+        toValue: 0,
+        useNativeDriver: false,
+      }).start();
+    };
+  }, [focussedTrack]);
+
+  const opacityInterpolation = focussedAnimation.interpolate({
+    inputRange: [-Math.abs(focussedPosition.current), 0],
+    outputRange: [0.1, 0.98],
+  });
+
+  const actionScaleInterpolation = actionOpacityAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.9, 1],
+  });
+
   return (
     <Animated.View
       onLayout={e => (height.current = e.nativeEvent.layout.height)}
@@ -105,13 +195,20 @@ const RoomTrack: FC<RoomTrackProps> = ({
         track={track}
         totalVotes={totalVotes}
         onPress={selectTrack}
-        onLongPress={onLongPress && onLongPress(track)}
+        onLongPress={toggleLongPress}
+        onTouchEnd={event => {
+          if (!focussedTrack) return;
+          console.log(event.target);
+          toggleLongPress(event);
+        }}
+        onTouchMove={handleMove}
         end={
           <EndIcon
             color={myVote && !isNextTrack ? 'main' : 'light'}
             colorOpacity={myVote && !isNextTrack ? 100 : 80}
           />
         }
+        {...listItemTrackProps}
       />
       <Popover visible={!!selected} onRequestClose={() => setSelected(false)}>
         <Track track={track} totalVotes={totalVotes} inverted hasBorder />
@@ -163,6 +260,75 @@ const RoomTrack: FC<RoomTrackProps> = ({
           }
         />
       </Popover>
+      <Modal transparent visible={!!focussedTrack}>
+        <Animated.View
+          style={[
+            styles.modalBackdrop,
+            {
+              opacity: opacityInterpolation,
+            },
+          ]}
+        />
+        <View style={styles.modalContent}>
+          <Animated.View
+            style={{
+              width: '100%',
+              opacity: actionOpacityAnimation,
+              transform: [{scale: actionScaleInterpolation}],
+            }}>
+            <Action
+              title="Up-vote track"
+              disabled={myVote === 'up'}
+              onPress={castVote('up')}
+              active={myVote === 'up' || actionSelected === 'up'}
+              icon={
+                <ArrowUpIcon
+                  color={
+                    myVote === 'up' || actionSelected === 'up' ? 'dark' : 'main'
+                  }
+                  colorOpacity={
+                    myVote === 'up' || actionSelected === 'up' ? 100 : 40
+                  }
+                />
+              }
+            />
+          </Animated.View>
+          <Animated.View
+            style={{
+              position: 'relative',
+              width: '100%',
+              top: focussedAnimation,
+            }}>
+            <Track track={track} />
+          </Animated.View>
+          <Animated.View
+            style={{
+              width: '100%',
+
+              opacity: actionOpacityAnimation,
+              transform: [{scale: actionScaleInterpolation}],
+            }}>
+            <Action
+              title="Down-vote track"
+              disabled={myVote === 'down'}
+              active={myVote === 'down' || actionSelected === 'down'}
+              onPress={castVote('down')}
+              icon={
+                <ArrowDownIcon
+                  color={
+                    myVote === 'down' || actionSelected === 'down'
+                      ? 'dark'
+                      : 'main'
+                  }
+                  colorOpacity={
+                    myVote === 'down' || actionSelected === 'down' ? 100 : 40
+                  }
+                />
+              }
+            />
+          </Animated.View>
+        </View>
+      </Modal>
     </Animated.View>
   );
 };
@@ -172,7 +338,7 @@ export const renderTrack =
     votes: {[key: string]: Vote[]},
     pin: string,
     currentUserId?: string,
-    onLongPress?: LongPressTrack,
+    toggleScroll?: () => void,
   ) =>
   (render: ListRenderItemInfo<TrackInterface>) => {
     const {item, index} = render;
@@ -185,23 +351,37 @@ export const renderTrack =
       0,
     );
 
-    const handleLongPress =
-      (track: TrackInterface) => (event: GestureResponderEvent) => {
-        onLongPress && onLongPress(track)(event);
-      };
-
     return (
-      <RoomTrack
-        key={item.id}
-        track={item}
-        index={index}
-        pin={pin}
-        totalVotes={total}
-        myVote={myVote?.state}
-        isNextTrack={render.index === 0}
-        onLongPress={handleLongPress}
-      />
+      <View>
+        <RoomTrack
+          key={item.id}
+          track={item}
+          index={index}
+          pin={pin}
+          totalVotes={total}
+          myVote={myVote?.state}
+          isNextTrack={render.index === 0}
+          toggleScroll={toggleScroll}
+        />
+      </View>
     );
   };
 
 export default RoomTrack;
+
+const styles = StyleSheet.create({
+  modalContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    padding: 24,
+  },
+  modalBackdrop: {
+    backgroundColor: Color.dark,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});

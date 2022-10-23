@@ -7,12 +7,15 @@ import {
   TouchableWithoutFeedback,
   TouchableWithoutFeedbackProps,
   View,
+  ViewProps,
 } from 'react-native';
 import {Color} from '../../types/Theme';
 import Image from '../atoms/Image';
 import Typography from '../atoms/Typography';
 
-export interface ListItemProps extends TouchableWithoutFeedbackProps {
+export interface ListItemProps
+  extends TouchableWithoutFeedbackProps,
+    ViewProps {
   imageUri?: string;
   title: string;
   subtitle: string;
@@ -79,7 +82,8 @@ const ListItem: FC<ListItemProps> = ({
             borderRadius: 12,
           },
           props.style,
-        ]}>
+        ]}
+        {...props}>
         <View>
           <Image
             style={[
