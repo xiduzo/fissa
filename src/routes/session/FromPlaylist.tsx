@@ -10,6 +10,7 @@ import Playlists from '../../components/organisms/Playlists';
 import BaseView from '../../components/templates/BaseView';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
+import Notification from '../../utils/Notification';
 import {RootStackParamList} from '../Routes';
 
 interface FromPlaylistProps
@@ -50,6 +51,12 @@ const FromPlaylist: FC<FromPlaylistProps> = ({navigation}) => {
       navigation.popToTop();
       navigation.replace('Room', {pin});
     } catch (error) {
+      if (error === 404) {
+        Notification.show({
+          message: 'Could not find an active speaker in spotify',
+          icon: '🦑',
+        });
+      }
       setWaitForResponse(false);
     }
   };

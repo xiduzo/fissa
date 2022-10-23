@@ -16,7 +16,7 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify, refreshToken, currentUser} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
-  const [hasSpeaker, setHasSpeaker] = useState(true);
+  const [hasSpeaker, setHasSpeaker] = useState(false);
 
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
