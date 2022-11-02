@@ -89,7 +89,12 @@ const RoomTrack: FC<RoomTrackProps> = ({
     setActionSelected(undefined);
   };
 
-  const handleMove = (event: GestureResponderEvent) => {
+  const handleTouchEnd = (event: GestureResponderEvent) => {
+    if (!focussedTrack) return;
+    toggleLongPress(event);
+  };
+
+  const handleTouchMove = (event: GestureResponderEvent) => {
     if (!focussedTrack) {
       setActionSelected(undefined);
       return;
@@ -100,13 +105,11 @@ const RoomTrack: FC<RoomTrackProps> = ({
     const currentY = event.nativeEvent.pageY;
 
     if (currentY < windowCenter - TRIGGER_DIFF) {
-      console.log('top event');
       setActionSelected('up');
       return;
     }
 
     if (currentY > windowCenter + TRIGGER_DIFF) {
-      console.log('bottom event');
       setActionSelected('down');
       return;
     }
@@ -187,21 +190,14 @@ const RoomTrack: FC<RoomTrackProps> = ({
   return (
     <Animated.View
       onLayout={e => (height.current = e.nativeEvent.layout.height)}
-      style={{
-        position: 'relative',
-        top: positionAnimation,
-      }}>
+      style={{top: positionAnimation}}>
       <Track
         track={track}
         totalVotes={totalVotes}
         onPress={selectTrack}
         onLongPress={toggleLongPress}
-        onTouchEnd={event => {
-          if (!focussedTrack) return;
-          console.log(event.target);
-          toggleLongPress(event);
-        }}
-        onTouchMove={handleMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
         end={
           <EndIcon
             color={myVote && !isNextTrack ? 'main' : 'light'}
@@ -260,7 +256,13 @@ const RoomTrack: FC<RoomTrackProps> = ({
           }
         />
       </Popover>
-      <Modal transparent visible={!!focussedTrack}>
+      <Modal
+        transparent
+        visible={!!focussedTrack}
+        // Redundant exit touch event
+        // This should be handled by the track `onTouchEnd`
+        // But if the track doesn't fire the user still needs a way out
+        onTouchEnd={handleTouchEnd}>
         <Animated.View
           style={[
             styles.modalBackdrop,
@@ -295,11 +297,10 @@ const RoomTrack: FC<RoomTrackProps> = ({
           </Animated.View>
           <Animated.View
             style={{
-              position: 'relative',
               width: '100%',
               top: focussedAnimation,
             }}>
-            <Track track={track} />
+            <Track totalVotes={totalVotes} track={track} />
           </Animated.View>
           <Animated.View
             style={{
@@ -352,18 +353,16 @@ export const renderTrack =
     );
 
     return (
-      <View>
-        <RoomTrack
-          key={item.id}
-          track={item}
-          index={index}
-          pin={pin}
-          totalVotes={total}
-          myVote={myVote?.state}
-          isNextTrack={render.index === 0}
-          toggleScroll={toggleScroll}
-        />
-      </View>
+      <RoomTrack
+        key={item.id}
+        track={item}
+        index={index}
+        pin={pin}
+        totalVotes={total}
+        myVote={myVote?.state}
+        isNextTrack={render.index === 0}
+        toggleScroll={toggleScroll}
+      />
     );
   };
 
