@@ -22,6 +22,7 @@ import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {Vote} from '../../lib/interfaces/Vote';
 import Divider from '../../components/atoms/Divider';
 import {Dimensions} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 const windowHeight = Dimensions.get('window').height;
 const windowCenter = windowHeight / 2;
 
@@ -62,9 +63,11 @@ const RoomTrack: FC<RoomTrackProps> = ({
 
   const castVote = (state?: 'up' | 'down') => async () => {
     setSelected(false);
+    if (myVote === state) return;
+
     Notification.show({
       icon: myVote === state ? '🔄' : state === 'up' ? '⬆️' : '⬇️',
-      message: `Your vote has been ${myVote === state ? 'reverted' : 'cast'}!`,
+      message: `Your vote has been cast!`,
     });
 
     await request('POST', '/room/vote', {
@@ -272,62 +275,87 @@ const RoomTrack: FC<RoomTrackProps> = ({
           ]}
         />
         <View style={styles.modalContent}>
+          <LinearGradient
+            colors={
+              actionSelected === 'up' ||
+              (myVote === 'up' && actionSelected !== 'down')
+                ? [Color.main + 10, Color.dark + 10]
+                : [Color.dark + 10, Color.dark + 10]
+            }
+            style={styles.modalAction}>
+            <Animated.View
+              style={[
+                styles.modalAction,
+                {
+                  opacity: actionOpacityAnimation,
+                  transform: [{scale: actionScaleInterpolation}],
+                },
+              ]}>
+              <Action
+                layout="column"
+                title="Up-vote track"
+                disabled={myVote === 'up'}
+                onPress={castVote('up')}
+                active={myVote === 'up' || actionSelected === 'up'}
+                icon={
+                  <ArrowUpIcon
+                    color={
+                      myVote === 'up' || actionSelected === 'up'
+                        ? 'dark'
+                        : 'main'
+                    }
+                    colorOpacity={
+                      myVote === 'up' || actionSelected === 'up' ? 100 : 40
+                    }
+                  />
+                }
+              />
+            </Animated.View>
+          </LinearGradient>
           <Animated.View
             style={{
-              width: '100%',
-              opacity: actionOpacityAnimation,
-              transform: [{scale: actionScaleInterpolation}],
-            }}>
-            <Action
-              title="Up-vote track"
-              disabled={myVote === 'up'}
-              onPress={castVote('up')}
-              active={myVote === 'up' || actionSelected === 'up'}
-              icon={
-                <ArrowUpIcon
-                  color={
-                    myVote === 'up' || actionSelected === 'up' ? 'dark' : 'main'
-                  }
-                  colorOpacity={
-                    myVote === 'up' || actionSelected === 'up' ? 100 : 40
-                  }
-                />
-              }
-            />
-          </Animated.View>
-          <Animated.View
-            style={{
-              width: '100%',
               top: focussedAnimation,
+              padding: 24,
             }}>
             <Track totalVotes={totalVotes} track={track} />
           </Animated.View>
-          <Animated.View
-            style={{
-              width: '100%',
-
-              opacity: actionOpacityAnimation,
-              transform: [{scale: actionScaleInterpolation}],
-            }}>
-            <Action
-              title="Down-vote track"
-              disabled={myVote === 'down'}
-              active={myVote === 'down' || actionSelected === 'down'}
-              onPress={castVote('down')}
-              icon={
-                <ArrowDownIcon
-                  color={
-                    myVote === 'down' || actionSelected === 'down'
-                      ? 'dark'
-                      : 'main'
-                  }
-                  colorOpacity={
-                    myVote === 'down' || actionSelected === 'down' ? 100 : 40
-                  }
-                />
-              }
-            />
-          </Animated.View>
+          <LinearGradient
+            colors={
+              actionSelected === 'down' ||
+              (myVote === 'down' && actionSelected !== 'up')
+                ? [Color.dark + 10, Color.main + 10]
+                : [Color.dark + 10, Color.dark + 10]
+            }
+            style={styles.modalAction}>
+            <Animated.View
+              style={[
+                {
+                  opacity: actionOpacityAnimation,
+                  transform: [{scale: actionScaleInterpolation}],
+                },
+              ]}>
+              <Action
+                layout="column"
+                reversed
+                title="Down-vote track"
+                disabled={myVote === 'down'}
+                active={myVote === 'down' || actionSelected === 'down'}
+                onPress={castVote('down')}
+                icon={
+                  <ArrowDownIcon
+                    color={
+                      myVote === 'down' || actionSelected === 'down'
+                        ? 'dark'
+                        : 'main'
+                    }
+                    colorOpacity={
+                      myVote === 'down' || actionSelected === 'down' ? 100 : 40
+                    }
+                  />
+                }
+              />
+            </Animated.View>
+          </LinearGradient>
         </View>
       </Modal>
     </Animated.View>
@@ -371,9 +399,11 @@ export default RoomTrack;
 const styles = StyleSheet.create({
   modalContent: {
     justifyContent: 'center',
-    alignItems: 'center',
     height: '100%',
-    padding: 24,
+  },
+  modalAction: {
+    flex: 1,
+    justifyContent: 'center',
   },
   modalBackdrop: {
     backgroundColor: Color.dark,

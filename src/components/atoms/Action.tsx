@@ -6,62 +6,87 @@ import Typography from './Typography';
 interface ActionProps extends Omit<ButtonProps, 'color'> {
   icon: JSX.Element;
   subtitle?: string;
+  reversed?: boolean;
   active?: boolean;
   inverted?: boolean;
   hidden?: boolean;
+  layout?: 'row' | 'column';
 }
 
 const Action: FC<ActionProps> = ({
   icon,
   title,
   subtitle,
+  reversed,
   active,
   inverted,
   hidden,
+  layout = 'row',
   ...props
 }) => {
   if (hidden) return null;
+
+  const Icon = () => {
+    return (
+      <View
+        style={[
+          styles.icon,
+          {
+            backgroundColor: active
+              ? inverted
+                ? Color.dark
+                : Color.light
+              : 'transparent',
+            borderColor: (inverted ? Color.dark : Color.light) + '10',
+            opacity: props.disabled ? 0.3 : 1,
+            marginRight: layout === 'row' ? 16 : 0,
+          },
+        ]}>
+        {icon}
+      </View>
+    );
+  };
+
+  const Title = () => {
+    return (
+      <View
+        style={{
+          opacity: props.disabled ? 0.3 : 1,
+          paddingVertical: layout === 'column' ? 36 : 0,
+        }}>
+        <Typography
+          variant="h4"
+          color={inverted ? 'dark' : 'light'}
+          style={{marginBottom: 4}}>
+          {title}
+        </Typography>
+        {subtitle && (
+          <Typography
+            variant="bodyM"
+            color={inverted ? 'dark' : 'light'}
+            style={{opacity: 0.6}}>
+            {subtitle}
+          </Typography>
+        )}
+      </View>
+    );
+  };
 
   return (
     <TouchableHighlight
       {...props}
       underlayColor="transparent"
       style={[styles.container]}>
-      <View style={styles.content}>
-        <View
-          style={[
-            styles.icon,
-            {
-              backgroundColor: active
-                ? inverted
-                  ? Color.dark
-                  : Color.light
-                : 'transparent',
-              borderColor: (inverted ? Color.dark : Color.light) + '10',
-              opacity: props.disabled ? 0.3 : 1,
-            },
-          ]}>
-          {icon}
-        </View>
-        <View
-          style={{
-            opacity: props.disabled ? 0.3 : 1,
-          }}>
-          <Typography
-            variant="h4"
-            color={inverted ? 'dark' : 'light'}
-            style={{marginBottom: 4}}>
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography
-              variant="bodyM"
-              color={inverted ? 'dark' : 'light'}
-              style={{opacity: 0.6}}>
-              {subtitle}
-            </Typography>
-          )}
-        </View>
+      <View
+        style={[
+          styles.content,
+          {
+            flexDirection: layout,
+          },
+        ]}>
+        {reversed && <Title />}
+        <Icon />
+        {!reversed && <Title />}
       </View>
     </TouchableHighlight>
   );
@@ -74,13 +99,11 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   content: {
-    flexDirection: 'row',
     alignItems: 'center',
   },
   icon: {
     padding: 8,
     borderWidth: 2,
     borderRadius: 12,
-    marginRight: 16,
   },
 });

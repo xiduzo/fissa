@@ -108,7 +108,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (!tracks.length)
     return (
-      <BaseView style={{flex: 1}}>
+      <BaseView style={{flex: 1}} noPadding>
         <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
