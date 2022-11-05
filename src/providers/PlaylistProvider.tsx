@@ -59,22 +59,16 @@ const PlaylistProvider: FC = ({children}) => {
   }, []);
 
   const fetchVotes = useCallback(async () => {
-    if (!room?.pin) return;
-    const {content} = await request<Vote[]>(
-      'GET',
-      `/room/vote?pin=${room.pin}`,
-    );
+    if (!pin) return;
+    const {content} = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
     sortAndSetVotes(content);
-  }, [room?.pin]);
+  }, [pin]);
 
   const fetchTracks = useCallback(async () => {
-    if (!room?.pin) return;
-    const {content} = await request<Track[]>(
-      'GET',
-      `/room/track?pin=${room.pin}`,
-    );
+    if (!pin) return;
+    const {content} = await request<Track[]>('GET', `/room/track?pin=${pin}`);
     setTracks(content);
-  }, [room?.pin]);
+  }, [pin]);
 
   const fetchRoom = useCallback(async () => {
     if (!pin) return;
@@ -168,13 +162,21 @@ const PlaylistProvider: FC = ({children}) => {
     const subscription = AppState.addEventListener('change', () => {
       if (AppState.currentState !== 'active') return;
 
+      if (!pin) return;
+
       fetchRoom();
       fetchTracks();
       fetchVotes();
+
+      Notification.show({
+        type: 'info',
+        message: 'Syncing fissa',
+        icon: '',
+      });
     });
 
     return subscription.remove;
-  }, [fetchRoom, fetchTracks, fetchVotes]);
+  }, [fetchRoom, fetchTracks, fetchVotes, pin]);
 
   return (
     <PlaylistContext.Provider

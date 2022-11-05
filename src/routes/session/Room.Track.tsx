@@ -31,7 +31,6 @@ interface RoomTrackProps {
   totalVotes?: number;
   myVote?: 'up' | 'down';
   pin: string;
-  isNextTrack?: boolean;
   index?: number;
   toggleScroll?: () => void;
 }
@@ -42,7 +41,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
   pin,
   index = 0,
   totalVotes = 0,
-  isNextTrack,
   toggleScroll,
   ...listItemTrackProps
 }) => {
@@ -80,7 +78,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
   };
 
   const toggleLongPress = async (event: GestureResponderEvent) => {
-    if (isNextTrack) return;
     focussedPosition.current = event.nativeEvent.pageY;
 
     if (actionSelected) {
@@ -122,14 +119,12 @@ const RoomTrack: FC<RoomTrackProps> = ({
   };
 
   const EndIcon = useMemo(() => {
-    if (isNextTrack) return LockIcon;
-
     if (myVote) {
       return myVote === 'up' ? ArrowUpIcon : ArrowDownIcon;
     }
 
     return MoreIcon;
-  }, [myVote, isNextTrack]);
+  }, [myVote]);
 
   useEffect(() => {
     const diff = previousIndex.current - index;
@@ -203,8 +198,8 @@ const RoomTrack: FC<RoomTrackProps> = ({
         onTouchMove={handleTouchMove}
         end={
           <EndIcon
-            color={myVote && !isNextTrack ? 'main' : 'light'}
-            colorOpacity={myVote && !isNextTrack ? 100 : 80}
+            color={myVote ? 'main' : 'light'}
+            colorOpacity={myVote ? 100 : 80}
           />
         }
         {...listItemTrackProps}
@@ -213,18 +208,9 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Track track={track} totalVotes={totalVotes} inverted hasBorder />
         <Divider color={Color.dark + '10'} />
         <Action
-          title="Locked track"
-          inverted
-          disabled
-          hidden={!isNextTrack}
-          icon={<LockIcon color={'dark'} />}
-          subtitle="This track will not move"
-        />
-        <Action
           title="Up-vote track"
           inverted
           disabled={myVote === 'up'}
-          hidden={isNextTrack}
           onPress={castVote('up')}
           active={myVote === 'up'}
           icon={
@@ -242,7 +228,6 @@ const RoomTrack: FC<RoomTrackProps> = ({
         <Action
           title="Down-vote track"
           inverted
-          hidden={isNextTrack}
           disabled={myVote === 'down'}
           active={myVote === 'down'}
           onPress={castVote('down')}
@@ -388,7 +373,6 @@ export const renderTrack =
         pin={pin}
         totalVotes={total}
         myVote={myVote?.state}
-        isNextTrack={render.index === 0}
         toggleScroll={toggleScroll}
       />
     );
