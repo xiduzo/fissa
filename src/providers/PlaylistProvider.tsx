@@ -167,12 +167,6 @@ const PlaylistProvider: FC = ({children}) => {
       fetchRoom();
       fetchTracks();
       fetchVotes();
-
-      Notification.show({
-        type: 'info',
-        message: 'Syncing fissa',
-        icon: '',
-      });
     });
 
     return subscription.remove;

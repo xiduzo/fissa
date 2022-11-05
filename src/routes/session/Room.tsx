@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
   },
   headerEmpty: {
     marginTop: 68,
+    paddingHorizontal: 24,
     justifyContent: 'flex-end',
   },
   gradient: {
