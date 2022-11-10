@@ -17,7 +17,7 @@ import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../types/Theme';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {Vote} from '../../lib/interfaces/Vote';
 import Divider from '../../components/atoms/Divider';

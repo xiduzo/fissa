@@ -1,6 +1,6 @@
 import {useNetInfo} from '@react-native-community/netinfo';
 import {FC, useEffect} from 'react';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 
 const NetworkMonitor: FC = () => {
   const {isConnected, isInternetReachable, type} = useNetInfo();

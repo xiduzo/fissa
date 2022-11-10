@@ -11,7 +11,7 @@ import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 
 interface RoomDetailsProps {
   pin: string;

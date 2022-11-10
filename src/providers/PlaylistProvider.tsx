@@ -13,7 +13,7 @@ import {Room} from '../lib/interfaces/Room';
 import {Track} from '../lib/interfaces/Track';
 import {Vote} from '../lib/interfaces/Vote';
 import {request} from '../lib/utils/api';
-import Notification from '../utils/Notification';
+import Notification from '../lib/utils/Notification';
 
 interface RoomPlaylistContextState {
   tracks: Track[];

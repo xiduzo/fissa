@@ -14,7 +14,7 @@ import BaseView from '../../components/templates/BaseView';
 import {Room} from '../../lib/interfaces/Room';
 import {request} from '../../lib/utils/api';
 import {Color} from '../../types/Theme';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 import {RootStackParamList} from '../Routes';
 
 interface JoinSessionProps

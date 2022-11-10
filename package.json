@@ -8,7 +8,11 @@
     "ios": "react-native run-ios",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "cruise": "npx depcruise src --include-only \"^src\" --config --output-type dot | dot -T svg > graph/dependency-graph.svg",
+    "cruise:html": "npx depcruise src --include-only \"^src\" --config --output-type dot | dot -T svg | tee graph/dependency-cruiser-dir-graph.svg | depcruise-wrap-stream-in-html > graph/dependency-graph.html",
+    "cruise:ddot": "npx depcruise src --include-only \"^src\" --config --output-type ddot | dot -T svg -Grankdir=TD > graph/dependency-graph.svg",
+    "cruise:archi": "npx depcruise src --include-only \"^src\" --config --output-type archi | dot -T svg -Grankdir=TD > graph/dependency-graph.svg"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -61,6 +65,7 @@
     "@typescript-eslint/parser": "5.42.0",
     "babel-jest": "26.6.3",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
+    "dependency-cruiser": "^11.18.0",
     "eslint": "8.26.0",
     "eslint-plugin-prettier": "4.2.1",
     "jest": "26.6.3",

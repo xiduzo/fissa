@@ -8,7 +8,7 @@ import DeleteIcon from '../components/atoms/icons/DeleteIcon';
 import Typography from '../components/atoms/Typography';
 import {request} from '../lib/utils/api';
 import {useSpotify} from './SpotifyProvider';
-import Notification from '../utils/Notification';
+import Notification from '../lib/utils/Notification';
 import {useRoomPlaylist} from './PlaylistProvider';
 
 interface RoomAddContextState {

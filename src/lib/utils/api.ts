@@ -1,4 +1,4 @@
-import Notification from '../../utils/Notification';
+import Notification from './Notification';
 import {API_ENDPOINT} from '../constants/Endpoint';
 
 type Method = 'GET' | 'POST';

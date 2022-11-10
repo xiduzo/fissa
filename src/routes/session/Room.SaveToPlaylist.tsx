@@ -9,7 +9,7 @@ import BaseView from '../../components/templates/BaseView';
 import Track from '../../components/molecules/ListItem.Track';
 import {SAVED_TRACKS_PLAYLIST_ID} from '../../lib/constants/Playlist';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 
 interface SaveToPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'SaveToPlaylist'> {}

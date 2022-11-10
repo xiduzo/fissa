@@ -10,7 +10,7 @@ import Playlists from '../../components/organisms/Playlists';
 import BaseView from '../../components/templates/BaseView';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 import {RootStackParamList} from '../Routes';
 
 interface FromPlaylistProps

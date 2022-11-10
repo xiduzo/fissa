@@ -19,7 +19,7 @@ import RoomDetails from './Room.Details';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import {renderTrack} from './Room.Track';
 import {request} from '../../lib/utils/api';
-import Notification from '../../utils/Notification';
+import Notification from '../../lib/utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import BaseView from '../../components/templates/BaseView';
 import RoomListHeader from './Room.ListHeader';
@@ -68,7 +68,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (!room?.pin)
     return (
-      <BaseView style={{flex: 1}}>
+      <BaseView style={{flex: 1}} noPadding>
         <View style={[styles.header, styles.headerEmpty]}>
           <Typography variant="h2">&nbsp;</Typography>
           <RoomDetails pin={pin} navigation={navigation} />
@@ -83,22 +83,22 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (activeTrackIndex === -1)
     return (
-      <BaseView style={{flex: 1}}>
+      <BaseView style={{flex: 1}} noPadding>
         <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
           icon="🦥"
-          title="This fissa is out of sync"
+          title="This fissa is not playing"
           subtitle={
             room?.createdBy !== currentUser?.id
-              ? 'Poke your host to resync this fissa'
+              ? 'Poke your host to continue this fissa'
               : undefined
           }>
           {room?.createdBy === currentUser?.id && (
             <Button
               disabled={isSyncing}
-              title="resync fissa"
+              title="continue fissa"
               onPress={restartPlaylist}
             />
           )}
