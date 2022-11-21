@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import mqtt from '@taoqf/react-native-mqtt';
 import {
   createContext,
@@ -19,14 +20,14 @@ interface RoomPlaylistContextState {
   tracks: Track[];
   room?: Room;
   votes: {[key: string]: Vote[]};
-  setPin: (pin: string) => void;
+  joinRoom: (pin: string) => void;
   leaveRoom: () => void;
 }
 
 const initialState: RoomPlaylistContextState = {
   tracks: [],
   votes: {},
-  setPin: () => {},
+  joinRoom: () => {},
   leaveRoom: () => {},
 };
 
@@ -51,11 +52,12 @@ const PlaylistProvider: FC = ({children}) => {
     setVotes(sorted);
   }, []);
 
-  const leaveRoom = useCallback(() => {
+  const leaveRoom = useCallback(async () => {
     setVotes({});
     setTracks([]);
     setRoom(undefined);
     setPin('');
+    await AsyncStorage.removeItem('pin');
   }, []);
 
   const fetchVotes = useCallback(async () => {
@@ -93,6 +95,13 @@ const PlaylistProvider: FC = ({children}) => {
     fetchTracks();
     fetchVotes();
   }, [room?.pin, fetchTracks, fetchVotes]);
+
+  const joinRoom = useCallback(async (pin: string) => {
+    if (!pin) return;
+
+    await AsyncStorage.setItem('pin', pin);
+    setPin(pin);
+  }, []);
 
   useEffect(() => {
     if (!pin) return;
@@ -172,13 +181,23 @@ const PlaylistProvider: FC = ({children}) => {
     return subscription.remove;
   }, [fetchRoom, fetchTracks, fetchVotes, pin]);
 
+  useEffect(() => {
+    AsyncStorage.getItem('pin').then(pin => {
+      if (pin) {
+        request<Room>('GET', `/room/${pin}`)
+          .then(() => setPin(pin))
+          .catch(console.error);
+      }
+    });
+  }, []);
+
   return (
     <PlaylistContext.Provider
       value={{
         tracks,
         room,
         votes,
-        setPin,
+        joinRoom,
         leaveRoom,
       }}>
       {children}
@@ -196,11 +215,12 @@ export const useRoomPlaylist = (pin?: string) => {
 
   useEffect(() => {
     if (pin) {
-      context.setPin(pin);
+      context.joinRoom(pin);
+      return;
     }
 
     return () => {
-      context.setPin('');
+      context.joinRoom('');
     };
   }, [context, pin]);
 

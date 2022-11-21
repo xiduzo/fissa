@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import Button from '../../components/atoms/Button';
 import EmptyState from '../../components/atoms/EmptyState';
@@ -12,6 +12,8 @@ import {useDevices} from '../../hooks/useDevices';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import {TransferPlaybackDevicePopover} from '../../components/organisms/TransferPlaybackDevicePopover';
 import {RootStackParamList} from '../../lib/interfaces/StackParams';
+import Popover from '../../components/molecules/Popover';
+import AsyncStorage from '@react-native-community/async-storage';
 
 interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
@@ -22,8 +24,15 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {devices, activeDevice} = useDevices();
 
   const [showDevicePopover, setShowDevicePopover] = useState(false);
-
   const toggleDevicePopover = () => setShowDevicePopover(!showDevicePopover);
+
+  const [showWarning, setShowWarning] = useState(false);
+  const toggleShowWarning = () => setShowWarning(!showWarning);
+
+  const disableWarning = () => {
+    AsyncStorage.setItem('showHostWarning', Boolean(false).toString());
+    toggleShowWarning();
+  };
 
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
@@ -58,6 +67,13 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     }
   };
 
+  useEffect(() => {
+    AsyncStorage.getItem('showHostWarning').then(doNotShowWarning => {
+      if (Boolean(doNotShowWarning)) return;
+      setShowWarning(true);
+    });
+  }, []);
+
   if (devices.length === 0) {
     return (
       <BaseView style={{justifyContent: 'space-evenly'}}>
@@ -74,10 +90,10 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     <BaseView style={{justifyContent: 'space-evenly'}}>
       <View style={{flex: 1, justifyContent: 'center'}}>
         <Typography variant="h1" gutter align="center">
-          Create a fissa
+          Host a fissa
         </Typography>
-        <Typography variant="h5" gutter={24} align="center">
-          How would you like to start this fissa?
+        <Typography variant="h4" gutter={24} align="center">
+          How should this fissa start
         </Typography>
       </View>
       <View style={{flex: 1}}>
@@ -116,6 +132,21 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
         visible={showDevicePopover}
         onRequestClose={toggleDevicePopover}
       />
+      <Popover visible={showWarning} onRequestClose={disableWarning}>
+        <Typography variant="h2" color="dark" align="center" gutter>
+          Be aware
+        </Typography>
+
+        <Typography variant="body2" color="dark" align="center" gutter>
+          The playlist you create in fissa will still be played via spotify. We
+          will try our best to keep your fissa in sync with spotify. Controlling
+          your music via spotify itself could cause your fissa to get out of
+          sync.
+        </Typography>
+        <View style={{marginTop: 32}}>
+          <Button title="Roger that" inverted onPress={disableWarning} />
+        </View>
+      </Popover>
     </BaseView>
   );
 };

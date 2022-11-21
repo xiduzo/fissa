@@ -16,7 +16,7 @@ export const useDevices = () => {
     const device = devices[0];
     if (!device.id) return;
 
-    spotify.transferMyPlayback([device.id]).catch(console.log);
+    spotify.transferMyPlayback([device.id]).catch(console.error);
 
     return device;
   }, [devices]);
