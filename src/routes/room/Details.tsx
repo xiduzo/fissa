@@ -24,7 +24,7 @@ interface RoomDetailsProps {
 const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
   const {leaveRoom} = useRoomPlaylist(pin);
   const {tracks} = useRoomPlaylist(pin);
-  const isOwner = useIsOwner(pin);
+  const {isOwner} = useIsOwner(pin);
 
   const {spotify, currentUser} = useSpotify();
   const [savingPlaylist, setSavingPlaylist] = useState(false);
