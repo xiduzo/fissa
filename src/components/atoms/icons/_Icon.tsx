@@ -1,6 +1,6 @@
 import VectorImage, {VectorImageProps} from 'react-native-vector-image';
 import {FC} from 'react';
-import {Color, Theme} from '../../../types/Theme';
+import {Color, Theme} from '../../../lib/types/Theme';
 
 export interface IconProps extends Omit<VectorImageProps, 'source'> {
   /**

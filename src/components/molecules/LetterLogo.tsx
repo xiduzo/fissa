@@ -1,6 +1,6 @@
 import React, {FC, memo, useRef} from 'react';
 import {Animated, Dimensions, View} from 'react-native';
-import {themes} from '../../types/Theme';
+import {themes} from '../../lib/types/Theme';
 import LetterA from '../atoms/icons/LetterA';
 import LetterF from '../atoms/icons/LetterF';
 import LetterI from '../atoms/icons/LetterI';

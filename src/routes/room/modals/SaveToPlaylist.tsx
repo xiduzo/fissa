@@ -1,15 +1,15 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FC, useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
-import ScrollViewWithHeaderTitle from '../../components/atoms/ScrollViewWithHeaderTitle';
-import Typography from '../../components/atoms/Typography';
-import {RootStackParamList} from '../Routes';
-import Playlists from '../../components/organisms/Playlists';
-import BaseView from '../../components/templates/BaseView';
-import Track from '../../components/molecules/ListItem.Track';
-import {SAVED_TRACKS_PLAYLIST_ID} from '../../lib/constants/Playlist';
-import {useSpotify} from '../../providers/SpotifyProvider';
-import Notification from '../../lib/utils/Notification';
+import ScrollViewWithHeaderTitle from '../../../components/atoms/ScrollViewWithHeaderTitle';
+import Typography from '../../../components/atoms/Typography';
+import Playlists from '../../../components/organisms/Playlists';
+import BaseView from '../../../components/templates/BaseView';
+import Track from '../../../components/molecules/ListItem.Track';
+import {SAVED_TRACKS_PLAYLIST_ID} from '../../../lib/constants/Playlist';
+import {useSpotify} from '../../../providers/SpotifyProvider';
+import Notification from '../../../lib/utils/Notification';
+import {RootStackParamList} from '../../../lib/interfaces/StackParams';
 
 interface SaveToPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'SaveToPlaylist'> {}

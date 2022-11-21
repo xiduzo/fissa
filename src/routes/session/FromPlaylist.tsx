@@ -11,7 +11,7 @@ import BaseView from '../../components/templates/BaseView';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../lib/utils/Notification';
-import {RootStackParamList} from '../Routes';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface FromPlaylistProps
   extends NativeStackScreenProps<RootStackParamList, 'FromPlaylist'> {}

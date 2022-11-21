@@ -13,9 +13,9 @@ import Typography from '../../components/atoms/Typography';
 import BaseView from '../../components/templates/BaseView';
 import {Room} from '../../lib/interfaces/Room';
 import {request} from '../../lib/utils/api';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 import Notification from '../../lib/utils/Notification';
-import {RootStackParamList} from '../Routes';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface JoinSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'JoinSession'> {}

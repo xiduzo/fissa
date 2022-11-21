@@ -12,20 +12,21 @@ import Button from '../../components/atoms/Button';
 import EmptyState from '../../components/atoms/EmptyState';
 import Typography from '../../components/atoms/Typography';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Theme';
-import {RootStackParamList} from '../Routes';
-import RoomAddTracksFab from './Room.AddTracksFab';
-import RoomDetails from './Room.Details';
+import {Color} from '../../lib/types/Theme';
+import RoomAddTracksFab from './AddTracksFab';
+import RoomDetails from './Details';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
-import {renderTrack} from './Room.Track';
+import {renderTrack} from './Track';
 import {request} from '../../lib/utils/api';
 import Notification from '../../lib/utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import BaseView from '../../components/templates/BaseView';
-import RoomListHeader from './Room.ListHeader';
+import RoomListHeader from './ListHeader';
 import RoomBackToTop, {
   RoomBackToTopRef,
 } from '../../components/atoms/BackToTop';
+import {useIsOwner} from '../../hooks/useIsOwner';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
@@ -34,8 +35,9 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
   const {tracks, room, votes} = useRoomPlaylist(pin);
   const {currentUser} = useSpotify();
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isRestarting, setIsRestarting] = useState(false);
   const [canScroll, setCanScroll] = useState(true);
+  const isOwner = useIsOwner(pin);
 
   const scrollRef = useRef<VirtualizedList<TrackInterface>>(null);
   const backToTopRef = useRef<RoomBackToTopRef>(null);
@@ -51,7 +53,7 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   const restartPlaylist = async () => {
     try {
-      setIsSyncing(true);
+      setIsRestarting(true);
       await request('POST', '/room/play', {pin});
     } catch (error) {
       if (error === 409) {
@@ -62,13 +64,13 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
         return;
       }
     } finally {
-      setIsSyncing(false);
+      setIsRestarting(false);
     }
   };
 
   if (!room?.pin)
     return (
-      <BaseView style={{flex: 1}} noPadding>
+      <BaseView style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
           <Typography variant="h2">&nbsp;</Typography>
           <RoomDetails pin={pin} navigation={navigation} />
@@ -83,21 +85,17 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
 
   if (activeTrackIndex === -1)
     return (
-      <BaseView style={{flex: 1}} noPadding>
+      <BaseView style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
           icon="🦥"
-          title="This fissa is not playing"
-          subtitle={
-            room?.createdBy !== currentUser?.id
-              ? 'Poke your host to continue this fissa'
-              : undefined
-          }>
-          {room?.createdBy === currentUser?.id && (
+          title="This fissa is asleep"
+          subtitle={!isOwner && 'Poke your host to continue this fissa'}>
+          {isOwner && (
             <Button
-              disabled={isSyncing}
+              disabled={isRestarting}
               title="continue fissa"
               onPress={restartPlaylist}
             />
@@ -109,7 +107,8 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
   if (!tracks.length)
     return (
       <BaseView style={{flex: 1}} noPadding>
-        <View style={[styles.header, styles.headerEmpty]}>
+        <View
+          style={[styles.header, styles.headerEmpty, {paddingHorizontal: 24}]}>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState
@@ -186,7 +185,6 @@ const styles = StyleSheet.create({
   },
   headerEmpty: {
     marginTop: 68,
-    paddingHorizontal: 24,
     justifyContent: 'flex-end',
   },
   gradient: {

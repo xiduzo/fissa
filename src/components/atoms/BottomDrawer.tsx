@@ -3,7 +3,7 @@ import {GestureResponderEvent, StyleSheet, View} from 'react-native';
 import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 import IconButton from './IconButton';
 import CloseIcon from './icons/CloseIcon';
 import {IconProps} from './icons/_Icon';

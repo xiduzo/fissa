@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import {ButtonProps, StyleSheet, TouchableHighlight} from 'react-native';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 
 export interface IconButtonProps extends ButtonProps {
   variant?: 'contained';

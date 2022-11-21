@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {Animated} from 'react-native';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 import ProgressBar from '../atoms/ProgressBar';
 import Typography from '../atoms/Typography';
 import ListItem, {ListItemProps} from './ListItem';

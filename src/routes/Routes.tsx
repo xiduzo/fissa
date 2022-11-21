@@ -1,18 +1,17 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {FC} from 'react';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
-import {Track} from '../lib/interfaces/Track';
-import {Color} from '../types/Theme';
+import {Color} from '../lib/types/Theme';
 import Home from './Home';
 import Initial from './Initial';
 import Header from './Routes.Header';
 import FromPlaylist from './session/FromPlaylist';
 import JoinSession from './session/JoinSession';
 import NewSession from './session/NewSession';
-import Room from './session/Room';
-import AddFromPlaylist from './session/Room.AddFromPlaylist';
-import SaveToPlaylist from './session/Room.SaveToPlaylist';
-import SelectTracks from './session/Room.SelectTracks';
+import Room from './room/Room';
+import AddFromPlaylist from './room/modals/AddFromPlaylist';
+import SaveToPlaylist from './room/modals/SaveToPlaylist';
+import SelectTracks from './room/modals/SelectTracks';
 
 const RootStack = createNativeStackNavigator();
 const SharedElementStack = createSharedElementStackNavigator();
@@ -100,30 +99,6 @@ const Routes: FC = () => {
       />
     </RootStack.Navigator>
   );
-};
-
-export type RootStackParamList = {
-  Home: undefined;
-  FromPlaylist?: {
-    scrollHeight?: number;
-  };
-  NewSession: undefined;
-  JoinSession: undefined;
-  SaveToPlaylist: {
-    track: Track;
-  };
-  Room: {
-    pin: string;
-  };
-  AddTracks: undefined;
-  Initial: undefined;
-};
-
-export type SharedElementStackParamList = {
-  AddFromPlaylist: undefined;
-  SelectTracks: {
-    playlistId: string;
-  };
 };
 
 export default Routes;

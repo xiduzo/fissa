@@ -1,11 +1,11 @@
 import {FC} from 'react';
 import {ButtonProps, StyleSheet, TouchableHighlight, View} from 'react-native';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 import Typography from './Typography';
 
 interface ActionProps extends Omit<ButtonProps, 'color'> {
   icon: JSX.Element;
-  subtitle?: string;
+  subtitle?: boolean | string;
   reversed?: boolean;
   active?: boolean;
   inverted?: boolean;

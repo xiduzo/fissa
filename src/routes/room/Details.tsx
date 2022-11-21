@@ -1,36 +1,45 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {FC, useMemo, useState} from 'react';
-import {Alert, TouchableOpacity, View} from 'react-native';
+import React, {FC, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
 import Action from '../../components/atoms/Action';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
 import InfoIcon from '../../components/atoms/icons/InfoIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
-import {RootStackParamList} from '../Routes';
 import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../lib/utils/Notification';
+import {useDevices} from '../../hooks/useDevices';
+import {TransferPlaybackDevicePopover} from '../../components/organisms/TransferPlaybackDevicePopover';
+import {useIsOwner} from '../../hooks/useIsOwner';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface RoomDetailsProps {
   pin: string;
-  isOwner?: boolean;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Room', undefined>;
 }
 
-const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
+const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
   const {leaveRoom} = useRoomPlaylist(pin);
   const {tracks} = useRoomPlaylist(pin);
+  const isOwner = useIsOwner(pin);
 
   const {spotify, currentUser} = useSpotify();
   const [savingPlaylist, setSavingPlaylist] = useState(false);
-  const [activeDevice, setActiveDevice] = useState<
-    SpotifyApi.UserDevice | undefined
-  >();
+  const {activeDevice} = useDevices();
+
   const [showRoomDetails, setShowRoomDetails] = useState(false);
 
   const toggleRoomDetails = () => setShowRoomDetails(!showRoomDetails);
+
+  const [showDevicePopover, setShowDevicePopover] = useState(false);
+
+  const toggleDevicePopover = () => {
+    setShowRoomDetails(false);
+    setShowDevicePopover(!showDevicePopover);
+  };
 
   const createPlaylist = async () => {
     if (!currentUser) return;
@@ -68,13 +77,6 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
     }
   };
 
-  useMemo(async () => {
-    if (!isOwner) return;
-    const {devices} = await spotify.getMyDevices();
-
-    setActiveDevice(devices.find(_device => _device.is_active));
-  }, [spotify, showRoomDetails, isOwner]);
-
   return (
     <View>
       <TouchableOpacity onPress={toggleRoomDetails}>
@@ -97,7 +99,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
         </Typography>
         <Action
           title="Leave session"
-          subtitle="No worries, you can always come back"
+          subtitle="No worries, you can come back"
           inverted
           onPress={() => {
             leaveRoom();
@@ -108,7 +110,7 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
         />
         <Action
           title="Create playlist in spotify"
-          subtitle="And keep the fissa memories"
+          subtitle="And keep this fissa's memories"
           inverted
           onPress={createPlaylist}
           disabled={!currentUser || savingPlaylist}
@@ -116,19 +118,17 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, isOwner, navigation}) => {
         />
         <Action
           hidden={!isOwner}
-          title="Set speakers"
-          subtitle={`Current speakers: ${activeDevice?.name ?? 'none'}`}
+          title={activeDevice?.name ?? 'No speakers found'}
+          subtitle="Current speaker"
           inverted
-          onPress={() => {
-            Alert.alert(
-              'Setting the speakers is coming soon',
-              'be patient my young pawadan',
-            );
-          }}
-          // disabled
+          onPress={toggleDevicePopover}
           icon={<SpeakerIcon color="dark" colorOpacity={40} />}
         />
       </Popover>
+      <TransferPlaybackDevicePopover
+        visible={showDevicePopover}
+        onRequestClose={toggleDevicePopover}
+      />
     </View>
   );
 };

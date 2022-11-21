@@ -4,8 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import Typography from '../../components/atoms/Typography';
 import Track from '../../components/molecules/ListItem.Track';
 import {Room} from '../../lib/interfaces/Room';
-import {RootStackParamList} from '../Routes';
-import RoomDetails from './Room.Details';
+import RoomDetails from './Details';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Popover from '../../components/molecules/Popover';
@@ -13,6 +12,7 @@ import Action from '../../components/atoms/Action';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import ArrowRightIcon from '../../components/atoms/icons/ArrowRightIcon';
 import {request} from '../../lib/utils/api';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface RoomListHeaderProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {
@@ -40,7 +40,7 @@ const RoomListHeader: FC<RoomListHeaderProps> = ({
         createdBy: currentUser?.id,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -50,11 +50,7 @@ const RoomListHeader: FC<RoomListHeaderProps> = ({
     <View>
       <View style={styles.header}>
         <Typography variant="h2">Now Playing</Typography>
-        <RoomDetails
-          isOwner={room?.createdBy === currentUser?.id}
-          pin={room.pin}
-          navigation={navigation}
-        />
+        <RoomDetails pin={room.pin} navigation={navigation} />
       </View>
       <Track
         imageStyle={{width: 125, height: 125}}

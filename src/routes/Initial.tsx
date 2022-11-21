@@ -6,8 +6,8 @@ import Button from '../components/atoms/Button';
 import SpotifyIcon from '../components/atoms/icons/SpotifyIcon';
 import Typography from '../components/atoms/Typography';
 import {useSpotify} from '../providers/SpotifyProvider';
-import {Color} from '../types/Theme';
-import {RootStackParamList} from './Routes';
+import {Color} from '../lib/types/Theme';
+import {RootStackParamList} from '../lib/interfaces/StackParams';
 
 interface InitialProps
   extends NativeStackScreenProps<RootStackParamList, 'Initial'> {}

@@ -5,7 +5,7 @@ import Typography from './Typography';
 interface EmptyStateProps {
   icon: string;
   title: string;
-  subtitle?: string;
+  subtitle?: boolean | string;
 }
 
 const EmptyState: FC<EmptyStateProps> = ({icon, title, subtitle, children}) => {

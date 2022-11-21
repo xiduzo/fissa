@@ -9,7 +9,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 import Image from '../atoms/Image';
 import Typography from '../atoms/Typography';
 
@@ -18,7 +18,7 @@ export interface ListItemProps
     ViewProps {
   imageUri?: string;
   title: string;
-  subtitle: string;
+  subtitle: string | boolean;
   subtitlePrefix?: JSX.Element;
   extra?: JSX.Element;
   imageStyle?: StyleProp<Pick<ImageStyle, 'width' | 'height' | 'borderRadius'>>;
@@ -128,17 +128,15 @@ const ListItem: FC<ListItemProps> = ({
           </Typography>
           <View style={{flexDirection: 'row'}}>
             {subtitlePrefix}
-            <Typography
-              color={inverted ? 'dark' : 'light'}
-              numberOfLines={1}
-              style={{
-                ...styles.subtitle,
-                flex: 1,
-                // maxWidth: subtitlePrefix ? '85%' : '100%',
-              }}
-              variant="bodyM">
-              {subtitle}
-            </Typography>
+            {subtitle && (
+              <Typography
+                color={inverted ? 'dark' : 'light'}
+                numberOfLines={1}
+                style={{...styles.subtitle, flex: 1}}
+                variant="bodyM">
+                {subtitle}
+              </Typography>
+            )}
           </View>
           {extra}
         </Animated.View>

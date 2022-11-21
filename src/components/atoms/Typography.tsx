@@ -6,7 +6,7 @@ import {
   TextProps,
   TextStyle,
 } from 'react-native';
-import {Color, Theme} from '../../types/Theme';
+import {Color, Theme} from '../../lib/types/Theme';
 
 interface TypographyProps extends Omit<TextProps, 'style'> {
   /**

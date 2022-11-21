@@ -1,6 +1,6 @@
 import {FC} from 'react';
 import {StyleSheet, View, ViewProps} from 'react-native';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 
 interface DividerProps extends ViewProps {
   color?: string;

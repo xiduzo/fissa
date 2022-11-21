@@ -2,7 +2,7 @@ import {FC, useEffect, useMemo, useState} from 'react';
 import {View, ViewProps} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Track} from '../../lib/interfaces/Track';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 
 interface ProgressBarProps extends ViewProps {
   progress?: number;

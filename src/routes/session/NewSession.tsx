@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect, useState} from 'react';
-import {View} from 'react-native';
+import React, {FC, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
 import Button from '../../components/atoms/Button';
 import EmptyState from '../../components/atoms/EmptyState';
 import Typography from '../../components/atoms/Typography';
@@ -8,7 +8,10 @@ import BaseView from '../../components/templates/BaseView';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../lib/utils/Notification';
-import {RootStackParamList} from '../Routes';
+import {useDevices} from '../../hooks/useDevices';
+import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
+import {TransferPlaybackDevicePopover} from '../../components/organisms/TransferPlaybackDevicePopover';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
@@ -16,7 +19,11 @@ interface NewSessionProps
 const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify, refreshToken, currentUser} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
-  const [hasSpeaker, setHasSpeaker] = useState(false);
+  const {devices, activeDevice} = useDevices();
+
+  const [showDevicePopover, setShowDevicePopover] = useState(false);
+
+  const toggleDevicePopover = () => setShowDevicePopover(!showDevicePopover);
 
   const surprisePlaylist = async () => {
     setWaitForResponse(true);
@@ -51,21 +58,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    const checkForSpeaker = async () => {
-      try {
-        const {devices} = await spotify.getMyDevices();
-        setHasSpeaker(devices.length > 0);
-      } catch (error) {
-        console.error(error);
-        setHasSpeaker(false);
-      }
-    };
-
-    checkForSpeaker();
-  }, []);
-
-  if (!hasSpeaker)
+  if (devices.length === 0) {
     return (
       <BaseView style={{justifyContent: 'space-evenly'}}>
         <EmptyState
@@ -75,6 +68,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
         />
       </BaseView>
     );
+  }
 
   return (
     <BaseView style={{justifyContent: 'space-evenly'}}>
@@ -102,6 +96,26 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
           disabled={waitForResponse}
         />
       </View>
+      <TouchableOpacity
+        style={{marginBottom: 64}}
+        onPress={toggleDevicePopover}>
+        <View>
+          <Typography variant="bodyL" align="center">
+            {activeDevice?.name ?? 'No active speaker found'}
+          </Typography>
+          <Button
+            start={<SpotifyIcon scale={0.8} />}
+            title="Set speaker"
+            variant="text"
+            disabled={waitForResponse}
+            onPress={toggleDevicePopover}
+          />
+        </View>
+      </TouchableOpacity>
+      <TransferPlaybackDevicePopover
+        visible={showDevicePopover}
+        onRequestClose={toggleDevicePopover}
+      />
     </BaseView>
   );
 };

@@ -1,14 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {FC, useEffect} from 'react';
-import IconButton from '../../components/atoms/IconButton';
-import CLoseIcon from '../../components/atoms/icons/CloseIcon';
-import Tracks from '../../components/organisms/Tracks';
-import {SharedElementStackParamList} from '../Routes';
+import IconButton from '../../../components/atoms/IconButton';
+import CLoseIcon from '../../../components/atoms/icons/CloseIcon';
+import Tracks from '../../../components/organisms/Tracks';
 import {
   AddContextBottomDrawer,
   useAddContext,
-} from '../../providers/AddTracksProvider';
-import BaseView from '../../components/templates/BaseView';
+} from '../../../providers/AddTracksProvider';
+import BaseView from '../../../components/templates/BaseView';
+import {SharedElementStackParamList} from '../../../lib/interfaces/StackParams';
 
 interface SelectTracksProps
   extends NativeStackScreenProps<SharedElementStackParamList, 'SelectTracks'> {}

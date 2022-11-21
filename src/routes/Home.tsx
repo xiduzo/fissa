@@ -4,8 +4,8 @@ import {View} from 'react-native';
 import Button from '../components/atoms/Button';
 import Typography from '../components/atoms/Typography';
 import BaseView from '../components/templates/BaseView';
+import {RootStackParamList} from '../lib/interfaces/StackParams';
 import {useSpotify} from '../providers/SpotifyProvider';
-import {RootStackParamList} from './Routes';
 
 interface HomeProps
   extends NativeStackScreenProps<RootStackParamList, 'Home', undefined> {}

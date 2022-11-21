@@ -7,7 +7,7 @@ import PlusIcons from '../../components/atoms/icons/PlusIcon';
 import Typography from '../../components/atoms/Typography';
 import ListItem from '../../components/molecules/ListItem';
 import Popover from '../../components/molecules/Popover';
-import {RootStackParamList} from '../Routes';
+import {RootStackParamList} from '../../lib/interfaces/StackParams';
 
 interface RoomAddTracksFabProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Room', undefined>;

@@ -10,13 +10,12 @@ import {
 import Action from '../../components/atoms/Action';
 import ArrowDownIcon from '../../components/atoms/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/atoms/icons/ArrowUpIcon';
-import LockIcon from '../../components/atoms/icons/LockIcon';
 import MoreIcon from '../../components/atoms/icons/MoreIcon';
 import Track from '../../components/molecules/ListItem.Track';
 import Popover from '../../components/molecules/Popover';
 import {request} from '../../lib/utils/api';
 import {useSpotify} from '../../providers/SpotifyProvider';
-import {Color} from '../../types/Theme';
+import {Color} from '../../lib/types/Theme';
 import Notification from '../../lib/utils/Notification';
 import {Track as TrackInterface} from '../../lib/interfaces/Track';
 import {Vote} from '../../lib/interfaces/Vote';
