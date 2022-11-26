@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useEffect} from 'react';
+import {FC, useCallback, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import IconButton from '../../../components/atoms/IconButton';
 import CloseIcon from '../../../components/atoms/icons/CloseIcon';
@@ -21,6 +21,8 @@ interface AddFromPlaylistProps
   > {}
 
 const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
+  const [filter, setFilter] = useState('');
+
   const {cancel} = useAddContext();
 
   const gotoPlaylist = useCallback(
@@ -51,10 +53,10 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
         <Typography variant="h1" gutter={32}>
           {title}
         </Typography>
-        <Playlists onPlaylistPress={gotoPlaylist} />
+        <Playlists onPlaylistPress={gotoPlaylist} filter={filter} />
         <Spacer size={300} />
       </ScrollViewWithHeaderTitle>
-      <AddContextBottomDrawer />
+      <AddContextBottomDrawer onSearch={setFilter} />
     </BaseView>
   );
 };

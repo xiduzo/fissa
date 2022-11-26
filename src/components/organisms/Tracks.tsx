@@ -15,6 +15,7 @@ interface TracksProps {
   selectedTracks: string[];
   navigation: NativeStackNavigationProp<any, any, undefined>;
   toggleTrack?: (trackId: string) => void;
+  filter?: string;
 }
 
 const Tracks: FC<TracksProps> = ({
@@ -22,6 +23,7 @@ const Tracks: FC<TracksProps> = ({
   navigation,
   selectedTracks,
   toggleTrack,
+  filter,
 }) => {
   const {spotify} = useSpotify();
 
@@ -97,6 +99,20 @@ const Tracks: FC<TracksProps> = ({
     fetchTracks();
   }, [playlistId, spotify]);
 
+  const filteredData = tracks.filter(track => {
+    if (!filter) return true;
+
+    const hasName = track.name.toLowerCase().includes(filter.toLowerCase());
+    const hasArtist = track.artists
+      .map(artist => artist.name)
+      .some(artist => artist.toLowerCase().includes(filter.toLowerCase()));
+    const hasAlbum = track.album.name
+      .toLowerCase()
+      .includes(filter.toLowerCase());
+
+    return hasName || hasArtist || hasAlbum;
+  });
+
   return (
     <VirtualizedListWithHeader
       navigation={navigation}
@@ -117,7 +133,7 @@ const Tracks: FC<TracksProps> = ({
         </>
       }
       ListFooterComponent={<Spacer size={300} />}
-      data={tracks}
+      data={filteredData}
       initialNumToRender={6}
       scrollEventThrottle={30}
       renderItem={renderItem}

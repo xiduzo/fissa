@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {FC, useEffect} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import IconButton from '../../../components/atoms/IconButton';
 import CLoseIcon from '../../../components/atoms/icons/CloseIcon';
 import Tracks from '../../../components/organisms/Tracks';
@@ -15,6 +15,8 @@ interface SelectTracksProps
 
 const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
   const {selectedTracks, addTrack, removeTrack, cancel} = useAddContext();
+  const [filter, setFilter] = useState('');
+
   const {playlistId} = route.params;
 
   const toggleTrack = (trackId: string) => {
@@ -43,8 +45,9 @@ const SelectTracks: FC<SelectTracksProps> = ({route, navigation}) => {
         playlistId={playlistId}
         selectedTracks={selectedTracks}
         toggleTrack={toggleTrack}
+        filter={filter}
       />
-      <AddContextBottomDrawer />
+      <AddContextBottomDrawer onSearch={setFilter} />
     </BaseView>
   );
 };
