@@ -15,7 +15,6 @@ import {useSpotify} from '../../providers/SpotifyProvider';
 import {Color} from '../../lib/types/Theme';
 import RoomAddTracksFab from './AddTracksFab';
 import RoomDetails from './Details';
-import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import {renderTrack} from './Track';
 import {request} from '../../lib/utils/api';
 import Notification from '../../lib/utils/Notification';
@@ -27,17 +26,18 @@ import RoomBackToTop, {
 } from '../../components/atoms/BackToTop';
 import {useIsOwner} from '../../hooks/useIsOwner';
 import {RootStackParamList} from '../../lib/interfaces/StackParams';
+import {useRoom} from '../../hooks/useRoom';
 
 interface RoomProps
   extends NativeStackScreenProps<RootStackParamList, 'Room'> {}
 
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
-  const {tracks, room, votes} = useRoomPlaylist(pin);
+  const {tracks, room, votes} = useRoom(pin);
   const {currentUser} = useSpotify();
   const [isRestarting, setIsRestarting] = useState(false);
   const [canScroll, setCanScroll] = useState(true);
-  const isOwner = useIsOwner(pin);
+  const {isOwner} = useIsOwner(pin);
 
   const scrollRef = useRef<VirtualizedList<TrackInterface>>(null);
   const backToTopRef = useRef<RoomBackToTopRef>(null);
@@ -72,7 +72,6 @@ const Room: FC<RoomProps> = ({route, navigation}) => {
     return (
       <BaseView style={{flex: 1}}>
         <View style={[styles.header, styles.headerEmpty]}>
-          <Typography variant="h2">&nbsp;</Typography>
           <RoomDetails pin={pin} navigation={navigation} />
         </View>
         <EmptyState

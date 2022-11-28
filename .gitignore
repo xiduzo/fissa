@@ -68,4 +68,3 @@ buck-out/
 components/atoms/icons
 heroku/node_modules
 .env
-src/hooks

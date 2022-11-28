@@ -1,157 +1,109 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import mqtt from '@taoqf/react-native-mqtt';
-import {
-  createContext,
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import {createContext, FC, useCallback, useEffect, useReducer} from 'react';
 import {AppState} from 'react-native';
-import Config from 'react-native-config';
+import {useRtc} from '../hooks/useRtc';
 import {Room} from '../lib/interfaces/Room';
 import {Track} from '../lib/interfaces/Track';
 import {Vote} from '../lib/interfaces/Vote';
 import {request} from '../lib/utils/api';
 import Notification from '../lib/utils/Notification';
+import {
+  clear,
+  roomReducer,
+  setPin,
+  setRoom,
+  setTracks,
+  setVotes,
+} from './roomReducer';
 
-interface RoomPlaylistContextState {
-  tracks: Track[];
-  room?: Room;
-  votes: {[key: string]: Vote[]};
-  joinRoom: (pin: string) => void;
-  leaveRoom: () => void;
-}
-
-const initialState: RoomPlaylistContextState = {
-  tracks: [],
-  votes: {},
-  joinRoom: () => {},
+export const PlaylistContext = createContext({
+  tracks: [] as Track[],
+  votes: {} as {[key: string]: Vote[]},
+  room: {} as Room | undefined,
+  joinRoom: (pin: string) => {},
   leaveRoom: () => {},
-};
-
-const PlaylistContext = createContext<RoomPlaylistContextState>(initialState);
+});
 
 const PlaylistProvider: FC = ({children}) => {
-  const [tracks, setTracks] = useState(initialState.tracks);
-  const [votes, setVotes] = useState(initialState.votes);
-  const [room, setRoom] = useState(initialState.room);
-  const [pin, setPin] = useState('');
+  const {listenTo, setMessageHandler} = useRtc();
 
-  const sortAndSetVotes = useCallback((newVotes: Vote[]) => {
-    const sorted = newVotes?.reduce(
-      (acc: {[key: string]: Vote[]}, vote: Vote) => {
-        acc[vote.trackId] = acc[vote.trackId] || [];
-        acc[vote.trackId].push(vote);
-        return acc;
-      },
-      {},
-    );
+  const [state, dispatch] = useReducer(roomReducer, {
+    tracks: [],
+    votes: {},
+    pin: '',
+  });
 
-    setVotes(sorted);
-  }, []);
-
-  const leaveRoom = useCallback(async () => {
-    setVotes({});
-    setTracks([]);
-    setRoom(undefined);
-    setPin('');
-    await AsyncStorage.removeItem('pin');
-  }, []);
+  const leaveRoom = useCallback(async () => dispatch(clear(undefined)), []);
 
   const fetchVotes = useCallback(async () => {
-    if (!pin) return;
-    const {content} = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
-    sortAndSetVotes(content);
-  }, [pin]);
+    if (!state.pin) return;
+    const {content} = await request<Vote[]>(
+      'GET',
+      `/room/vote?pin=${state.pin}`,
+    );
+    dispatch(setVotes(content));
+  }, [state.pin, dispatch]);
 
   const fetchTracks = useCallback(async () => {
-    if (!pin) return;
-    const {content} = await request<Track[]>('GET', `/room/track?pin=${pin}`);
-    setTracks(content);
-  }, [pin]);
+    if (!state.pin) return;
+    const {content} = await request<Track[]>(
+      'GET',
+      `/room/track?pin=${state.pin}`,
+    );
+    dispatch(setTracks(content));
+  }, [state.pin, dispatch]);
 
   const fetchRoom = useCallback(async () => {
-    if (!pin) return;
+    if (!state.pin) return;
 
     try {
-      const {content} = await request<Room>('GET', `/room/${pin}`);
+      const {content} = await request<Room>('GET', `/room/${state.pin}`);
 
-      setRoom(content);
+      dispatch(setRoom(content));
     } catch (error) {
       if (error === 404) {
         Notification.show({
           type: 'warning',
-          message: `Fissa ${pin} you are trying to join does not exist`,
+          message: `Fissa ${state.pin} you are trying to join does not exist`,
         });
       }
     }
-  }, [pin]);
+  }, [state.pin, dispatch]);
 
   useEffect(() => {
-    if (!room?.pin) return;
+    if (!state.room?.pin) return;
 
     fetchTracks();
     fetchVotes();
-  }, [room?.pin, fetchTracks, fetchVotes]);
+  }, [state.room?.pin, fetchTracks, fetchVotes]);
 
-  const joinRoom = useCallback(async (pin: string) => {
-    if (!pin) return;
+  const joinRoom = useCallback(
+    async (pin: string) => {
+      if (!state.pin) return;
 
-    await AsyncStorage.setItem('pin', pin);
-    setPin(pin);
-  }, []);
+      await AsyncStorage.setItem('pin', state.pin);
+      dispatch(setPin(pin));
+    },
+    [dispatch],
+  );
 
-  useEffect(() => {
-    if (!pin) return;
+  const handleRtcMessage = useCallback(
+    (topic: string, payload: Buffer, packet: any) => {
+      const message = JSON.parse(payload.toString());
 
-    fetchRoom();
-
-    // TODO: rewrite MQTT stuff to hook
-    if (!Config.MQTT_USER || !Config.MQTT_PASSWORD) {
-      console.error("No MQTT credentials provided, can't connect to MQTT");
-      return;
-    }
-
-    const mqttClient = mqtt.connect('mqtt://mqtt.mdd-tardis.net', {
-      port: 9001,
-      protocol: 'mqtt',
-      username: Config.MQTT_USER,
-      password: Config.MQTT_PASSWORD,
-      resubscribe: true,
-      clientId: 'fissa_' + Math.random().toString(16).substr(2, 8),
-    });
-
-    mqttClient.on('connect', () => {
-      const topics = [
-        `fissa/room/${pin}`,
-        `fissa/room/${pin}/votes`,
-        `fissa/room/${pin}/tracks/reordered`,
-        `fissa/room/${pin}/tracks/added`,
-      ];
-      mqttClient.subscribe(topics);
-    });
-
-    mqttClient.on('error', error => {
-      console.warn('MQTT error', error);
-    });
-
-    mqttClient.on('message', (topic, message) => {
-      // TODO: validate message to expected format?
       switch (topic) {
-        case `fissa/room/${pin}/tracks/added`:
-        case `fissa/room/${pin}/tracks/reordered`:
+        case `fissa/room/${state.pin}/tracks/added`:
+        case `fissa/room/${state.pin}/tracks/reordered`:
           fetchTracks();
           break;
-        case `fissa/room/${pin}/votes`: {
+        case `fissa/room/${state.pin}/votes`: {
           const payload = JSON.parse(message?.toString() ?? '[]');
-          sortAndSetVotes(payload);
+          dispatch(setVotes(payload));
           break;
         }
-        case `fissa/room/${pin}`: {
+        case `fissa/room/${state.pin}`: {
           const payload = JSON.parse(message?.toString() ?? '{}');
-          setRoom(payload);
+          dispatch(setRoom(payload));
           break;
         }
         default: {
@@ -160,18 +112,30 @@ const PlaylistProvider: FC = ({children}) => {
           break;
         }
       }
-    });
+    },
+    [dispatch],
+  );
 
-    return () => {
-      mqttClient.end(true);
-    };
-  }, [pin, fetchTracks, fetchRoom, sortAndSetVotes]);
+  useEffect(() => {
+    setMessageHandler(handleRtcMessage);
+  }, [handleRtcMessage, setMessageHandler]);
+
+  useEffect(() => {
+    if (!state.pin) return;
+
+    fetchRoom();
+
+    listenTo([
+      `fissa/room/${state.pin}`,
+      `fissa/room/${state.pin}/votes`,
+      `fissa/room/${state.pin}/tracks/reordered`,
+      `fissa/room/${state.pin}/tracks/added`,
+    ]);
+  }, [state.pin, listenTo]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', () => {
       if (AppState.currentState !== 'active') return;
-
-      if (!pin) return;
 
       fetchRoom();
       fetchTracks();
@@ -179,57 +143,30 @@ const PlaylistProvider: FC = ({children}) => {
     });
 
     return subscription.remove;
-  }, [fetchRoom, fetchTracks, fetchVotes, pin]);
+  }, [fetchRoom, fetchTracks, fetchVotes]);
 
   useEffect(() => {
     AsyncStorage.getItem('pin').then(pin => {
-      if (pin) {
-        request<Room>('GET', `/room/${pin}`)
-          .then(() => setPin(pin))
-          .catch(console.error);
-      }
+      if (!pin) return;
+
+      request<Room>('GET', `/room/${pin}`)
+        .then(() => dispatch(setPin(pin)))
+        .catch(console.error);
     });
-  }, []);
+  }, [dispatch]);
 
   return (
     <PlaylistContext.Provider
       value={{
-        tracks,
-        room,
-        votes,
+        tracks: state.tracks,
+        room: state.room,
+        votes: state.votes,
         joinRoom,
         leaveRoom,
       }}>
       {children}
     </PlaylistContext.Provider>
   );
-};
-
-export const useRoomPlaylist = (pin?: string) => {
-  const context = useContext(PlaylistContext);
-  if (!context) {
-    throw new Error(
-      'useRoomPlaylist must be used within a RoomPlaylistContext',
-    );
-  }
-
-  useEffect(() => {
-    if (pin) {
-      context.joinRoom(pin);
-      return;
-    }
-
-    return () => {
-      context.joinRoom('');
-    };
-  }, [context, pin]);
-
-  return {
-    tracks: context.tracks,
-    room: context.room,
-    votes: context.votes,
-    leaveRoom: context.leaveRoom,
-  };
 };
 
 export default PlaylistProvider;

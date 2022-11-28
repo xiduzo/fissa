@@ -4,9 +4,9 @@ import {View} from 'react-native';
 import Button from '../components/atoms/Button';
 import Typography from '../components/atoms/Typography';
 import BaseView from '../components/templates/BaseView';
+import {useRoom} from '../hooks/useRoom';
 import {RootStackParamList} from '../lib/interfaces/StackParams';
 import Notification from '../lib/utils/Notification';
-import {useRoomPlaylist} from '../providers/PlaylistProvider';
 import {useSpotify} from '../providers/SpotifyProvider';
 
 interface HomeProps
@@ -14,7 +14,7 @@ interface HomeProps
 
 const Home: FC<HomeProps> = ({navigation}) => {
   const {currentUser} = useSpotify();
-  const {room} = useRoomPlaylist();
+  const {room} = useRoom();
 
   const navigate = (route: keyof RootStackParamList, params?: any) => () =>
     navigation.navigate(route, params);

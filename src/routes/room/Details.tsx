@@ -7,7 +7,6 @@ import InfoIcon from '../../components/atoms/icons/InfoIcon';
 import SpotifyIcon from '../../components/atoms/icons/SpotifyIcon';
 import Typography from '../../components/atoms/Typography';
 import Popover from '../../components/molecules/Popover';
-import {useRoomPlaylist} from '../../providers/PlaylistProvider';
 import SpeakerIcon from '../../components/atoms/icons/SpeakerIcon';
 import {useSpotify} from '../../providers/SpotifyProvider';
 import Notification from '../../lib/utils/Notification';
@@ -15,6 +14,7 @@ import {useDevices} from '../../hooks/useDevices';
 import {TransferPlaybackDevicePopover} from '../../components/organisms/TransferPlaybackDevicePopover';
 import {useIsOwner} from '../../hooks/useIsOwner';
 import {RootStackParamList} from '../../lib/interfaces/StackParams';
+import {useRoom} from '../../hooks/useRoom';
 
 interface RoomDetailsProps {
   pin: string;
@@ -22,8 +22,7 @@ interface RoomDetailsProps {
 }
 
 const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
-  const {leaveRoom} = useRoomPlaylist(pin);
-  const {tracks} = useRoomPlaylist(pin);
+  const {leaveRoom, tracks} = useRoom(pin);
   const {isOwner} = useIsOwner(pin);
 
   const {spotify, currentUser} = useSpotify();

@@ -5,14 +5,12 @@ import {SharedElement} from 'react-navigation-shared-element';
 import BottomDrawer from '../components/atoms/BottomDrawer';
 import Button from '../components/atoms/Button';
 import DeleteIcon from '../components/atoms/icons/DeleteIcon';
-import Typography from '../components/atoms/Typography';
 import {request} from '../lib/utils/api';
 import {useSpotify} from './SpotifyProvider';
 import Notification from '../lib/utils/Notification';
-import {useRoomPlaylist} from './PlaylistProvider';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Color} from '../lib/types/Theme';
 import {useDebounce} from '../hooks/useDebounce';
+import {useRoom} from '../hooks/useRoom';
 
 interface RoomAddContextState {
   selectedTracks: string[];
@@ -36,7 +34,7 @@ const AddTracksContext = createContext<RoomAddContextState>(initialState);
 
 const AddTracksProvider: FC = ({children}) => {
   const {goBack, canGoBack} = useNavigation();
-  const {room} = useRoomPlaylist();
+  const {room} = useRoom();
   const {spotify, currentUser} = useSpotify();
 
   const [selectedTracks, setSelectedTracks] = useState<string[]>(
