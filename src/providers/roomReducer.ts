@@ -10,32 +10,35 @@ interface State {
   pin: string;
 }
 
-type ActionMethod<T extends string, P = undefined> = (payload: P) => {
+type ActionWithPayload<T extends string, P = undefined> = (payload: P) => {
   type: T;
   payload: P;
 };
 
-export const setVotes: ActionMethod<'setVotes', Vote[]> = votes => ({
+type ActionWithoutPayload<T extends string> = () => {
+  type: T;
+};
+
+export const setVotes: ActionWithPayload<'setVotes', Vote[]> = votes => ({
   type: 'setVotes',
   payload: votes,
 });
 
-export const clear: ActionMethod<'clear'> = () => ({
+export const clear: ActionWithoutPayload<'clear'> = () => ({
   type: 'clear',
-  payload: undefined,
 });
 
-export const setTracks: ActionMethod<'setTracks', Track[]> = tracks => ({
+export const setTracks: ActionWithPayload<'setTracks', Track[]> = tracks => ({
   type: 'setTracks',
   payload: tracks,
 });
 
-export const setRoom: ActionMethod<'setRoom', Room> = room => ({
+export const setRoom: ActionWithPayload<'setRoom', Room> = room => ({
   type: 'setRoom',
   payload: room,
 });
 
-export const setPin: ActionMethod<'setPin', string> = pin => ({
+export const setPin: ActionWithPayload<'setPin', string> = pin => ({
   type: 'setPin',
   payload: pin,
 });

@@ -5,14 +5,12 @@ import IconButton from '../../../components/atoms/IconButton';
 import CloseIcon from '../../../components/atoms/icons/CloseIcon';
 import ScrollViewWithHeaderTitle from '../../../components/atoms/ScrollViewWithHeaderTitle';
 import Typography from '../../../components/atoms/Typography';
-import {
-  AddContextBottomDrawer,
-  useAddContext,
-} from '../../../providers/AddTracksProvider';
+import {useAddContext} from '../../../providers/AddTracksProvider';
 import Playlists from '../../../components/organisms/Playlists';
 import BaseView from '../../../components/templates/BaseView';
 import Spacer from '../../../components/atoms/Spacer';
 import {SharedElementStackParamList} from '../../../lib/interfaces/StackParams';
+import AddContextBottomDrawer from './AddTracksBottomDrawer';
 
 interface AddFromPlaylistProps
   extends NativeStackScreenProps<

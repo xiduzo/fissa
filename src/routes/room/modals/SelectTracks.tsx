@@ -3,12 +3,10 @@ import React, {FC, useEffect, useState} from 'react';
 import IconButton from '../../../components/atoms/IconButton';
 import CLoseIcon from '../../../components/atoms/icons/CloseIcon';
 import Tracks from '../../../components/organisms/Tracks';
-import {
-  AddContextBottomDrawer,
-  useAddContext,
-} from '../../../providers/AddTracksProvider';
+import {useAddContext} from '../../../providers/AddTracksProvider';
 import BaseView from '../../../components/templates/BaseView';
 import {SharedElementStackParamList} from '../../../lib/interfaces/StackParams';
+import AddContextBottomDrawer from './AddTracksBottomDrawer';
 
 interface SelectTracksProps
   extends NativeStackScreenProps<SharedElementStackParamList, 'SelectTracks'> {}

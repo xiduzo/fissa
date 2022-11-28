@@ -33,7 +33,7 @@ const PlaylistProvider: FC = ({children}) => {
     pin: '',
   });
 
-  const leaveRoom = useCallback(async () => dispatch(clear(undefined)), []);
+  const leaveRoom = useCallback(async () => dispatch(clear()), []);
 
   const fetchVotes = useCallback(async () => {
     if (!state.pin) return;
