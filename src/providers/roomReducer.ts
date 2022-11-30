@@ -16,26 +16,18 @@ const action = <T extends string, P = undefined>(type: T, payload: P) => ({
 });
 
 export const setVotes = (votes: Vote[]) => action('setVotes', votes);
-export const clear = () => action('clear', undefined);
 export const setTracks = (tracks: Track[]) => action('setTracks', tracks);
 export const setRoom = (room: Room) => action('setRoom', room);
 export const setPin = (pin: string) => action('setPin', pin);
 
 type Action =
   | ReturnType<typeof setVotes>
-  | ReturnType<typeof clear>
   | ReturnType<typeof setTracks>
   | ReturnType<typeof setRoom>
   | ReturnType<typeof setPin>;
 
 export const roomReducer = (state: State, action: Action) => {
   switch (action.type) {
-    case 'clear':
-      return {
-        ...state,
-        tracks: [],
-        votes: {},
-      };
     case 'setVotes':
       return {
         ...state,

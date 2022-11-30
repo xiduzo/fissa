@@ -18,26 +18,47 @@ mqttClient.on('error', error => {
 export const useRtc = () => {
   const topicsRef = useRef<string[]>([]);
 
-  const listenTo = useCallback((topics: string | string[], attempt = 0) => {
-    if (!mqttClient.connected) {
+  const listenTo = useCallback((topics: string[], attempt = 0) => {
+    if (!mqttClient.connected && attempt < 5) {
       setTimeout(() => listenTo(topics, attempt + 1), 1000 * attempt);
-      return;
     }
 
     mqttClient.subscribe(topics);
 
-    if (Array.isArray(topics)) {
-      topicsRef.current = topicsRef.current.concat(topics);
-    } else {
-      topicsRef.current.push(topics);
-    }
+    topicsRef.current = topicsRef.current.concat(topics);
+
+    return () => unsubscribeFrom(topics);
   }, []);
 
-  const setMessageHandler = useCallback((handler: mqtt.OnMessageCallback) => {
-    mqttClient.on('message', handler);
+  const unsubscribeFrom = useCallback((topics: string[], attempt = 0) => {
+    if (!mqttClient.connected && attempt < 5) {
+      setTimeout(() => unsubscribeFrom(topics, attempt + 1), 1000 * attempt);
+    }
+
+    mqttClient.unsubscribe(topics);
+
+    topicsRef.current = topicsRef.current.filter(
+      topic => !topics.includes(topic),
+    );
   }, []);
+
+  const setMessageHandler = useCallback(
+    (handler: (topic: string, message: string) => void) => {
+      const _handler = (topic: string, message: Buffer) =>
+        handler(topic, message.toString());
+
+      mqttClient.on('message', _handler);
+
+      return () => {
+        mqttClient.off('message', _handler);
+      };
+    },
+    [],
+  );
 
   useEffect(() => {
+    if (topicsRef.current.length <= 0) return;
+
     return () => {
       mqttClient.unsubscribe(topicsRef.current);
       topicsRef.current = [];

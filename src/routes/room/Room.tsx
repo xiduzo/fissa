@@ -33,11 +33,11 @@ interface RoomProps
 
 const Room: FC<RoomProps> = ({route, navigation}) => {
   const {pin} = route.params;
-  const {tracks, room, votes} = useRoom(pin);
+  const {tracks, room, votes} = useRoom();
   const {currentUser} = useSpotify();
   const [isRestarting, setIsRestarting] = useState(false);
   const [canScroll, setCanScroll] = useState(true);
-  const {isOwner} = useIsOwner(pin);
+  const {isOwner} = useIsOwner();
 
   const scrollRef = useRef<VirtualizedList<TrackInterface>>(null);
   const backToTopRef = useRef<RoomBackToTopRef>(null);

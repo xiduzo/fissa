@@ -7,21 +7,13 @@ import {Track} from '../lib/interfaces/Track';
 import {Vote} from '../lib/interfaces/Vote';
 import {request} from '../lib/utils/api';
 import Notification from '../lib/utils/Notification';
-import {
-  clear,
-  roomReducer,
-  setPin,
-  setRoom,
-  setTracks,
-  setVotes,
-} from './roomReducer';
+import {roomReducer, setPin, setRoom, setTracks, setVotes} from './roomReducer';
 
 export const PlaylistContext = createContext({
   tracks: [] as Track[],
   votes: {} as {[key: string]: Vote[]},
   room: {} as Room | undefined,
   joinRoom: (pin: string) => {},
-  leaveRoom: () => {},
 });
 
 const PlaylistProvider: FC = ({children}) => {
@@ -32,8 +24,6 @@ const PlaylistProvider: FC = ({children}) => {
     votes: {},
     pin: '',
   });
-
-  const leaveRoom = useCallback(async () => dispatch(clear()), []);
 
   const fetchVotes = useCallback(async () => {
     if (!state.pin) return;
@@ -79,17 +69,19 @@ const PlaylistProvider: FC = ({children}) => {
 
   const joinRoom = useCallback(
     async (pin: string) => {
-      if (!state.pin) return;
+      await AsyncStorage.setItem('pin', pin);
+      fetchRoom();
+      fetchTracks();
+      fetchVotes();
 
-      await AsyncStorage.setItem('pin', state.pin);
       dispatch(setPin(pin));
     },
-    [dispatch],
+    [dispatch, fetchRoom, fetchTracks, fetchVotes],
   );
 
   const handleRtcMessage = useCallback(
-    (topic: string, payload: Buffer, packet: any) => {
-      const message = JSON.parse(payload.toString());
+    (topic: string, payload: string) => {
+      const message = JSON.parse(payload);
 
       switch (topic) {
         case `fissa/room/${state.pin}/tracks/added`:
@@ -97,35 +89,33 @@ const PlaylistProvider: FC = ({children}) => {
           fetchTracks();
           break;
         case `fissa/room/${state.pin}/votes`: {
-          const payload = JSON.parse(message?.toString() ?? '[]');
-          dispatch(setVotes(payload));
+          dispatch(setVotes(message));
           break;
         }
         case `fissa/room/${state.pin}`: {
-          const payload = JSON.parse(message?.toString() ?? '{}');
-          dispatch(setRoom(payload));
+          dispatch(setRoom(message));
           break;
         }
         default: {
-          const payload = JSON.parse(message?.toString() ?? '');
-          console.warn(topic, payload);
+          console.warn('no topic match', {topic, message});
           break;
         }
       }
     },
-    [dispatch],
+    [dispatch, fetchTracks],
   );
 
-  useEffect(() => {
-    setMessageHandler(handleRtcMessage);
-  }, [handleRtcMessage, setMessageHandler]);
+  useEffect(
+    () => setMessageHandler(handleRtcMessage),
+    [handleRtcMessage, setMessageHandler],
+  );
 
   useEffect(() => {
     if (!state.pin) return;
 
     fetchRoom();
 
-    listenTo([
+    return listenTo([
       `fissa/room/${state.pin}`,
       `fissa/room/${state.pin}/votes`,
       `fissa/room/${state.pin}/tracks/reordered`,
@@ -142,7 +132,9 @@ const PlaylistProvider: FC = ({children}) => {
       fetchVotes();
     });
 
-    return subscription.remove;
+    return () => {
+      subscription.remove();
+    };
   }, [fetchRoom, fetchTracks, fetchVotes]);
 
   useEffect(() => {
@@ -162,7 +154,6 @@ const PlaylistProvider: FC = ({children}) => {
         room: state.room,
         votes: state.votes,
         joinRoom,
-        leaveRoom,
       }}>
       {children}
     </PlaylistContext.Provider>

@@ -14,13 +14,14 @@ interface HomeProps
 
 const Home: FC<HomeProps> = ({navigation}) => {
   const {currentUser} = useSpotify();
-  const {room} = useRoom();
+  const {room, joinRoom} = useRoom();
 
   const navigate = (route: keyof RootStackParamList, params?: any) => () =>
     navigation.navigate(route, params);
 
-  const joinRoom = () => {
+  const reJoinRoom = () => {
     if (!room?.pin) return;
+    joinRoom(room.pin);
     navigation.replace('Room', {pin: room.pin});
     Notification.show({
       icon: '🦤',
@@ -51,7 +52,11 @@ const Home: FC<HomeProps> = ({navigation}) => {
       </View>
       {room && (
         <View style={{marginBottom: 64}}>
-          <Button title="Rejoin last fissa" variant="text" onPress={joinRoom} />
+          <Button
+            title="Rejoin last fissa"
+            variant="text"
+            onPress={reJoinRoom}
+          />
         </View>
       )}
     </BaseView>

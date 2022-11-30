@@ -22,8 +22,8 @@ interface RoomDetailsProps {
 }
 
 const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
-  const {leaveRoom, tracks} = useRoom(pin);
-  const {isOwner} = useIsOwner(pin);
+  const {tracks} = useRoom();
+  const {isOwner} = useIsOwner();
 
   const {spotify, currentUser} = useSpotify();
   const [savingPlaylist, setSavingPlaylist] = useState(false);
@@ -101,7 +101,6 @@ const RoomDetails: FC<RoomDetailsProps> = ({pin, navigation}) => {
           subtitle="No worries, you can come back"
           inverted
           onPress={() => {
-            leaveRoom();
             toggleRoomDetails();
             navigation.replace('Home');
           }}
