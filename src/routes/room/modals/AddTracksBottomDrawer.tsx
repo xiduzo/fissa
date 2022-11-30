@@ -34,6 +34,7 @@ export const AddContextBottomDrawer: FC = () => {
                 style={{paddingVertical: 16, flex: 1}}
                 value={search}
                 placeholder="Filter"
+                placeholderTextColor={Color.dark + 80}
                 onChange={handleSearch}
               />
               <Typography
