@@ -16,11 +16,14 @@ import {request} from '../../lib/utils/api';
 import {Color} from '../../lib/types/Theme';
 import Notification from '../../lib/utils/Notification';
 import {RootStackParamList} from '../../lib/interfaces/StackParams';
+import {useRoom} from '../../hooks/useRoom';
 
 interface JoinSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'JoinSession'> {}
 
 const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
+  const {joinRoom} = useRoom();
+
   const [pin, setPin] = useState(['', '', '', '']);
   const key1 = useRef<TextInput>(null);
   const key2 = useRef<TextInput>(null);
@@ -78,12 +81,13 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
     }, 0);
   }, [keys]);
 
-  const joinRoom = useCallback(
+  const tryJoinRoom = useCallback(
     async (code: string) => {
       try {
         const {
           content: {pin},
         } = await request<Room>('GET', `/room/${code}`);
+        joinRoom(pin);
         navigation.popToTop();
         navigation.replace('Room', {pin});
         Notification.show({
@@ -109,8 +113,8 @@ const JoinSession: FC<JoinSessionProps> = ({navigation}) => {
 
     keys.forEach(key => key.current?.blur());
 
-    joinRoom(pin.join(''));
-  }, [reset, keys, joinRoom, pin]);
+    tryJoinRoom(pin.join(''));
+  }, [reset, keys, tryJoinRoom, pin]);
 
   useEffect(() => {
     keys[0].current?.focus();

@@ -140,10 +140,14 @@ const PlaylistProvider: FC = ({children}) => {
   useEffect(() => {
     AsyncStorage.getItem('pin').then(pin => {
       if (!pin) return;
-
       request<Room>('GET', `/room/${pin}`)
-        .then(() => dispatch(setPin(pin)))
-        .catch(console.error);
+        .then(({content}) => {
+          dispatch(setPin(content.pin));
+        })
+        .catch(async e => {
+          console.warn(e);
+          await AsyncStorage.setItem('pin', '');
+        });
     });
   }, [dispatch]);
 

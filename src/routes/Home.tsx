@@ -36,7 +36,7 @@ const Home: FC<HomeProps> = ({navigation}) => {
           Hi there {currentUser?.display_name?.split(' ')[0]},
         </Typography>
         <Typography variant="h4" align="center">
-          How can we move those feet
+          What are you up to?
         </Typography>
       </View>
       <View style={{flex: 1}}>

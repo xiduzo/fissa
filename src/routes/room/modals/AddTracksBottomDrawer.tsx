@@ -11,6 +11,7 @@ import {SharedElement} from 'react-navigation-shared-element';
 import BottomDrawer from '../../../components/atoms/BottomDrawer';
 import Button from '../../../components/atoms/Button';
 import DeleteIcon from '../../../components/atoms/icons/DeleteIcon';
+import Typography from '../../../components/atoms/Typography';
 import {Color} from '../../../lib/types/Theme';
 import {useAddContext} from '../../../providers/AddTracksProvider';
 
@@ -28,12 +29,19 @@ export const AddContextBottomDrawer: FC = () => {
         <BottomDrawer
           action={reset}
           title={
-            <TextInput
-              value={search}
-              style={styles.searchInput}
-              placeholder="Filter"
-              onChange={handleSearch}
-            />
+            <View style={styles.searchInput}>
+              <TextInput
+                style={{paddingVertical: 16, flex: 1}}
+                value={search}
+                placeholder="Filter"
+                onChange={handleSearch}
+              />
+              <Typography
+                color={search ? 'dark' : 'light'}
+                onPress={() => setSearch('')}>
+                clear
+              </Typography>
+            </View>
           }
           actionIcon={DeleteIcon}>
           <Button
@@ -65,9 +73,12 @@ const styles = StyleSheet.create({
   searchInput: {
     marginHorizontal: 16,
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
     backgroundColor: Color.light,
     color: Color.dark,
     borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
