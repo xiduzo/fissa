@@ -1,46 +1,49 @@
 import React, {FC, useState} from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
+} from 'react-native';
 import {SharedElement} from 'react-navigation-shared-element';
 
 import BottomDrawer from '../../../components/atoms/BottomDrawer';
 import Button from '../../../components/atoms/Button';
 import DeleteIcon from '../../../components/atoms/icons/DeleteIcon';
-import {useDebounce} from '../../../hooks/useDebounce';
 import {Color} from '../../../lib/types/Theme';
 import {useAddContext} from '../../../providers/AddTracksProvider';
 
-interface AddContextBottomDrawerProps {
-  onSearch?: (value: string) => void;
-}
+export const AddContextBottomDrawer: FC = () => {
+  const {selectedTracks, addToQueue, reset, search, setSearch} =
+    useAddContext();
 
-export const AddContextBottomDrawer: FC<AddContextBottomDrawerProps> = ({
-  onSearch,
-}) => {
-  const {selectedTracks, addToQueue, reset} = useAddContext();
-
-  const [search, setSearch] = useState('');
-
-  useDebounce(search, 500, newSearch => {
-    console.log(newSearch);
-    onSearch && onSearch(newSearch);
-  });
+  const handleSearch = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+    setSearch(e.nativeEvent.text);
+  };
 
   return (
     <SharedElement id="tracks-to-add-drawer">
       <View style={styles.view}>
-        <BottomDrawer action={reset} actionIcon={DeleteIcon}>
+        <BottomDrawer
+          action={reset}
+          title={
+            <TextInput
+              value={search}
+              style={styles.searchInput}
+              placeholder="Filter"
+              onChange={handleSearch}
+            />
+          }
+          actionIcon={DeleteIcon}>
           <Button
             inverted
             style={styles.button}
-            title={`Add ${selectedTracks.length} tracks`}
+            title={`Add ${selectedTracks.length} track${
+              selectedTracks.length === 1 ? '' : 's'
+            }`}
             onPress={addToQueue}
             disabled={selectedTracks.length <= 0}
-          />
-          <TextInput
-            value={search}
-            style={styles.searchInput}
-            placeholder="Search"
-            onChange={e => setSearch(e.nativeEvent.text)}
           />
         </BottomDrawer>
       </View>
@@ -57,10 +60,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    marginTop: 16,
+    marginTop: 32,
   },
   searchInput: {
-    marginVertical: 16,
+    marginHorizontal: 16,
+    flex: 1,
     padding: 16,
     backgroundColor: Color.light,
     color: Color.dark,

@@ -7,6 +7,8 @@ import {useRoom} from '../hooks/useRoom';
 
 const AddTracksContext = createContext({
   selectedTracks: [] as string[],
+  search: '',
+  setSearch: (value: string) => {},
   addTrack: (trackId: string) => {},
   removeTrack: (trackId: string) => {},
   addToQueue: () => {},
@@ -15,6 +17,7 @@ const AddTracksContext = createContext({
 });
 
 const AddTracksProvider: FC = ({children}) => {
+  const [search, setSearch] = useState('');
   const {goBack, canGoBack} = useNavigation();
   const {room} = useRoom();
   const {spotify, currentUser} = useSpotify();
@@ -68,6 +71,8 @@ const AddTracksProvider: FC = ({children}) => {
         addToQueue,
         cancel,
         reset,
+        search,
+        setSearch,
       }}>
       {children}
     </AddTracksContext.Provider>

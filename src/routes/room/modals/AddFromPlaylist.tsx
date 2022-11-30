@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FC, useCallback, useEffect, useState} from 'react';
+import {FC, useCallback, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
 import IconButton from '../../../components/atoms/IconButton';
 import CloseIcon from '../../../components/atoms/icons/CloseIcon';
@@ -19,12 +19,11 @@ interface AddFromPlaylistProps
   > {}
 
 const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
-  const [filter, setFilter] = useState('');
-
-  const {cancel} = useAddContext();
+  const {cancel, search, setSearch} = useAddContext();
 
   const gotoPlaylist = useCallback(
     (playlist: SpotifyApi.PlaylistObjectSimplified) => {
+      setSearch('');
       navigation.navigate('SelectTracks', {playlistId: playlist.id});
     },
     [navigation],
@@ -51,10 +50,10 @@ const AddFromPlaylist: FC<AddFromPlaylistProps> = ({navigation}) => {
         <Typography variant="h1" gutter={32}>
           {title}
         </Typography>
-        <Playlists onPlaylistPress={gotoPlaylist} filter={filter} />
+        <Playlists onPlaylistPress={gotoPlaylist} filter={search} />
         <Spacer size={300} />
       </ScrollViewWithHeaderTitle>
-      <AddContextBottomDrawer onSearch={setFilter} />
+      <AddContextBottomDrawer />
     </BaseView>
   );
 };

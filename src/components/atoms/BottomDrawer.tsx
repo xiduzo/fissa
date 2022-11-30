@@ -9,7 +9,7 @@ import CloseIcon from './icons/CloseIcon';
 import {IconProps} from './icons/_Icon';
 
 interface BottomDrawerProps extends Omit<LinearGradientProps, 'colors'> {
-  title?: JSX.Element;
+  title?: JSX.Element | false;
   action?: (event: GestureResponderEvent) => void;
   actionIcon?: FC<IconProps>;
 }
