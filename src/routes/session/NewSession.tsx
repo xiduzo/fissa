@@ -14,6 +14,7 @@ import {TransferPlaybackDevicePopover} from '../../components/organisms/Transfer
 import {RootStackParamList} from '../../lib/interfaces/StackParams';
 import Popover from '../../components/molecules/Popover';
 import AsyncStorage from '@react-native-community/async-storage';
+import {useRoom} from '../../hooks/useRoom';
 
 interface NewSessionProps
   extends NativeStackScreenProps<RootStackParamList, 'NewSession'> {}
@@ -22,6 +23,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
   const {spotify, refreshToken, currentUser} = useSpotify();
   const [waitForResponse, setWaitForResponse] = useState(false);
   const {devices, activeDevice} = useDevices();
+  const {joinRoom} = useRoom();
 
   const [showDevicePopover, setShowDevicePopover] = useState(false);
   const toggleDevicePopover = () => setShowDevicePopover(!showDevicePopover);
@@ -49,6 +51,7 @@ const NewSession: FC<NewSessionProps> = ({navigation}) => {
         createdBy: currentUser?.id,
       });
 
+      joinRoom(pin);
       navigation.popToTop();
       navigation.replace('Room', {pin});
       Notification.show({

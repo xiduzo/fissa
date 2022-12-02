@@ -26,6 +26,7 @@ const Playlists: FC<PlaylistProps> = ({onPlaylistPress, filter}) => {
   const fetchPlaylists = useCallback(
     async (offset = 0) => {
       spotify.getUserPlaylists(undefined, {offset}).then(({items, next}) => {
+        // TODO: filter unique playlists
         setPlaylists(prev => [...prev, ...items]);
         if (next) fetchPlaylists(offset + items.length);
       });
@@ -53,31 +54,29 @@ const Playlists: FC<PlaylistProps> = ({onPlaylistPress, filter}) => {
     });
   }, [spotify, fetchPlaylists]);
 
+  const filteredData = [...playlists].filter(playlist => {
+    if (!filter) return playlist;
+
+    const hasTitle = playlist.name.toLowerCase().includes(filter.toLowerCase());
+    const hasOwner = playlist.owner?.display_name
+      ?.toLowerCase()
+      .includes(filter.toLowerCase());
+    const hasDescription = playlist.description
+      ?.toLowerCase()
+      .includes(filter.toLowerCase());
+
+    return hasTitle || hasOwner || hasDescription;
+  });
+
   return (
     <>
-      {playlists
-        .filter(playlist => {
-          if (!filter) return playlist;
-
-          const hasTitle = playlist.name
-            .toLowerCase()
-            .includes(filter.toLowerCase());
-          const hasOwner = playlist.owner?.display_name
-            ?.toLowerCase()
-            .includes(filter.toLowerCase());
-          const hasDescription = playlist.description
-            ?.toLowerCase()
-            .includes(filter.toLowerCase());
-
-          return hasTitle || hasOwner || hasDescription;
-        })
-        .map(playlist => (
-          <Playlist
-            playlist={playlist}
-            key={playlist.id}
-            onPress={handlePlaylistPress(playlist)}
-          />
-        ))}
+      {filteredData.map(playlist => (
+        <Playlist
+          playlist={playlist}
+          key={playlist.id}
+          onPress={handlePlaylistPress(playlist)}
+        />
+      ))}
     </>
   );
 };

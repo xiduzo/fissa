@@ -99,7 +99,7 @@ const Tracks: FC<TracksProps> = ({
     fetchTracks();
   }, [playlistId, spotify]);
 
-  const filteredData = tracks.filter(track => {
+  const filteredData = [...tracks].filter(track => {
     if (!filter) return true;
 
     const hasName = track.name.toLowerCase().includes(filter.toLowerCase());

@@ -25,56 +25,48 @@ const PlaylistProvider: FC = ({children}) => {
     pin: '',
   });
 
-  const fetchVotes = useCallback(async () => {
-    if (!state.pin) return;
-    const {content} = await request<Vote[]>(
-      'GET',
-      `/room/vote?pin=${state.pin}`,
-    );
-    dispatch(setVotes(content));
-  }, [state.pin, dispatch]);
+  const fetchVotes = useCallback(
+    async pin => {
+      const {content} = await request<Vote[]>('GET', `/room/vote?pin=${pin}`);
+      dispatch(setVotes(content));
+    },
+    [dispatch],
+  );
 
-  const fetchTracks = useCallback(async () => {
-    if (!state.pin) return;
-    const {content} = await request<Track[]>(
-      'GET',
-      `/room/track?pin=${state.pin}`,
-    );
-    dispatch(setTracks(content));
-  }, [state.pin, dispatch]);
+  const fetchTracks = useCallback(
+    async pin => {
+      const {content} = await request<Track[]>('GET', `/room/track?pin=${pin}`);
+      dispatch(setTracks(content));
+    },
+    [dispatch],
+  );
 
-  const fetchRoom = useCallback(async () => {
-    if (!state.pin) return;
+  const fetchRoom = useCallback(
+    async pin => {
+      try {
+        const {content} = await request<Room>('GET', `/room/${pin}`);
 
-    try {
-      const {content} = await request<Room>('GET', `/room/${state.pin}`);
-
-      dispatch(setRoom(content));
-    } catch (error) {
-      if (error === 404) {
-        Notification.show({
-          type: 'warning',
-          message: `Fissa ${state.pin} you are trying to join does not exist`,
-        });
+        dispatch(setRoom(content));
+      } catch (error) {
+        if (error === 404) {
+          Notification.show({
+            type: 'warning',
+            message: `Fissa ${state.pin} you are trying to join does not exist`,
+          });
+        }
       }
-    }
-  }, [state.pin, dispatch]);
-
-  useEffect(() => {
-    if (!state.room?.pin) return;
-
-    fetchTracks();
-    fetchVotes();
-  }, [state.room?.pin, fetchTracks, fetchVotes]);
+    },
+    [dispatch],
+  );
 
   const joinRoom = useCallback(
     async (pin: string) => {
-      await AsyncStorage.setItem('pin', pin);
-      fetchRoom();
-      fetchTracks();
-      fetchVotes();
-
       dispatch(setPin(pin));
+
+      await AsyncStorage.setItem('pin', pin);
+      fetchRoom(pin);
+      fetchTracks(pin);
+      fetchVotes(pin);
     },
     [dispatch, fetchRoom, fetchTracks, fetchVotes],
   );
@@ -86,7 +78,7 @@ const PlaylistProvider: FC = ({children}) => {
       switch (topic) {
         case `fissa/room/${state.pin}/tracks/added`:
         case `fissa/room/${state.pin}/tracks/reordered`:
-          fetchTracks();
+          fetchTracks(state.pin);
           break;
         case `fissa/room/${state.pin}/votes`: {
           dispatch(setVotes(message));
@@ -102,7 +94,7 @@ const PlaylistProvider: FC = ({children}) => {
         }
       }
     },
-    [dispatch, fetchTracks],
+    [state.pin, dispatch, fetchTracks],
   );
 
   useEffect(
@@ -113,8 +105,6 @@ const PlaylistProvider: FC = ({children}) => {
   useEffect(() => {
     if (!state.pin) return;
 
-    fetchRoom();
-
     return listenTo([
       `fissa/room/${state.pin}`,
       `fissa/room/${state.pin}/votes`,
@@ -124,32 +114,34 @@ const PlaylistProvider: FC = ({children}) => {
   }, [state.pin, listenTo]);
 
   useEffect(() => {
+    if (!state.pin) return;
+
     const subscription = AppState.addEventListener('change', () => {
       if (AppState.currentState !== 'active') return;
 
-      fetchRoom();
-      fetchTracks();
-      fetchVotes();
+      fetchRoom(state.pin);
+      fetchTracks(state.pin);
+      fetchVotes(state.pin);
     });
 
     return () => {
       subscription.remove();
     };
-  }, [fetchRoom, fetchTracks, fetchVotes]);
+  }, [state.pin, fetchRoom, fetchTracks, fetchVotes]);
 
   useEffect(() => {
     AsyncStorage.getItem('pin').then(pin => {
       if (!pin) return;
       request<Room>('GET', `/room/${pin}`)
         .then(({content}) => {
-          dispatch(setPin(content.pin));
+          joinRoom(content.pin);
         })
         .catch(async e => {
           console.warn(e);
           await AsyncStorage.setItem('pin', '');
         });
     });
-  }, [dispatch]);
+  }, [joinRoom]);
 
   return (
     <PlaylistContext.Provider
