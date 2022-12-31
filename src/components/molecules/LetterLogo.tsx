@@ -27,7 +27,7 @@ const MovableLetter: FC = () => {
           position: 'absolute',
 
           tintColor:
-            themes[Math.floor(Math.random() * themes.length)].main + '05',
+            themes[Math.floor(Math.random() * themes.length)].main + '10',
           // tintColor: '#00000020',
           transform: [{scale: 0.5}],
         }}

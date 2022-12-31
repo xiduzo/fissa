@@ -18,17 +18,18 @@ import {
 import EncryptedStorage from 'react-native-encrypted-storage';
 import SpotifyWebApi from 'spotify-web-api-js';
 import {TOKEN_ENDPOINT} from '../lib/constants/Endpoint';
+import Notification from '../lib/utils/Notification';
 
 interface SpotifyProviderState {
   spotify: SpotifyWebApi.SpotifyWebApiJs;
-  auth: () => Promise<void>;
+  auth: () => Promise<SpotifyApi.CurrentUsersProfileResponse | undefined>;
   refreshToken?: string | null;
   currentUser?: SpotifyApi.CurrentUsersProfileResponse;
 }
 
 const initialState: SpotifyProviderState = {
   spotify: new SpotifyWebApi(),
-  auth: async () => {},
+  auth: async () => undefined,
 };
 
 const SpotifyContext = createContext<SpotifyProviderState>(initialState);
@@ -77,8 +78,12 @@ const SpotifyProvider: FC = ({children}) => {
       EncryptedStorage.setItem('accessToken', JSON.stringify(result));
       AsyncStorage.setItem('scopesVersion', SCOPES_VERSION);
       setCurrentUser(await spotifyApi.current.getMe());
-    } catch (error) {
-      console.error(`spotifyAuth error: ${error}`);
+      return await spotifyApi.current.getMe();
+    } catch {
+      Notification.show({
+        type: 'error',
+        message: 'Something went wrong while connecting to Spotify',
+      });
     }
   }, []);
 

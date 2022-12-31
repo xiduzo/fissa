@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    minHeight: '75%',
   },
   subtitleView: {
     marginVertical: 32,

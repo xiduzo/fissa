@@ -12,6 +12,7 @@ import Room from './room/Room';
 import AddFromPlaylist from './room/modals/AddFromPlaylist';
 import SaveToPlaylist from './room/modals/SaveToPlaylist';
 import SelectTracks from './room/modals/SelectTracks';
+import AddFromSpotifySearch from './room/modals/AddFromSpotifySearch';
 
 const RootStack = createNativeStackNavigator();
 const SharedElementStack = createSharedElementStackNavigator();
@@ -88,6 +89,16 @@ const Routes: FC = () => {
           animation: 'slide_from_bottom',
         }}
       />
+
+      <RootStack.Screen
+        name="AddFromSpotifySearch"
+        component={AddFromSpotifySearch}
+        options={{
+          animation: 'slide_from_bottom',
+          presentation: 'containedModal',
+        }}
+      />
+
       <RootStack.Screen
         name="AddTracks"
         component={SharedViewComponent}

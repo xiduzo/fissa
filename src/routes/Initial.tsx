@@ -25,7 +25,11 @@ const Initial: FC<InitialProps> = ({navigation}) => {
   const signIn = async () => {
     try {
       setSigningIn(() => true);
-      await auth();
+
+      const user = await auth();
+
+      if (!user) return;
+
       navigation.replace('Home');
     } finally {
       setSigningIn(() => false);
@@ -35,7 +39,6 @@ const Initial: FC<InitialProps> = ({navigation}) => {
   useEffect(() => {
     if (!currentUser) return;
     canSkipToHome.current = true;
-
     if (animationsDone.current) {
       navigation.replace('Home');
     }

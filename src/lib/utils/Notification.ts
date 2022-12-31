@@ -13,13 +13,13 @@ class Notification {
   defaultIcon(type: ToastType) {
     switch (type) {
       case 'error':
-        return '❌';
+        return '🦀';
       case 'info':
-        return '💡';
+        return '🦉';
       case 'warning':
-        return '⚡️';
+        return '🦑';
       case 'success':
-        return '👊🏻';
+        return '🐕';
       default:
         return '';
     }

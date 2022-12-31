@@ -14,6 +14,7 @@ export type RootStackParamList = {
     pin: string;
   };
   AddTracks: undefined;
+  AddFromSpotifySearch: undefined;
   Initial: undefined;
 };
 

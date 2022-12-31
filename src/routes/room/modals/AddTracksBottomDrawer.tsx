@@ -15,7 +15,9 @@ import Typography from '../../../components/atoms/Typography';
 import {Color} from '../../../lib/types/Theme';
 import {useAddContext} from '../../../providers/AddTracksProvider';
 
-export const AddContextBottomDrawer: FC = () => {
+export const AddContextBottomDrawer: FC<{filterText?: string}> = ({
+  filterText,
+}) => {
   const {selectedTracks, addToQueue, reset, search, setSearch} =
     useAddContext();
 
@@ -24,43 +26,49 @@ export const AddContextBottomDrawer: FC = () => {
   };
 
   return (
+    <View style={styles.view}>
+      <BottomDrawer
+        action={reset}
+        title={
+          <View style={styles.searchInput}>
+            <TextInput
+              style={{paddingVertical: 16, flex: 1}}
+              value={search}
+              placeholder={filterText || 'Filter'}
+              placeholderTextColor={Color.dark + 80}
+              onChange={handleSearch}
+            />
+            <Typography
+              color={search ? 'dark' : 'light'}
+              onPress={() => setSearch('')}>
+              clear
+            </Typography>
+          </View>
+        }
+        actionIcon={DeleteIcon}>
+        <Button
+          inverted
+          style={styles.button}
+          title={`Add ${selectedTracks.length} track${
+            selectedTracks.length === 1 ? '' : 's'
+          }`}
+          onPress={addToQueue}
+          disabled={selectedTracks.length <= 0}
+        />
+      </BottomDrawer>
+    </View>
+  );
+};
+
+const SharedAddContextBottomDrawer = () => {
+  return (
     <SharedElement id="tracks-to-add-drawer">
-      <View style={styles.view}>
-        <BottomDrawer
-          action={reset}
-          title={
-            <View style={styles.searchInput}>
-              <TextInput
-                style={{paddingVertical: 16, flex: 1}}
-                value={search}
-                placeholder="Filter"
-                placeholderTextColor={Color.dark + 80}
-                onChange={handleSearch}
-              />
-              <Typography
-                color={search ? 'dark' : 'light'}
-                onPress={() => setSearch('')}>
-                clear
-              </Typography>
-            </View>
-          }
-          actionIcon={DeleteIcon}>
-          <Button
-            inverted
-            style={styles.button}
-            title={`Add ${selectedTracks.length} track${
-              selectedTracks.length === 1 ? '' : 's'
-            }`}
-            onPress={addToQueue}
-            disabled={selectedTracks.length <= 0}
-          />
-        </BottomDrawer>
-      </View>
+      <AddContextBottomDrawer />
     </SharedElement>
   );
 };
 
-export default AddContextBottomDrawer;
+export default SharedAddContextBottomDrawer;
 
 const styles = StyleSheet.create({
   view: {
